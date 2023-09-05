@@ -37,4 +37,6 @@
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
 /build:Models/tgc-logo/tgc-logo.fbx
+/build:Models/TankWars/Panzer/Panzer.fbx
+/build:Models/TankWars/T90/T90.fbx
 
