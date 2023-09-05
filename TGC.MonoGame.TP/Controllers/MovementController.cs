@@ -1,18 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TGC.MonoGame.TP.Content.Actors;
 
 namespace TGC.MonoGame.TP.Controllers
 {
     class MovementController
     {
-        public Vector3 Acceleration;
+        public float Acceleration;
+        public float Speed;
         public Vector3 Velocity;
-        public float Dampening = 0.01f;
+        public float Dampening = 0.5f;
         public float DriveSpeed { get; set; }
         public float RotationSpeed { get; set; }
 
@@ -20,18 +16,19 @@ namespace TGC.MonoGame.TP.Controllers
         {
             DriveSpeed = driveSpeed;
             RotationSpeed = rotationSpeed;
-            Acceleration = Vector3.Zero;
+            Acceleration = 0f;
+            Speed = 0f;
             Velocity = Vector3.Zero;
         }
 
-        public void Accelerate(GameObject gameObject)
+        public void Accelerate()
         {
-            Acceleration = gameObject.World.Forward * DriveSpeed;
+            Acceleration = DriveSpeed;
         }
 
-        public void Decelerate(GameObject gameObject)
+        public void Decelerate()
         {
-            Acceleration = gameObject.World.Backward * DriveSpeed;
+            Acceleration = -DriveSpeed;
         }
 
         public void RotateRight(GameObject gameObject, float deltaTime)
@@ -44,14 +41,15 @@ namespace TGC.MonoGame.TP.Controllers
             gameObject.YAxisRotation += RotationSpeed * deltaTime;
         }
 
-        public void Settle(GameObject gameObject)
+        public void Settle()
         {
-            Acceleration = gameObject.World.Forward * - Velocity * Dampening;
+            Acceleration = -Speed * Dampening;
         }
 
         public void Move(GameObject gameObject, float deltaTime)
         {
-            Velocity += Acceleration * deltaTime;
+            Speed += Acceleration * deltaTime;
+            Velocity = gameObject.World.Forward * Speed;
             gameObject.Position += Velocity * deltaTime;
         }
 
