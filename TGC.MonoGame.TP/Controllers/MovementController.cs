@@ -10,11 +10,11 @@ namespace TGC.MonoGame.TP.Controllers
 {
     class MovementController
     {
-        public Vector3 Acceleration;
-        public Vector3 Velocity;
-        public float Dampening = 0.01f;
-        public float DriveSpeed { get; set; }
-        public float RotationSpeed { get; set; }
+        private Vector3 Acceleration;
+        private Vector3 Velocity;
+        private const float Damping = 2f;
+        private float DriveSpeed { get; set; }
+        private float RotationSpeed { get; set; }
 
         public MovementController(float driveSpeed, float rotationSpeed)
         {
@@ -34,19 +34,21 @@ namespace TGC.MonoGame.TP.Controllers
             Acceleration = gameObject.World.Backward * DriveSpeed;
         }
 
-        public void RotateRight(GameObject gameObject, float deltaTime)
+        public void TurnRight(GameObject gameObject, float deltaTime)
         {
             gameObject.YAxisRotation -= RotationSpeed * deltaTime;
+            Acceleration -= Velocity * Damping;
         }
 
-        public void RotateLeft(GameObject gameObject, float deltaTime)
+        public void TurnLeft(GameObject gameObject, float deltaTime)
         {
             gameObject.YAxisRotation += RotationSpeed * deltaTime;
+            Acceleration -= Velocity * Damping;
         }
 
         public void Settle(GameObject gameObject)
         {
-            Acceleration = gameObject.World.Forward * - Velocity * Dampening;
+            Acceleration = gameObject.World.Forward - Velocity * Damping;
         }
 
         public void Move(GameObject gameObject, float deltaTime)

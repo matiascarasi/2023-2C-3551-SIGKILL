@@ -24,24 +24,29 @@ namespace TGC.MonoGame.TP.Controllers
             var keyboardState = Keyboard.GetState();
             var deltaTime = Convert.ToSingle(gameTime.ElapsedGameTime.TotalSeconds);
 
-            if (keyboardState.IsKeyDown(Keys.A))
+            if (keyboardState.IsKeyDown(Keys.W))
             {
-                MovementController.RotateLeft(Player, deltaTime);
-            }
-            else if (keyboardState.IsKeyDown(Keys.D))
-            {
-                MovementController.RotateRight(Player, deltaTime);
-            }
-
-            if (keyboardState.IsKeyDown(Keys.W)){
                 MovementController.Accelerate(Player);
-            } else if (keyboardState.IsKeyDown(Keys.S))
+            }
+            else if (keyboardState.IsKeyDown(Keys.S))
             {
                 MovementController.Decelerate(Player);
-            } else
+            }
+            else
             {
                 MovementController.Settle(Player);
             }
+
+            if (keyboardState.IsKeyDown(Keys.A))
+            {
+                MovementController.TurnLeft(Player, deltaTime);
+            }
+            else if (keyboardState.IsKeyDown(Keys.D))
+            {
+                MovementController.TurnRight(Player, deltaTime);
+            }
+
+            
 
             MovementController.Move(Player, deltaTime);
         }
