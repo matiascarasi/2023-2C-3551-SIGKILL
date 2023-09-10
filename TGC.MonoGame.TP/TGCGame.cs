@@ -37,6 +37,7 @@ namespace TGC.MonoGame.TP
         private Matrix Projection { get; set; }
         private GameObject Player { get; set; }
         private FollowCamera FollowCamera { get; set; }
+        private Terrain Terrain;
 
         /// <summary>
         ///     Se llama una sola vez, al principio cuando se ejecuta el ejemplo.
@@ -55,10 +56,12 @@ namespace TGC.MonoGame.TP
             // Seria hasta aca.
 
             // Configuramos nuestras matrices de la escena.
-            View = Matrix.CreateLookAt(Vector3.UnitZ * 1500, Vector3.Zero, Vector3.Up);
+            View = Matrix.CreateLookAt(new Vector3(0f, 2500f, 5000f), Vector3.Zero, Vector3.Up);
             Projection =
-                Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, GraphicsDevice.Viewport.AspectRatio, 1, 2000);
+                Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, GraphicsDevice.Viewport.AspectRatio, 1, 200000);
             FollowCamera = new FollowCamera(GraphicsDevice.Viewport.AspectRatio);
+
+            Terrain = new Terrain("Textures/heightmaps/heightmap-3", "Textures/heightmaps/terrain-texture-3");
 
             Player = new GameObject(
                 new TankGraphicsComponent(Content, PlayerDefaults.TankName), 
@@ -81,6 +84,7 @@ namespace TGC.MonoGame.TP
             // Aca es donde deberiamos cargar todos los contenido necesarios antes de iniciar el juego.
             SpriteBatch = new SpriteBatch(GraphicsDevice);
 
+            Terrain.LoadContent(Content, GraphicsDevice);
             Player.LoadContent();
 
             base.LoadContent();
@@ -115,7 +119,7 @@ namespace TGC.MonoGame.TP
         {
             // Aca deberiamos poner toda la logia de renderizado del juego.
             GraphicsDevice.Clear(Color.Black);
-
+            Terrain.Draw(GraphicsDevice, View, Projection);
             Player.Draw(gameTime, View, Projection);
         }
 
@@ -126,6 +130,7 @@ namespace TGC.MonoGame.TP
         {
             // Libero los recursos.
             Content.Unload();
+            Terrain.UnloadContent();
 
             base.UnloadContent();
         }
