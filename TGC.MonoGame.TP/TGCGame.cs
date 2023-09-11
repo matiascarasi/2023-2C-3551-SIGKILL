@@ -1,7 +1,9 @@
 ﻿using System;
+using Microsoft.VisualBasic.CompilerServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using TGC.MonoGame.TP.Cameras;
 using TGC.MonoGame.TP.Components;
 using TGC.MonoGame.TP.Content.Actors;
 using TGC.MonoGame.TP.Controllers;
@@ -38,7 +40,10 @@ namespace TGC.MonoGame.TP
         private GameObject Player { get; set; }
         private FollowCamera FollowCamera { get; set; }
         private Terrain Terrain;
+        
+        private Camera Camera { get; set; }
 
+        
         /// <summary>
         ///     Se llama una sola vez, al principio cuando se ejecuta el ejemplo.
         ///     Escribir aqui el codigo de inicializacion: el procesamiento que podemos pre calcular para nuestro juego.
@@ -61,7 +66,7 @@ namespace TGC.MonoGame.TP
                 Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, GraphicsDevice.Viewport.AspectRatio, 1, 200000);
             FollowCamera = new FollowCamera(GraphicsDevice.Viewport.AspectRatio);
 
-            Terrain = new Terrain("Textures/heightmaps/heightmap-3", "Textures/heightmaps/terrain-texture-3");
+            Terrain = new Terrain("Textures/heightmaps/hills-heightmap", "Textures/heightmaps/hills");
 
             Player = new GameObject(
                 new TankGraphicsComponent(Content, PlayerDefaults.TankName), 
@@ -71,6 +76,10 @@ namespace TGC.MonoGame.TP
                 PlayerDefaults.Scale
             );
 
+            Camera = new SimpleCamera(GraphicsDevice.Viewport.AspectRatio, new Vector3(-400f, 1000f, 2000f), 400, 1.0f, 1,
+                int.MaxValue);
+            
+            
             base.Initialize();
         }
 
@@ -105,6 +114,7 @@ namespace TGC.MonoGame.TP
                 //Salgo del juego.
                 Exit();
             }
+            Camera.Update(gameTime);
 
             Player.Update(gameTime);
 
@@ -118,10 +128,13 @@ namespace TGC.MonoGame.TP
         protected override void Draw(GameTime gameTime)
         {
             // Aca deberiamos poner toda la logia de renderizado del juego.
-            GraphicsDevice.Clear(Color.Black);
-            Terrain.Draw(GraphicsDevice, View, Projection);
-            Player.Draw(gameTime, View, Projection);
+            GraphicsDevice.Clear(Color.Blue);
+            Terrain.Draw(GraphicsDevice, Camera.View, Camera.Projection);
+            Player.Draw(gameTime, Camera.View, Camera.Projection);
+            
+            
         }
+        
 
         /// <summary>
         ///     Libero los recursos que se cargaron en el juego.

@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -24,8 +26,8 @@ namespace TGC.MonoGame.TP
         {
             var currentHeightmap = contentManager.Load<Texture2D>(HeightmapPath);
 
-            var scaleXZ = 50f;
-            var scaleY = 4f;
+            var scaleXZ = 50.0f;
+            var scaleY = 30.0f;
             CreateHeightmapMesh(graphicsDevice, currentHeightmap, scaleXZ, scaleY);
 
             var terrainTexture = contentManager.Load<Texture2D>(TexturePath);
@@ -51,6 +53,7 @@ namespace TGC.MonoGame.TP
             {
                 pass.Apply();
                 graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, PrimitiveCount);
+               
             }
         }
 
@@ -64,8 +67,8 @@ namespace TGC.MonoGame.TP
             var heightMapLengthMinusOne = heightMap.GetLength(1) - 1;
 
             PrimitiveCount = 2 * heightMapWidthMinusOne * heightMapLengthMinusOne;
-
-            CreateIndexBuffer(graphicsDevice, heightMapWidthMinusOne, heightMapLengthMinusOne);
+            
+            CreateIndexBuffer(graphicsDevice, (uint)heightMapWidthMinusOne, (uint)heightMapLengthMinusOne);
         }
 
         private float[,] LoadHeightmap(Texture2D texture)
@@ -80,7 +83,7 @@ namespace TGC.MonoGame.TP
                 for (var y = 0; y < texture.Height; y++)
                 {
                     var texel = texels[y * texture.Width + x];
-                    heightmap[x, y] = texel.R;
+                    heightmap[x, y] = (texel.R+texel.G+texel.B)/3;
                 }
 
             return heightmap;
@@ -97,19 +100,21 @@ namespace TGC.MonoGame.TP
             var vertexCount = heightMapWidth * heightMapLength;
 
             var vertices = new VertexPositionTexture[vertexCount];
-
+            
             var index = 0;
             Vector3 position;
             Vector2 textureCoordinates;
-
             for (var x = 0; x < heightMapWidth; x++)
+            {
+                var xCoordinate = x * scaleXZ - offsetX;
                 for (var z = 0; z < heightMapLength; z++)
                 {
-                    position = new Vector3(x * scaleXZ - offsetX, heightMap[x, z] * scaleY, z * scaleXZ - offsetZ);
+                    position = new Vector3(xCoordinate, heightMap[x, z] * scaleY, z * scaleXZ - offsetZ);
                     textureCoordinates = new Vector2((float)x / heightMapWidth, (float)z / heightMapLength);
                     vertices[index] = new VertexPositionTexture(position, textureCoordinates);
                     index++;
                 }
+            }
 
             VertexBuffer = new VertexBuffer(graphicsDevice, VertexPositionTexture.VertexDeclaration, vertexCount,
                 BufferUsage.None);
@@ -117,20 +122,20 @@ namespace TGC.MonoGame.TP
         }
 
 
-        private void CreateIndexBuffer(GraphicsDevice graphicsDevice, int quadsInX, int quadsInZ)
+        private void CreateIndexBuffer(GraphicsDevice graphicsDevice, uint quadsInX, uint quadsInZ)
         {
-            var indexCount = 3 * 2 * quadsInX * quadsInZ;
+            var indexCount = (int)(3 * 2 * quadsInX * quadsInZ);
 
-            var indices = new ushort[indexCount];
+            var indices = new uint[indexCount];
             var index = 0;
 
-            int right;
-            int top;
-            int bottom;
+            uint right;
+            uint top;
+            uint bottom;
 
             var vertexCountX = quadsInX + 1;
-            for (var x = 0; x < quadsInX; x++)
-                for (var z = 0; z < quadsInZ; z++)
+            for (uint x = 0; x < quadsInX; x++)
+                for (uint z = 0; z < quadsInZ; z++)
                 {
                     right = x + 1;
                     bottom = z * vertexCountX;
@@ -141,10 +146,10 @@ namespace TGC.MonoGame.TP
                     //   |/_|
                     //  a    b
 
-                    var a = (ushort)(x + bottom);
-                    var b = (ushort)(right + bottom);
-                    var c = (ushort)(right + top);
-                    var d = (ushort)(x + top);
+                    var a = x + bottom;
+                    var b = right + bottom;
+                    var c = right + top;
+                    var d = x + top;
 
                     // ACB
                     indices[index] = a;
@@ -163,7 +168,7 @@ namespace TGC.MonoGame.TP
                     index++;
                 }
             IndexBuffer =
-                new IndexBuffer(graphicsDevice, IndexElementSize.SixteenBits, indexCount, BufferUsage.None);
+                new IndexBuffer(graphicsDevice, IndexElementSize.ThirtyTwoBits, indexCount, BufferUsage.None);
             IndexBuffer.SetData(indices);
         }
 
