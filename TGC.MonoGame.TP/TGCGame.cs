@@ -83,8 +83,8 @@ namespace TGC.MonoGame.TP
             for (int i = 0; i < 200; i++)
             {
  
-                float randomObjectX = (float)random.NextDouble() * 2000f - 1000f; 
-                float randomObjectZ = (float)random.NextDouble() * 2000f - 1000f; 
+                float randomObjectX = (float)random.NextDouble() * 20000f - 10000f; 
+                float randomObjectZ = (float)random.NextDouble() * 20000f - 10000f; 
 
                 GameObject obj = new GameObject(
                     new MiscellaneousGraphicsComponent(Content, "Rock", "Rock07-Base"),

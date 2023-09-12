@@ -47,7 +47,7 @@ namespace TGC.MonoGame.TP
 
             TerrainEffect.Parameters["View"].SetValue(view);
             TerrainEffect.Parameters["Projection"].SetValue(projection);
-        //    TerrainEffect.Parameters["DiffuseColor"].SetValue(Color.DarkGreen.ToVector3());
+            TerrainEffect.Parameters["DiffuseColor"].SetValue(Color.DarkGreen.ToVector3());
 
             foreach (var pass in TerrainEffect.CurrentTechnique.Passes)
             {

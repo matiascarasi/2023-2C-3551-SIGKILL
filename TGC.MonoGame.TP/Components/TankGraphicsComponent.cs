@@ -1,11 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TGC.MonoGame.TP.Content.Actors;
 using TGC.MonoGame.TP.Content.Controllers;
 
@@ -15,17 +10,10 @@ namespace TGC.MonoGame.TP.Components
     {
 
         private const string TankModelsFolder = "TankWars/";
-        public const string ContentFolderEffects = "Effects/";
 
         private readonly ContentManager Content;
         private readonly string _tankName;
         private Effect Effect { get; set; }
-        
-        private float Rotation { get; set; }
-        private Matrix World { get; set; }
-        private Matrix View { get; set; }
-        private Matrix Projection { get; set; }
-
 
         public TankGraphicsComponent(ContentManager content, string tankName)
         {
@@ -39,7 +27,7 @@ namespace TGC.MonoGame.TP.Components
         public void LoadContent(GameObject Tank)
         {
             Tank.Model = Content.Load<Model>(PathsService.ContentFolder3D + TankModelsFolder + _tankName + "/" + _tankName);
-            Effect = Content.Load<Effect>(ContentFolderEffects + "BasicShader");
+            Effect = Content.Load<Effect>(PathsService.ContentFolderEffects + "BasicShader");
             foreach (var mesh in Tank.Model.Meshes)
             {
                 foreach (var meshPart in mesh.MeshParts)
@@ -51,20 +39,21 @@ namespace TGC.MonoGame.TP.Components
 
         public void Draw(GameObject Tank, GameTime gameTime, Matrix view, Matrix projection)
         {
-            
+
             Effect.Parameters["View"].SetValue(view);
             Effect.Parameters["Projection"].SetValue(projection);
-         //   Effect.Parameters["DiffuseColor"].SetValue(Color.DarkRed.ToVector3());
-            var rotationMatrix = Matrix.CreateRotationY(Rotation);
-
+            Effect.Parameters["DiffuseColor"].SetValue(Color.DarkRed.ToVector3());
+            var scaleMatrix = Matrix.CreateScale(Tank.Scale);
+            var rotationMatrix = Matrix.CreateRotationY(MathHelper.ToRadians(Tank.YAxisRotation));
+            var translationMatrix = Matrix.CreateTranslation(Tank.Position);
+            var world = scaleMatrix * rotationMatrix * translationMatrix;
+            Tank.World = world;
             foreach (var mesh in Tank.Model.Meshes)
             {
-                World =  Matrix.CreateScale(Tank.Scale) * Matrix.CreateRotationY(MathHelper.ToRadians(Tank.YAxisRotation))*mesh.ParentBone.Transform * rotationMatrix;
-                Effect.Parameters["World"].SetValue(World);
+                world = mesh.ParentBone.Transform * Tank.World;
+                Effect.Parameters["World"].SetValue(world);
                 mesh.Draw();
             }
-         
         }
-
     }
 }
