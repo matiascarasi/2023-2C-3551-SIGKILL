@@ -10,18 +10,17 @@ namespace TGC.MonoGame.TP.Scenes
     class Forest : IScene
     {
 
+        private const double SMALL_TREES_MIN_SCALE = 0.5;
         private readonly GameObject[] Miscellaneous;
-
         private Vector2 Center;
         private readonly double _radius;
-
         private readonly int smallTreesAmount;
 
         public Forest(Vector2 center, double radius, double density)
         {
             Center = center;
             _radius = radius;
-            smallTreesAmount = (int) (Math.PI * Math.Pow(_radius, 2) * 0.00001 * density);
+            smallTreesAmount = (int) (Math.PI * Math.Pow(_radius, 2) * 0.000001 * density);
             Miscellaneous = new GameObject[smallTreesAmount];
         }
 
@@ -35,12 +34,12 @@ namespace TGC.MonoGame.TP.Scenes
             {
                 var position = AlgebraHelper.GetRandomPointInCircle(Center, _radius, Random);
                 var rotation = Convert.ToSingle(AlgebraHelper.FULL_ROTATION * Random.NextDouble());
-                var scale = Convert.ToSingle(Math.Max(0.7, Random.NextDouble()));
+                var scale = Convert.ToSingle(Math.Max(SMALL_TREES_MIN_SCALE, Random.NextDouble()));
 
                 // TODO: Check tree position doesn't collide
                 
                 var tree = new GameObject(
-                    new T90GraphicsComponent(),
+                    new MiscellaneousGraphicsComponent("Trees/yamaboushi_tan_6000_a_sum1_flower1"),
                     new EmptyInputComponent(),
                     new Vector3(position.X, 0f, position.Y),
                     rotation,

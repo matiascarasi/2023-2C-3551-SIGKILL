@@ -32,15 +32,12 @@ namespace TGC.MonoGame.TP
             // Hace que el mouse sea visible.
             IsMouseVisible = true;
         }
-        private CityScene City { get; set; } // CIUDAD TP0
         private GraphicsDeviceManager Graphics { get; }
         private SpriteBatch SpriteBatch { get; set; }
         private Matrix View { get; set; }
         private Matrix Projection { get; set; }
         private GameObject Player { get; set; }
         private Forest Forest { get; set; }
-        private FollowCamera FollowCamera { get; set; }
-        private GameObject Box { get; set; }
         private MouseCamera MouseCamera { get; set; }
 
         /// <summary>
@@ -72,15 +69,6 @@ namespace TGC.MonoGame.TP
 
             Forest = new Forest(ForestDefaults.Center, ForestDefaults.Radius, ForestDefaults.Density);
 
-            //OBJETO MODELO EJEMPLO
-            Box = new GameObject(
-               new MiscellaneousGraphicsComponent(Content, "Rock", "Rock07-Base"),
-               new PlayerInputComponent(0f, 0f),
-               new Vector3(0f,0f, 0f),
-               0f,
-               1f
-           );
-
             base.Initialize();
         }
 
@@ -92,14 +80,12 @@ namespace TGC.MonoGame.TP
         protected override void LoadContent()
         {
 
-            City = new CityScene(Content); //CARGO MODELO CIUDAD 
 
             // Aca es donde deberiamos cargar todos los contenido necesarios antes de iniciar el juego.
             SpriteBatch = new SpriteBatch(GraphicsDevice);
 
             Player.LoadContent(Content);
             Forest.LoadContent(Content);
-            Box.LoadContent();
 
             base.LoadContent();
         }
@@ -137,7 +123,6 @@ namespace TGC.MonoGame.TP
 
             Player.Draw(gameTime, MouseCamera.View, MouseCamera.Projection);
             Forest.Draw(gameTime, MouseCamera.View, MouseCamera.Projection);
-            Box.Draw(gameTime, MouseCamera.View, MouseCamera.Projection);
         }
 
         /// <summary>
