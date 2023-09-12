@@ -33,8 +33,8 @@ namespace TGC.MonoGame.TP
 
             var terrainTexture = contentManager.Load<Texture2D>(TexturePath);
 
-            // Crear y configurar tu efecto personalizado aquí
-            TerrainEffect = contentManager.Load<Effect>(ContentFolderEffects + "BasicShader"); // Cambia la ruta según donde esté tu efecto
+     
+            TerrainEffect = contentManager.Load<Effect>(ContentFolderEffects + "BasicShader"); 
             TerrainEffect.Parameters["World"].SetValue(Matrix.Identity);
            // Effect.Parameters["Texture"].SetValue(terrainTexture);
         }
@@ -47,7 +47,7 @@ namespace TGC.MonoGame.TP
 
             TerrainEffect.Parameters["View"].SetValue(view);
             TerrainEffect.Parameters["Projection"].SetValue(projection);
-            TerrainEffect.Parameters["DiffuseColor"].SetValue(Color.DarkGreen.ToVector3());
+        //    TerrainEffect.Parameters["DiffuseColor"].SetValue(Color.DarkGreen.ToVector3());
 
             foreach (var pass in TerrainEffect.CurrentTechnique.Passes)
             {

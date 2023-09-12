@@ -42,7 +42,6 @@ namespace TGC.MonoGame.TP.Components
             Effect = Content.Load<Effect>(ContentFolderEffects + "BasicShader");
             foreach (var mesh in Tank.Model.Meshes)
             {
-                // Un mesh puede tener mas de 1 mesh part (cada 1 puede tener su propio efecto).
                 foreach (var meshPart in mesh.MeshParts)
                 {
                     meshPart.Effect = Effect;
@@ -55,7 +54,7 @@ namespace TGC.MonoGame.TP.Components
             
             Effect.Parameters["View"].SetValue(view);
             Effect.Parameters["Projection"].SetValue(projection);
-            Effect.Parameters["DiffuseColor"].SetValue(Color.DarkRed.ToVector3());
+         //   Effect.Parameters["DiffuseColor"].SetValue(Color.DarkRed.ToVector3());
             var rotationMatrix = Matrix.CreateRotationY(Rotation);
 
             foreach (var mesh in Tank.Model.Meshes)

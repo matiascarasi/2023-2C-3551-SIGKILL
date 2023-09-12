@@ -49,8 +49,6 @@ namespace TGC.MonoGame.TP
 
         private Effect Effect { get; set; }
         
-        //private GameObject Box { get; set; }
-        
         private float Rotation { get; set; }
         private Matrix World { get; set; }
         
@@ -133,8 +131,7 @@ namespace TGC.MonoGame.TP
             Terrain.Draw(GraphicsDevice, Camera.View, Camera.Projection);
 
             Box.Draw(gameTime, Camera.View, Camera.Projection);
-
-
+            
             Player.Draw(gameTime, Camera.View, Camera.Projection);
 
         }
@@ -142,7 +139,6 @@ namespace TGC.MonoGame.TP
         
         protected override void UnloadContent()
         {
-            // Libero los recursos.
             Content.Unload();
             Terrain.UnloadContent();
 
