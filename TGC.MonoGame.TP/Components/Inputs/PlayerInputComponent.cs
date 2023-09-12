@@ -1,14 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TGC.MonoGame.TP.Components;
-using TGC.MonoGame.TP.Content.Actors;
+using TGC.MonoGame.TP.Controllers;
 
-namespace TGC.MonoGame.TP.Controllers
+namespace TGC.MonoGame.TP.Components
 {
     class PlayerInputComponent : IInputComponent
     {

@@ -3,9 +3,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using TGC.MonoGame.TP.Components;
-using TGC.MonoGame.TP.Content.Actors;
-using TGC.MonoGame.TP.Controllers;
 using TGC.MonoGame.TP.Defaults;
+using TGC.MonoGame.TP.Scenes;
 
 namespace TGC.MonoGame.TP
 {
@@ -36,6 +35,7 @@ namespace TGC.MonoGame.TP
         private Matrix View { get; set; }
         private Matrix Projection { get; set; }
         private GameObject Player { get; set; }
+        private Forest Forest { get; set; }
         private FollowCamera FollowCamera { get; set; }
 
         /// <summary>
@@ -61,12 +61,14 @@ namespace TGC.MonoGame.TP
             FollowCamera = new FollowCamera(GraphicsDevice.Viewport.AspectRatio);
 
             Player = new GameObject(
-                new TankGraphicsComponent(Content, PlayerDefaults.TankName), 
+                new T90GraphicsComponent(), 
                 new PlayerInputComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed), 
                 PlayerDefaults.Position, 
                 PlayerDefaults.YAxisRotation, 
                 PlayerDefaults.Scale
             );
+
+            Forest = new Forest(ForestDefaults.Center, ForestDefaults.Radius, ForestDefaults.Density);
 
             base.Initialize();
         }
@@ -81,8 +83,8 @@ namespace TGC.MonoGame.TP
             // Aca es donde deberiamos cargar todos los contenido necesarios antes de iniciar el juego.
             SpriteBatch = new SpriteBatch(GraphicsDevice);
 
-            Player.LoadContent();
-
+            Player.LoadContent(Content);
+            Forest.LoadContent(Content);
             base.LoadContent();
         }
 
@@ -117,6 +119,7 @@ namespace TGC.MonoGame.TP
             GraphicsDevice.Clear(Color.Black);
 
             Player.Draw(gameTime, View, Projection);
+            Forest.Draw(gameTime, View, Projection);
         }
 
         /// <summary>

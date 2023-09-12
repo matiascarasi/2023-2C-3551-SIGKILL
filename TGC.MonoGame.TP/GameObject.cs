@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using TGC.MonoGame.TP.Components;
 
-namespace TGC.MonoGame.TP.Content.Actors
+namespace TGC.MonoGame.TP
 {
     class GameObject
     {
@@ -28,9 +28,9 @@ namespace TGC.MonoGame.TP.Content.Actors
             Scale = scale;
         }
 
-        public void LoadContent() 
+        public void LoadContent(ContentManager content) 
         {
-            GraphicsComponent.LoadContent(this);
+            GraphicsComponent.LoadContent(this, content);
         }
         public void Update(GameTime gameTime)
         {

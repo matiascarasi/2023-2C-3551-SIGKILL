@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TGC.MonoGame.TP.Content.Controllers
+﻿namespace TGC.MonoGame.TP.Content.Services
 {
     abstract class PathsService
     {
@@ -14,5 +8,6 @@ namespace TGC.MonoGame.TP.Content.Controllers
         public const string ContentFolderSounds = "Sounds/";
         public const string ContentFolderSpriteFonts = "SpriteFonts/";
         public const string ContentFolderTextures = "Textures/";
+        public const string TankModelsFolder = ContentFolder3D + "TankWars/";
     }
 }
