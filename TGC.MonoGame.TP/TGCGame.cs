@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using TGC.MonoGame.TP.Components;
 using TGC.MonoGame.TP.Content.Actors;
+using TGC.MonoGame.TP.Content.Models;
 using TGC.MonoGame.TP.Controllers;
 using TGC.MonoGame.TP.Defaults;
 
@@ -24,19 +25,23 @@ namespace TGC.MonoGame.TP
         {
             // Maneja la configuracion y la administracion del dispositivo grafico.
             Graphics = new GraphicsDeviceManager(this);
+
+            Graphics.GraphicsProfile = GraphicsProfile.HiDef;
+
             // Para que el juego sea pantalla completa se puede usar Graphics IsFullScreen.
             // Carpeta raiz donde va a estar toda la Media.
             Content.RootDirectory = "Content";
             // Hace que el mouse sea visible.
             IsMouseVisible = true;
         }
-
+        private CityScene City { get; set; } // CIUDAD TP0
         private GraphicsDeviceManager Graphics { get; }
         private SpriteBatch SpriteBatch { get; set; }
         private Matrix View { get; set; }
         private Matrix Projection { get; set; }
         private GameObject Player { get; set; }
-        private FollowCamera FollowCamera { get; set; }
+        private GameObject Box { get; set; }
+        private MouseCamera MouseCamera { get; set; }
 
         /// <summary>
         ///     Se llama una sola vez, al principio cuando se ejecuta el ejemplo.
@@ -44,29 +49,35 @@ namespace TGC.MonoGame.TP
         /// </summary>
         protected override void Initialize()
         {
+
+            IsMouseVisible = true;
             // La logica de inicializacion que no depende del contenido se recomienda poner en este metodo.
 
-            // Apago el backface culling.
-            // Esto se hace por un problema en el diseno del modelo del logo de la materia.
-            // Una vez que empiecen su juego, esto no es mas necesario y lo pueden sacar.
-            var rasterizerState = new RasterizerState();
-            rasterizerState.CullMode = CullMode.None;
-            GraphicsDevice.RasterizerState = rasterizerState;
+            // Apago el backface culling
             // Seria hasta aca.
 
             // Configuramos nuestras matrices de la escena.
             View = Matrix.CreateLookAt(Vector3.UnitZ * 1500, Vector3.Zero, Vector3.Up);
             Projection =
                 Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, GraphicsDevice.Viewport.AspectRatio, 1, 2000);
-            FollowCamera = new FollowCamera(GraphicsDevice.Viewport.AspectRatio);
+            MouseCamera = new MouseCamera(GraphicsDevice);
 
             Player = new GameObject(
-                new TankGraphicsComponent(Content, PlayerDefaults.TankName), 
-                new PlayerInputComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed), 
-                PlayerDefaults.Position, 
-                PlayerDefaults.YAxisRotation, 
+                new TankGraphicsComponent(Content, PlayerDefaults.TankName),
+                new PlayerInputComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed),
+                PlayerDefaults.Position,
+                PlayerDefaults.YAxisRotation,
                 PlayerDefaults.Scale
             );
+
+            //OBJETO MODELO EJEMPLO
+            Box = new GameObject(
+               new MiscellaneousGraphicsComponent(Content, "Rock", "Rock07-Base"),
+               new PlayerInputComponent(0f, 0f),
+               new Vector3(0f,0f, 0f),
+               0f,
+               1f
+           );
 
             base.Initialize();
         }
@@ -78,10 +89,14 @@ namespace TGC.MonoGame.TP
         /// </summary>
         protected override void LoadContent()
         {
+
+            City = new CityScene(Content); //CARGO MODELO CIUDAD 
+
             // Aca es donde deberiamos cargar todos los contenido necesarios antes de iniciar el juego.
             SpriteBatch = new SpriteBatch(GraphicsDevice);
 
             Player.LoadContent();
+            Box.LoadContent();
 
             base.LoadContent();
         }
@@ -103,6 +118,7 @@ namespace TGC.MonoGame.TP
             }
 
             Player.Update(gameTime);
+            MouseCamera.Update(gameTime, Player.World);
 
             base.Update(gameTime);
         }
@@ -115,8 +131,9 @@ namespace TGC.MonoGame.TP
         {
             // Aca deberiamos poner toda la logia de renderizado del juego.
             GraphicsDevice.Clear(Color.Black);
-
-            Player.Draw(gameTime, View, Projection);
+            City.Draw(gameTime, MouseCamera.View, MouseCamera.Projection);
+            Player.Draw(gameTime, MouseCamera.View, MouseCamera.Projection);
+            Box.Draw(gameTime, MouseCamera.View, MouseCamera.Projection);
         }
 
         /// <summary>
