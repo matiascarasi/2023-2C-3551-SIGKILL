@@ -9,12 +9,13 @@ namespace TGC.MonoGame.TP
     public class Terrain
     {
 
-        private BasicEffect Effect;
+        private Effect TerrainEffect;
         private VertexBuffer VertexBuffer;
         private IndexBuffer IndexBuffer;
         private int PrimitiveCount;
         private readonly string HeightmapPath;
         private readonly string TexturePath;
+        public const string ContentFolderEffects = "Effects/";
 
         public Terrain(string heightmapPath, string texturePath)
         {
@@ -32,12 +33,10 @@ namespace TGC.MonoGame.TP
 
             var terrainTexture = contentManager.Load<Texture2D>(TexturePath);
 
-            Effect = new BasicEffect(graphicsDevice)
-            {
-                World = Matrix.Identity,
-                TextureEnabled = true,
-                Texture = terrainTexture
-            };
+            // Crear y configurar tu efecto personalizado aquí
+            TerrainEffect = contentManager.Load<Effect>(ContentFolderEffects + "BasicShader"); // Cambia la ruta según donde esté tu efecto
+            TerrainEffect.Parameters["World"].SetValue(Matrix.Identity);
+           // Effect.Parameters["Texture"].SetValue(terrainTexture);
         }
 
         public void Draw(GraphicsDevice graphicsDevice, Matrix view, Matrix projection)
@@ -46,14 +45,14 @@ namespace TGC.MonoGame.TP
             graphicsDevice.SetVertexBuffer(VertexBuffer);
             graphicsDevice.Indices = IndexBuffer;
 
-            Effect.View = view;
-            Effect.Projection = projection;
+            TerrainEffect.Parameters["View"].SetValue(view);
+            TerrainEffect.Parameters["Projection"].SetValue(projection);
+            TerrainEffect.Parameters["DiffuseColor"].SetValue(Color.DarkGreen.ToVector3());
 
-            foreach (var pass in Effect.CurrentTechnique.Passes)
+            foreach (var pass in TerrainEffect.CurrentTechnique.Passes)
             {
                 pass.Apply();
                 graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, PrimitiveCount);
-               
             }
         }
 

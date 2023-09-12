@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.VisualBasic.CompilerServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -41,6 +42,16 @@ namespace TGC.MonoGame.TP
         private FollowCamera FollowCamera { get; set; }
         private Terrain Terrain;
         
+        public const string ContentFolderEffects = "Effects/";
+
+        private Effect Effect { get; set; }
+        
+        private float Rotation { get; set; }
+        private Matrix World { get; set; }
+        
+        private Model Model { get; set; }
+
+        
         private Camera Camera { get; set; }
 
         
@@ -78,7 +89,7 @@ namespace TGC.MonoGame.TP
 
             Camera = new SimpleCamera(GraphicsDevice.Viewport.AspectRatio, new Vector3(-400f, 1000f, 2000f), 400, 1.0f, 1,
                 int.MaxValue);
-            
+
             
             base.Initialize();
         }
@@ -94,8 +105,9 @@ namespace TGC.MonoGame.TP
             SpriteBatch = new SpriteBatch(GraphicsDevice);
 
             Terrain.LoadContent(Content, GraphicsDevice);
+            
             Player.LoadContent();
-
+            
             base.LoadContent();
         }
 
@@ -131,8 +143,6 @@ namespace TGC.MonoGame.TP
             GraphicsDevice.Clear(Color.Blue);
             Terrain.Draw(GraphicsDevice, Camera.View, Camera.Projection);
             Player.Draw(gameTime, Camera.View, Camera.Projection);
-            
-            
         }
         
 

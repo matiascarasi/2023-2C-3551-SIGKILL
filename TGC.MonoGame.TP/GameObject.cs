@@ -14,9 +14,10 @@ namespace TGC.MonoGame.TP.Content.Actors
         public Vector3 Position { get; set; }
         public float YAxisRotation { get; set; }
         public float Scale { get; set; }
-
+        
         private readonly IGraphicsComponent GraphicsComponent;
         private readonly IInputComponent InputComponent;
+    
 
         public GameObject(IGraphicsComponent graphics, IInputComponent inputComponent, Vector3 position, float yAxisRotation, float scale)
         {
