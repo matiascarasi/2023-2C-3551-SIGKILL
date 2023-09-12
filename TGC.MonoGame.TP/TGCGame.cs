@@ -46,6 +46,8 @@ namespace TGC.MonoGame.TP
 
         private Effect Effect { get; set; }
         
+        private GameObject Box { get; set; }
+        
         private float Rotation { get; set; }
         private Matrix World { get; set; }
         
@@ -86,6 +88,14 @@ namespace TGC.MonoGame.TP
                 PlayerDefaults.YAxisRotation, 
                 PlayerDefaults.Scale
             );
+            
+            // Box = new GameObject(
+            //     new MiscellaneousGraphicsComponent(Content, "Rock", "Rock07-Base"),
+            //     new PlayerInputComponent(0f, 0f),
+            //     new Vector3(0f, 300f, 0f),
+            //     0f,
+            //     1f
+            // );
 
             Camera = new SimpleCamera(GraphicsDevice.Viewport.AspectRatio, new Vector3(-400f, 1000f, 2000f), 400, 1.0f, 1,
                 int.MaxValue);
@@ -108,6 +118,8 @@ namespace TGC.MonoGame.TP
             
             Player.LoadContent();
             
+            //Box.LoadContent();
+            
             base.LoadContent();
         }
 
@@ -129,7 +141,7 @@ namespace TGC.MonoGame.TP
             Camera.Update(gameTime);
 
             Player.Update(gameTime);
-
+            
             base.Update(gameTime);
         }
 
@@ -143,6 +155,8 @@ namespace TGC.MonoGame.TP
             GraphicsDevice.Clear(Color.Blue);
             Terrain.Draw(GraphicsDevice, Camera.View, Camera.Projection);
             Player.Draw(gameTime, Camera.View, Camera.Projection);
+           // Box.Draw(gameTime, Camera.View, Camera.Projection);
+
         }
         
 
