@@ -28,7 +28,7 @@ namespace TGC.MonoGame.TP
             var currentHeightmap = contentManager.Load<Texture2D>(HeightmapPath);
 
             var scaleXZ = 50.0f;
-            var scaleY = 30.0f;
+            var scaleY = -1.0f;
             CreateHeightmapMesh(graphicsDevice, currentHeightmap, scaleXZ, scaleY);
 
             var terrainTexture = contentManager.Load<Texture2D>(TexturePath);

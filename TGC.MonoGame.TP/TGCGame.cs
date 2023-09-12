@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualBasic.CompilerServices;
 using Microsoft.Xna.Framework;
@@ -9,7 +10,6 @@ using TGC.MonoGame.TP.Components;
 using TGC.MonoGame.TP.Content.Actors;
 using TGC.MonoGame.TP.Controllers;
 using TGC.MonoGame.TP.Defaults;
-
 namespace TGC.MonoGame.TP
 {
     /// <summary>
@@ -57,6 +57,8 @@ namespace TGC.MonoGame.TP
         
         private Camera Camera { get; set; }
 
+        
+        List<GameObject> objects = new List<GameObject>();
 
         protected override void Initialize()
         {
@@ -71,18 +73,30 @@ namespace TGC.MonoGame.TP
             Player = new GameObject(
                 new TankGraphicsComponent(Content, PlayerDefaults.TankName),
                 new PlayerInputComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed),
-                PlayerDefaults.Position,
+                new Vector3(0f, 40f, 0f),
                 PlayerDefaults.YAxisRotation,
                 PlayerDefaults.Scale
             );
             
-            Box = new GameObject(
-                new MiscellaneousGraphicsComponent(Content, "Rock", "Rock07-Base"),
-                new PlayerInputComponent(0f, 0f),
-                new Vector3(0f, 300f, 0f),
-                0f,
-                1f
-            );
+            Random random = new Random();
+
+            for (int i = 0; i < 200; i++)
+            {
+ 
+                float randomObjectX = (float)random.NextDouble() * 2000f - 1000f; 
+                float randomObjectZ = (float)random.NextDouble() * 2000f - 1000f; 
+
+                GameObject obj = new GameObject(
+                    new MiscellaneousGraphicsComponent(Content, "Rock", "Rock07-Base"),
+                    new PlayerInputComponent(0f, 0f),
+                    new Vector3(randomObjectX, 0f, randomObjectZ),
+                    0f,
+                    1f
+                );
+
+                objects.Add(obj);
+            }
+
 
 
             Camera = new SimpleCamera(GraphicsDevice.Viewport.AspectRatio, new Vector3(-400f, 1000f, 2000f), 400, 1.0f, 1,
@@ -94,14 +108,19 @@ namespace TGC.MonoGame.TP
 
         protected override void LoadContent()
         {
-            // Aca es donde deberiamos cargar todos los contenido necesarios antes de iniciar el juego.
-            SpriteBatch = new SpriteBatch(GraphicsDevice);
+             SpriteBatch = new SpriteBatch(GraphicsDevice);
 
             Terrain.LoadContent(Content, GraphicsDevice);
             
-            Player.LoadContent();
+             Player.LoadContent();
+            //
+            // Box.LoadContent();
             
-            Box.LoadContent();
+
+            foreach (var obj in objects)
+            {
+                obj.LoadContent();
+            }
             
             base.LoadContent();
         }
@@ -130,10 +149,16 @@ namespace TGC.MonoGame.TP
             GraphicsDevice.Clear(Color.Blue);
             Terrain.Draw(GraphicsDevice, Camera.View, Camera.Projection);
 
-            Box.Draw(gameTime, Camera.View, Camera.Projection);
-            
-            Player.Draw(gameTime, Camera.View, Camera.Projection);
+            // Box.Draw(gameTime, Camera.View, Camera.Projection);
+            //
+             Player.Draw(gameTime, Camera.View, Camera.Projection);
 
+
+            foreach (var obj in objects)
+            {
+                obj.Draw(gameTime, Camera.View, Camera.Projection);
+            }
+            
         }
 
         
