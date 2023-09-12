@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,31 +11,35 @@ namespace TGC.MonoGame.TP
     /// </summary>
     class FollowCamera
     {
-        private const float AxisDistanceToTarget = 1000f;
+        private const float AxisDistanceToTarget = 750f;
 
         private const float AngleFollowSpeed = 0.015f;
 
-        private const float AngleThreshold = 0.85f;
+        private const float AngleThreshold = 0.55f;
+        
+        private MouseState mouse { get; set; }
 
         public Matrix Projection { get; private set; }
 
         public Matrix View { get; private set; }
 
-        private Vector3 CurrentRightVector { get; set; } = Vector3.Right;
+        private Vector3 CurrentBackVector { get; set; } = Vector3.Right;
 
-        private float RightVectorInterpolator { get; set; } = 0f;
+        private float BackVectorInterpolator { get; set; } = 0f;
 
-        private Vector3 PastRightVector { get; set; } = Vector3.Right;
+        private Vector3 PastBackVector { get; set; } = Vector3.Backward;
 
-        /// <summary>
-        /// Crea una FollowCamera que sigue a una matriz de mundo
-        /// </summary>
-        /// <param name="aspectRatio"></param>
-        public FollowCamera(float aspectRatio)
+        private float AspectRatio  { get; set; }
+
+    /// <summary>
+    /// Crea una FollowCamera que sigue a una matriz de mundo
+    /// </summary>
+    /// <param name="aspectRatio"></param>
+    public FollowCamera(float aspectRatio)
         {
             // Orthographic camera
             // Projection = Matrix.CreateOrthographic(screenWidth, screenHeight, 0.01f, 10000f);
-
+            AspectRatio = aspectRatio;
             // Perspective camera
             // Uso 60° como FOV, aspect ratio, pongo las distancias a near plane y far plane en 0.1 y 100000 (mucho) respectivamente
             Projection = Matrix.CreatePerspectiveFieldOfView(MathF.PI / 3f, aspectRatio, 0.1f, 100000f);
@@ -47,44 +52,53 @@ namespace TGC.MonoGame.TP
         /// <param name="followedWorld">The World matrix to follow</param>
         public void Update(GameTime gameTime, Matrix followedWorld)
         {
+
+
+
+            //Obtengo el estado del mouse
+            mouse = Mouse.GetState();
+            var mouseWheelValue = mouse.ScrollWheelValue != 0 ? mouse.ScrollWheelValue / 100 : 1;
+
+            System.Diagnostics.Debug.WriteLine(Math.Max(mouse.ScrollWheelValue, 600));
             // Obtengo el tiempo
             var elapsedTime = Convert.ToSingle(gameTime.ElapsedGameTime.TotalSeconds);
             
             // Obtengo la posicion de la matriz de mundo que estoy siguiendo
             var followedPosition = followedWorld.Translation;
 
-            // Obtengo el vector Derecha de la matriz de mundo que estoy siguiendo
-            var followedRight = followedWorld.Right;
+            // Obtengo el vector trasero de la matriz de mundo que estoy siguiendo
+            var followedBackward = followedWorld.Backward;
 
             // Si el producto escalar entre el vector Derecha anterior
             // y el actual es mas grande que un limite,
             // muevo el Interpolator (desde 0 a 1) mas cerca de 1
-            if (Vector3.Dot(followedRight, PastRightVector) > AngleThreshold)
+            if (Vector3.Dot(followedBackward, PastBackVector) > AngleThreshold)
             {
                 // Incremento el Interpolator
-                RightVectorInterpolator += elapsedTime * AngleFollowSpeed;
+                BackVectorInterpolator += elapsedTime * AngleFollowSpeed;
 
                 // No permito que Interpolator pase de 1
-                RightVectorInterpolator = MathF.Min(RightVectorInterpolator, 1f);
+                BackVectorInterpolator = MathF.Min(BackVectorInterpolator, 1f);
 
                 // Calculo el vector Derecha a partir de la interpolacion
                 // Esto mueve el vector Derecha para igualar al vector Derecha que sigo
                 // En este caso uso la curva x^2 para hacerlo mas suave
                 // Interpolator se convertira en 1 eventualmente
-                CurrentRightVector = Vector3.Lerp(CurrentRightVector, followedRight, RightVectorInterpolator * RightVectorInterpolator);
+                CurrentBackVector = Vector3.Lerp(CurrentBackVector, followedBackward, BackVectorInterpolator * BackVectorInterpolator * mouseWheelValue);
             }
             else
                 // Si el angulo no pasa de cierto limite, lo pongo de nuevo en cero
-                RightVectorInterpolator = 0f;
+                BackVectorInterpolator = 0f;
 
             // Guardo el vector Derecha para usar en la siguiente iteracion
-            PastRightVector = followedRight;
-            
+            PastBackVector = followedBackward;
+            var vectorUpCamera = new Vector3 (0f, 0.5f, 0f);
             // Calculo la posicion del a camara
-            // tomo la posicion que estoy siguiendo, agrego un offset en los ejes Y y Derecha
+            // tomo la posicion que estoy siguiendo, agrego un offset en los ejes Y y Trasero
             var offsetedPosition = followedPosition 
-                + CurrentRightVector * AxisDistanceToTarget
-                + Vector3.Up * AxisDistanceToTarget;
+                + CurrentBackVector * AxisDistanceToTarget 
+                + vectorUpCamera * AxisDistanceToTarget ;
+
 
             // Calculo el vector Arriba actualizado
             // Nota: No se puede usar el vector Arriba por defecto (0, 1, 0)
@@ -107,6 +121,9 @@ namespace TGC.MonoGame.TP
             // Calculo la matriz de Vista de la camara usando la Posicion, La Posicion a donde esta mirando,
             // y su vector Arriba
             View = Matrix.CreateLookAt(offsetedPosition, followedPosition, cameraCorrectUp);
+
+
+            //setteo mouse en el centro
         }
     }
 }
