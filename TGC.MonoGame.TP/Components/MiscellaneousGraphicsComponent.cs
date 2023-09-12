@@ -15,17 +15,20 @@ namespace TGC.MonoGame.TP.Components
     {
 
         private const string MiscellaneousFolder = "TankWars/Miscellaneous";
+        
         private const string TankModelsFolder = "TankWars/";
         public const string ContentFolderEffects = "Effects/";
+
         private readonly ContentManager Content;
         private readonly string _objectFolder;
         private readonly string _objectName;
+
 
         public GraphicsDeviceManager Graphics { get; set; }
         private Effect ObjectEffect { get; set; }
         
         private Matrix World { get; set; }
-
+        
 
         public MiscellaneousGraphicsComponent(ContentManager content, string ObjectFolder, string objectName)
         {
@@ -37,6 +40,7 @@ namespace TGC.MonoGame.TP.Components
         public void LoadContent(GameObject Object)
         {
             Object.Model = Content.Load<Model>(PathsService.ContentFolder3D + MiscellaneousFolder + "/" + _objectFolder + "/" + _objectName);
+
             ObjectEffect = Content.Load<Effect>(ContentFolderEffects + "BasicShader");
             foreach (var mesh in Object.Model.Meshes)
             {
@@ -52,7 +56,7 @@ namespace TGC.MonoGame.TP.Components
         {
             ObjectEffect.Parameters["View"].SetValue(view);
             ObjectEffect.Parameters["Projection"].SetValue(projection);
-            ObjectEffect.Parameters["DiffuseColor"].SetValue(Color.Brown.ToVector3());
+//            ObjectEffect.Parameters["DiffuseColor"].SetValue(Color.Brown.ToVector3());
             foreach (var mesh in Object.Model.Meshes)
             {
                 World =  Matrix.CreateScale(Object.Scale) * Matrix.CreateRotationY(MathHelper.ToRadians(Object.YAxisRotation)) * Matrix.CreateTranslation(Object.Position)*mesh.ParentBone.Transform;
@@ -60,8 +64,6 @@ namespace TGC.MonoGame.TP.Components
                 mesh.Draw();
             }
             
-            Object.World = Matrix.CreateScale(Object.Scale) * Matrix.CreateRotationY(MathHelper.ToRadians(Object.YAxisRotation)) * Matrix.CreateTranslation(Object.Position);
-            Object.Model.Draw(Object.World, view, projection);
         }
 
     }
