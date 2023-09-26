@@ -54,8 +54,8 @@ namespace TGC.MonoGame.TP
 
         private Model Model { get; set; }
 
+        private MouseCamera MouseCamera { get; set; }
 
-        private Camera Camera { get; set; }
 
 
         List<GameObject> objects = new List<GameObject>();
@@ -66,6 +66,11 @@ namespace TGC.MonoGame.TP
             View = Matrix.CreateLookAt(new Vector3(0f, 2500f, 5000f), Vector3.Zero, Vector3.Up);
             Projection =
                 Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, GraphicsDevice.Viewport.AspectRatio, 1, 200000);
+            
+            //Pantalla Completa
+            Graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width - 100;
+            Graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height - 100;
+            Graphics.ApplyChanges();
 
             Terrain = new Terrain(Content, GraphicsDevice, "Textures/heightmaps/hills-heightmap", "Textures/heightmaps/hills", 20.0f, 8.0f);
             Player = new GameObject(
@@ -75,6 +80,9 @@ namespace TGC.MonoGame.TP
                 PlayerDefaults.YAxisRotation,
                 PlayerDefaults.Scale
             );
+
+            MouseCamera = new MouseCamera(GraphicsDevice);
+
 
             Random random = new Random();
 
@@ -94,9 +102,6 @@ namespace TGC.MonoGame.TP
                 objects.Add(obj);
             }
 
-            Camera = new SimpleCamera(GraphicsDevice.Viewport.AspectRatio, new Vector3(-400f, 1000f, 2000f), 150.0f, 1.0f, 1,
-                int.MaxValue);
-
             base.Initialize();
         }
 
@@ -105,9 +110,13 @@ namespace TGC.MonoGame.TP
         {
             // SpriteBatch = new SpriteBatch(GraphicsDevice);
 
-            Terrain.LoadContent(Content, GraphicsDevice);
 
+            Terrain.LoadContent(Content, GraphicsDevice);
             Player.LoadContent();
+            MouseCamera.SetModelVariables(Player.Model, "Turret", "Cannon");
+            //
+            // Box.LoadContent();
+
 
             foreach (var obj in objects)
             {
@@ -128,10 +137,10 @@ namespace TGC.MonoGame.TP
                 //Salgo del juego.
                 Exit();
             }
-            Camera.Update(gameTime);
 
             Player.Update(gameTime);
-
+            MouseCamera.Update(gameTime, Player.World);
+            
             base.Update(gameTime);
         }
 
@@ -139,13 +148,14 @@ namespace TGC.MonoGame.TP
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.Blue);
-            Terrain.Draw(GraphicsDevice, Camera.View, Camera.Projection);
+            Terrain.Draw(GraphicsDevice, MouseCamera.View, MouseCamera.Projection);
 
-            Player.Draw(gameTime, Camera.View, Camera.Projection);
+            Player.Draw(gameTime, MouseCamera.View, MouseCamera.Projection);
+
 
             foreach (var obj in objects)
             {
-                obj.Draw(gameTime, Camera.View, Camera.Projection);
+                obj.Draw(gameTime, MouseCamera.View, MouseCamera.Projection);
             }
 
         }
