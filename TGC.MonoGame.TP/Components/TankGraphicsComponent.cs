@@ -47,10 +47,12 @@ namespace TGC.MonoGame.TP.Components
             var rotationMatrix = Matrix.CreateRotationY(MathHelper.ToRadians(Tank.YAxisRotation));
             var translationMatrix = Matrix.CreateTranslation(Tank.Position);
             var world = scaleMatrix * rotationMatrix * translationMatrix;
+            Matrix[] matrices = new Matrix[Tank.Model.Bones.Count];
+            Tank.Model.CopyAbsoluteBoneTransformsTo(matrices);
             Tank.World = world;
             foreach (var mesh in Tank.Model.Meshes)
             {
-                world = mesh.ParentBone.Transform * Tank.World;
+                world = matrices[mesh.ParentBone.Index] * Tank.World;
                 Effect.Parameters["World"].SetValue(world);
                 mesh.Draw();
             }
