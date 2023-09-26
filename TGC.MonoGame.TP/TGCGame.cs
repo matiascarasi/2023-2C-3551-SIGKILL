@@ -44,62 +44,57 @@ namespace TGC.MonoGame.TP
         private GameObject Box { get; set; }
         private Terrain Terrain;
 
-        
+
         public const string ContentFolderEffects = "Effects/";
 
         private Effect Effect { get; set; }
-        
+
         private float Rotation { get; set; }
         private Matrix World { get; set; }
-        
+
         private Model Model { get; set; }
 
-        
+
         private Camera Camera { get; set; }
 
-        
+
         List<GameObject> objects = new List<GameObject>();
 
         protected override void Initialize()
         {
-
             IsMouseVisible = true;
             View = Matrix.CreateLookAt(new Vector3(0f, 2500f, 5000f), Vector3.Zero, Vector3.Up);
             Projection =
                 Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, GraphicsDevice.Viewport.AspectRatio, 1, 200000);
 
-            Terrain = new Terrain("Textures/heightmaps/hills-heightmap", "Textures/heightmaps/hills");
-
+            Terrain = new Terrain(Content, GraphicsDevice, "Textures/heightmaps/hills-heightmap", "Textures/heightmaps/hills", 20.0f, 8.0f);
             Player = new GameObject(
                 new TankGraphicsComponent(Content, PlayerDefaults.TankName),
                 new PlayerInputComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed),
-                new Vector3(0f, 40f, 0f),
+                new Vector3(0f, Terrain.Height(0f, 0f), 0f),
                 PlayerDefaults.YAxisRotation,
                 PlayerDefaults.Scale
             );
-            
+
             Random random = new Random();
 
-            for (int i = 0; i < 200; i++)
+            for (int i = 0; i < 20; i++)
             {
- 
-                float randomObjectX = (float)random.NextDouble() * 20000f - 10000f; 
-                float randomObjectZ = (float)random.NextDouble() * 20000f - 10000f; 
+
+                float randomObjectX = (float)random.NextDouble() * 20000f - 10000f;
+                float randomObjectZ = (float)random.NextDouble() * 20000f - 10000f;
 
                 GameObject obj = new GameObject(
                     new MiscellaneousGraphicsComponent(Content, "Rock", "Rock07-Base"),
                     new PlayerInputComponent(0f, 0f),
-                    new Vector3(randomObjectX, 0f, randomObjectZ),
+                    new Vector3(randomObjectX, Terrain.Height(randomObjectX, randomObjectZ), randomObjectZ),
                     0f,
                     1f
                 );
-
                 objects.Add(obj);
             }
 
-
-
-            Camera = new SimpleCamera(GraphicsDevice.Viewport.AspectRatio, new Vector3(-400f, 1000f, 2000f), 400, 1.0f, 1,
+            Camera = new SimpleCamera(GraphicsDevice.Viewport.AspectRatio, new Vector3(-400f, 1000f, 2000f), 150.0f, 1.0f, 1,
                 int.MaxValue);
 
             base.Initialize();
@@ -108,20 +103,17 @@ namespace TGC.MonoGame.TP
 
         protected override void LoadContent()
         {
-             SpriteBatch = new SpriteBatch(GraphicsDevice);
+            // SpriteBatch = new SpriteBatch(GraphicsDevice);
 
             Terrain.LoadContent(Content, GraphicsDevice);
-            
-             Player.LoadContent();
-            //
-            // Box.LoadContent();
-            
+
+            Player.LoadContent();
 
             foreach (var obj in objects)
             {
                 obj.LoadContent();
             }
-            
+
             base.LoadContent();
         }
 
@@ -139,7 +131,7 @@ namespace TGC.MonoGame.TP
             Camera.Update(gameTime);
 
             Player.Update(gameTime);
-            
+
             base.Update(gameTime);
         }
 
@@ -149,19 +141,16 @@ namespace TGC.MonoGame.TP
             GraphicsDevice.Clear(Color.Blue);
             Terrain.Draw(GraphicsDevice, Camera.View, Camera.Projection);
 
-            // Box.Draw(gameTime, Camera.View, Camera.Projection);
-            //
-             Player.Draw(gameTime, Camera.View, Camera.Projection);
-
+            Player.Draw(gameTime, Camera.View, Camera.Projection);
 
             foreach (var obj in objects)
             {
                 obj.Draw(gameTime, Camera.View, Camera.Projection);
             }
-            
+
         }
 
-        
+
         protected override void UnloadContent()
         {
             Content.Unload();

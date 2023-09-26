@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using TGC.MonoGame.TP.Content.Actors;
@@ -57,7 +58,6 @@ namespace TGC.MonoGame.TP.Components
                 ObjectEffect.Parameters["World"].SetValue(world);
                 mesh.Draw();
             }
-
         }
 
     }
