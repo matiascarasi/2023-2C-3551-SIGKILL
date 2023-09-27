@@ -1,10 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TGC.MonoGame.TP.Components;
 using TGC.MonoGame.TP.Content.Actors;
 
@@ -26,15 +22,15 @@ namespace TGC.MonoGame.TP.Controllers
 
             if (keyboardState.IsKeyDown(Keys.W))
             {
-                MovementController.Accelerate(Player);
+                MovementController.Accelerate();
             }
             else if (keyboardState.IsKeyDown(Keys.S))
             {
-                MovementController.Decelerate(Player);
+                MovementController.Decelerate();
             }
             else
             {
-                MovementController.Settle(Player);
+                MovementController.Settle();
             }
 
             if (keyboardState.IsKeyDown(Keys.A))
@@ -45,8 +41,6 @@ namespace TGC.MonoGame.TP.Controllers
             {
                 MovementController.TurnRight(Player, deltaTime);
             }
-
-            
 
             MovementController.Move(Player, deltaTime);
         }
