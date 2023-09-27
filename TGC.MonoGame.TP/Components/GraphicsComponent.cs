@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -39,17 +40,36 @@ namespace TGC.MonoGame.TP.Components
             Model = Content.Load<Model>(ModelPath);
             Effects = EffectPaths.ToDictionary(kv => kv.Key, kv => Content.Load<Effect>(kv.Value));
             Textures = TexturePaths.ToDictionary(kv => kv.Key, kv => Content.Load<Texture>(kv.Value));
-            //TODO: validar que no se definan partes inexistentes
+
+            var meshNames = Model.Meshes.Select(mesh => mesh.Name);
+            foreach (var meshName in Effects.Keys)
+            {
+                if (!meshNames.Contains(meshName))
+                {
+                    throw new Exception($"Invalid mesh \"{meshName}\" in effects dictionary");
+                }
+            }
+            foreach (var meshName in Textures.Keys)
+            {
+                if (!meshNames.Contains(meshName))
+                {
+                    throw new Exception($"Invalid mesh \"{meshName}\" in textures dictionary");
+                }
+            }
+            foreach (var meshName in meshNames)
+            {
+                if (!Effects.ContainsKey(meshName))
+                {
+                    Effects[meshName] = Content.Load<Effect>(DefaultEffectPath);
+                }
+                if (!Textures.ContainsKey(meshName))
+                {
+                    Textures[meshName] = Content.Load<Texture>(DefaultTexturePath);
+                }
+            }
+
             foreach (var mesh in Model.Meshes)
             {
-                if (!Effects.ContainsKey(mesh.Name))
-                {
-                    Effects[mesh.Name] = Content.Load<Effect>(DefaultEffectPath);
-                }
-                if (!Textures.ContainsKey(mesh.Name))
-                {
-                    Textures[mesh.Name] = Content.Load<Texture>(DefaultTexturePath);
-                }
                 foreach (var meshPart in mesh.MeshParts)
                 {
                     meshPart.Effect = Effects[mesh.Name];
