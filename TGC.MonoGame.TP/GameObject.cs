@@ -8,15 +8,14 @@ namespace TGC.MonoGame.TP.Content.Actors
 {
     class GameObject
     {
-        public Model Model { get; set; }
         public Matrix World { get; set; }
         public Vector3 Position { get; set; }
         public float YAxisRotation { get; set; }
         public float Scale { get; set; }
-        
-        private readonly IGraphicsComponent GraphicsComponent;
+
+        public IGraphicsComponent GraphicsComponent { get; }
         private readonly IInputComponent InputComponent;
-    
+
 
         public GameObject(IGraphicsComponent graphics, IInputComponent inputComponent, Vector3 position, float yAxisRotation, float scale)
         {
@@ -28,9 +27,9 @@ namespace TGC.MonoGame.TP.Content.Actors
             Scale = scale;
         }
 
-        public void LoadContent() 
+        public void LoadContent()
         {
-            GraphicsComponent.LoadContent(this);
+            GraphicsComponent.LoadContent();
         }
         public void Update(GameTime gameTime)
         {
