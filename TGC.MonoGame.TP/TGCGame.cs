@@ -64,7 +64,7 @@ namespace TGC.MonoGame.TP
             View = Matrix.CreateLookAt(new Vector3(0f, 2500f, 5000f), Vector3.Zero, Vector3.Up);
             Projection =
                 Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, GraphicsDevice.Viewport.AspectRatio, 1, 200000);
-            
+
             //Pantalla Completa
             Graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width - 100;
             Graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height - 100;
@@ -72,7 +72,7 @@ namespace TGC.MonoGame.TP
 
             Terrain = new Terrain(Content, GraphicsDevice, "Textures/heightmaps/hills-heightmap", "Textures/heightmaps/hills", 20.0f, 8.0f);
             Player = new GameObject(
-                new TankGraphicsComponent(Content, PlayerDefaults.TankName),
+                new TankGraphicsComponent(Content, PlayerDefaults.TankName, "Models/TankWars/Panzer/PzVl_Tiger_I_0", "Models/TankWars/Panzer/PzVI_Tiger_I_track_0"),
                 new PlayerInputComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed),
                 new Vector3(0f, Terrain.Height(0f, 0f), 0f),
                 PlayerDefaults.YAxisRotation,
@@ -138,7 +138,7 @@ namespace TGC.MonoGame.TP
 
             Player.Update(gameTime);
             MouseCamera.Update(gameTime, Player.World);
-            
+
             base.Update(gameTime);
         }
 

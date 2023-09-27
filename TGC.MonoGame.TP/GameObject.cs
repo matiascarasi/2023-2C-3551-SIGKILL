@@ -8,7 +8,6 @@ namespace TGC.MonoGame.TP.Content.Actors
 {
     class GameObject
     {
-        public Effect Effect { get; set; }
         public Model Model { get; set; }
         public Matrix World { get; set; }
         public Vector3 Position { get; set; }

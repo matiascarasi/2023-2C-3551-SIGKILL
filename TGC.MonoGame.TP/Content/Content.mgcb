@@ -25,6 +25,12 @@
 /processorParam:DebugMode=Auto
 /build:Effects/BasicTexture.fx
 
+#begin Effects/WrapTexture.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Effects/WrapTexture.fx
+
 #begin Models/TankWars/Miscellaneous/Box/Wooden_box_01_BaseColor.png
 /importer:TextureImporter
 /processor:TextureProcessor

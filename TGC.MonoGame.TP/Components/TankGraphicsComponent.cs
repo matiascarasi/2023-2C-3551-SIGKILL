@@ -14,13 +14,20 @@ namespace TGC.MonoGame.TP.Components
 
         private readonly ContentManager Content;
         private readonly string _tankName;
-        private Effect Effect { get; set; }
+        private Effect TextureEffect;
+        private Effect TextureWrapEffect;
+        private Texture HullTexture;
+        private Texture TreadTexture;
 
-        public TankGraphicsComponent(ContentManager content, string tankName)
+        private readonly string HullTexturePath;
+        private readonly string TreadTexturePath;
+
+        public TankGraphicsComponent(ContentManager content, string tankName, string hullTexturePath, string treadTexturePath)
         {
             _tankName = tankName;
             Content = content;
-
+            HullTexturePath = hullTexturePath;
+            TreadTexturePath = treadTexturePath;
         }
 
         public GraphicsDeviceManager Graphics { get; set; }
@@ -28,12 +35,22 @@ namespace TGC.MonoGame.TP.Components
         public void LoadContent(GameObject Tank)
         {
             Tank.Model = Content.Load<Model>(PathsService.ContentFolder3D + TankModelsFolder + _tankName + "/" + _tankName);
-            Effect = Content.Load<Effect>(PathsService.ContentFolderEffects + "BasicShader");
+            HullTexture = Content.Load<Texture>(HullTexturePath);
+            TreadTexture = Content.Load<Texture>(TreadTexturePath);
+            TextureEffect = Content.Load<Effect>(PathsService.ContentFolderEffects + "BasicTexture");
+            TextureWrapEffect = Content.Load<Effect>(PathsService.ContentFolderEffects + "WrapTexture");
             foreach (var mesh in Tank.Model.Meshes)
             {
                 foreach (var meshPart in mesh.MeshParts)
                 {
-                    meshPart.Effect = Effect;
+                    if (mesh.Name == "Treadmill1" || mesh.Name == "Treadmill2")
+                    {
+                        meshPart.Effect = TextureWrapEffect;
+                    }
+                    else
+                    {
+                        meshPart.Effect = TextureEffect;
+                    }
                 }
             }
         }
@@ -41,9 +58,6 @@ namespace TGC.MonoGame.TP.Components
         public void Draw(GameObject Tank, GameTime gameTime, Matrix view, Matrix projection)
         {
 
-            Effect.Parameters["View"].SetValue(view);
-            Effect.Parameters["Projection"].SetValue(projection);
-            Effect.Parameters["DiffuseColor"].SetValue(Color.DarkRed.ToVector3());
             var scaleMatrix = Matrix.CreateScale(Tank.Scale);
             var rotationMatrix = Matrix.CreateRotationY(MathHelper.ToRadians(Tank.YAxisRotation));
             var translationMatrix = Matrix.CreateTranslation(Tank.Position);
@@ -51,10 +65,23 @@ namespace TGC.MonoGame.TP.Components
             Matrix[] matrices = new Matrix[Tank.Model.Bones.Count];
             Tank.Model.CopyAbsoluteBoneTransformsTo(matrices);
             Tank.World = world;
+            Effect effect;
             foreach (var mesh in Tank.Model.Meshes)
             {
+                if (mesh.Name == "Treadmill1" || mesh.Name == "Treadmill2")
+                {
+                    effect = TextureWrapEffect;
+                    effect.Parameters["Texture"].SetValue(TreadTexture);
+                }
+                else
+                {
+                    effect = TextureEffect;
+                    effect.Parameters["Texture"].SetValue(HullTexture);
+                }
+                effect.Parameters["View"].SetValue(view);
+                effect.Parameters["Projection"].SetValue(projection);
                 world = matrices[mesh.ParentBone.Index] * Tank.World;
-                Effect.Parameters["World"].SetValue(world);
+                effect.Parameters["World"].SetValue(world);
                 mesh.Draw();
             }
         }
