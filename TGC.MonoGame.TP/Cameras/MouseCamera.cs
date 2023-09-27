@@ -13,7 +13,7 @@ namespace TGC.MonoGame.TP
     {
         private const float AxisDistanceToTarget = 1800f;
         private const float UpVectorDistance = 500f;
-        private const float AngleFollowSpeed = .25f;
+        private const float AngleFollowSpeed = .10f;
         private const float AngleThreshold = 0.85f;
 
         private float zoomVal = 1f;

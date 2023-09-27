@@ -33,8 +33,7 @@ namespace TGC.MonoGame.TP
             // Para que el juego sea pantalla completa se puede usar Graphics IsFullScreen.
             // Carpeta raiz donde va a estar toda la Media.
             Content.RootDirectory = "Content";
-            // Hace que el mouse sea visible.
-            IsMouseVisible = true;
+            IsMouseVisible = false;
         }
         private GraphicsDeviceManager Graphics { get; }
         private SpriteBatch SpriteBatch { get; set; }
@@ -62,7 +61,6 @@ namespace TGC.MonoGame.TP
 
         protected override void Initialize()
         {
-            IsMouseVisible = true;
             View = Matrix.CreateLookAt(new Vector3(0f, 2500f, 5000f), Vector3.Zero, Vector3.Up);
             Projection =
                 Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, GraphicsDevice.Viewport.AspectRatio, 1, 200000);
