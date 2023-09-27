@@ -19,6 +19,12 @@
 /processorParam:DebugMode=Auto
 /build:Effects/BasicShader.fx
 
+#begin Effects/BasicTexture.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Effects/BasicTexture.fx
+
 #begin Models/TankWars/Miscellaneous/Box/Wooden_box_01_BaseColor.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -1674,3 +1680,4 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Textures/heightmaps/hills.jpg
+

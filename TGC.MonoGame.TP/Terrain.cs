@@ -8,12 +8,13 @@ namespace TGC.MonoGame.TP
     public class Terrain
     {
 
-        private Effect TerrainEffect;
+        private Effect Effect;
         private VertexBuffer VertexBuffer;
         private IndexBuffer IndexBuffer;
         private int PrimitiveCount;
         private readonly string HeightmapPath;
         private readonly string TexturePath;
+        private Texture2D Texture;
         public const string ContentFolderEffects = "Effects/";
         private float[,] heightmap;
 
@@ -33,10 +34,8 @@ namespace TGC.MonoGame.TP
 
         public void LoadContent(ContentManager contentManager, GraphicsDevice graphicsDevice)
         {
-            var terrainTexture = contentManager.Load<Texture2D>(TexturePath);
-
-            TerrainEffect = contentManager.Load<Effect>(ContentFolderEffects + "BasicShader");
-            // Effect.Parameters["Texture"].SetValue(terrainTexture);
+            Texture = contentManager.Load<Texture2D>(TexturePath);
+            Effect = contentManager.Load<Effect>(ContentFolderEffects + "BasicTexture");
         }
 
         public void Draw(GraphicsDevice graphicsDevice, Matrix view, Matrix projection)
@@ -44,12 +43,12 @@ namespace TGC.MonoGame.TP
             graphicsDevice.DepthStencilState = DepthStencilState.Default;
             graphicsDevice.SetVertexBuffer(VertexBuffer);
             graphicsDevice.Indices = IndexBuffer;
-            TerrainEffect.Parameters["World"].SetValue(Matrix.Identity);
-            TerrainEffect.Parameters["View"].SetValue(view);
-            TerrainEffect.Parameters["Projection"].SetValue(projection);
-            TerrainEffect.Parameters["DiffuseColor"].SetValue(Color.DarkGreen.ToVector3());
+            Effect.Parameters["World"].SetValue(Matrix.Identity);
+            Effect.Parameters["View"].SetValue(view);
+            Effect.Parameters["Projection"].SetValue(projection);
+            Effect.Parameters["Texture"].SetValue(Texture);
 
-            foreach (var pass in TerrainEffect.CurrentTechnique.Passes)
+            foreach (var pass in Effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
                 graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, PrimitiveCount);
@@ -96,24 +95,24 @@ namespace TGC.MonoGame.TP
 
             var vertexCount = heightMapWidth * heightMapLength;
 
-            var vertices = new VertexPosition[vertexCount];
+            var vertices = new VertexPositionTexture[vertexCount];
 
             var index = 0;
             Vector3 position;
-            Vector2 textureCoordinates;
+            Vector2 textureCoordinate;
             for (var x = 0; x < heightMapWidth; x++)
             {
                 var xCoordinate = x * scaleXZ - offsetX;
                 for (var z = 0; z < heightMapLength; z++)
                 {
                     position = new Vector3(xCoordinate, heightmap[x, z] * scaleY, z * scaleXZ - offsetZ);
-                    textureCoordinates = new Vector2((float)x / heightMapWidth, (float)z / heightMapLength);
-                    vertices[index] = new VertexPosition(position);
+                    textureCoordinate = new Vector2((float)x / heightMapWidth, (float)z / heightMapLength);
+                    vertices[index] = new VertexPositionTexture(position, textureCoordinate);
                     index++;
                 }
             }
 
-            VertexBuffer = new VertexBuffer(graphicsDevice, VertexPosition.VertexDeclaration, vertexCount,
+            VertexBuffer = new VertexBuffer(graphicsDevice, VertexPositionTexture.VertexDeclaration, vertexCount,
                 BufferUsage.None);
             VertexBuffer.SetData(vertices);
         }
