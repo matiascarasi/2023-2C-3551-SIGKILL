@@ -1,8 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
 using TGC.MonoGame.TP.Components;
+using TGC.MonoGame.TP.Graphics;
 
 namespace TGC.MonoGame.TP.Content.Actors
 {

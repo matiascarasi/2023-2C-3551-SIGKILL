@@ -5,11 +5,11 @@ using Microsoft.VisualBasic.CompilerServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using TGC.MonoGame.TP.Cameras;
-using TGC.MonoGame.TP.Components;
 using TGC.MonoGame.TP.Content.Actors;
 using TGC.MonoGame.TP.Controllers;
 using TGC.MonoGame.TP.Defaults;
+using TGC.MonoGame.TP.Graphics;
+
 namespace TGC.MonoGame.TP
 {
     /// <summary>
@@ -71,10 +71,8 @@ namespace TGC.MonoGame.TP
             Graphics.ApplyChanges();
 
             Terrain = new Terrain(Content, GraphicsDevice, "Textures/heightmaps/hills-heightmap", "Textures/heightmaps/hills", 20.0f, 8.0f);
-            var playerEffects = new Dictionary<string, string> { { "Treadmill1", "Effects/WrapTexture" }, { "Treadmill2", "Effects/WrapTexture" } };
-            var playerTextures = new Dictionary<string, string> { { "Treadmill1", "Models/TankWars/Panzer/PzVI_Tiger_I_track_0" }, { "Treadmill2", "Models/TankWars/Panzer/PzVI_Tiger_I_track_0" } };
             Player = new GameObject(
-                new GraphicsComponent(Content, "Models/TankWars/Panzer/Panzer", "Effects/BasicTexture", "Models/TankWars/Panzer/PzVl_Tiger_I_0", playerEffects, playerTextures),
+                new PanzerGraphicsComponent(Content),
                 new PlayerInputComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed),
                 new Vector3(0f, Terrain.Height(0f, 0f), 0f),
                 PlayerDefaults.YAxisRotation,
@@ -92,7 +90,7 @@ namespace TGC.MonoGame.TP
                 float randomObjectX = (float)random.NextDouble() * 20000f - 10000f;
                 float randomObjectZ = (float)random.NextDouble() * 20000f - 10000f;
                 GameObject obj = new GameObject(
-                    new GraphicsComponent(Content, "Models/TankWars/Miscellaneous/Rock/Rock07-Base", "Effects/BasicTexture", "Models/TankWars/Miscellaneous/Rock/Rock07-Base-Diffuse_0"),
+                    new RockGraphicsComponent(Content),
                     new PlayerInputComponent(0f, 0f),
                     new Vector3(randomObjectX, Terrain.Height(randomObjectX, randomObjectZ), randomObjectZ),
                     0f,

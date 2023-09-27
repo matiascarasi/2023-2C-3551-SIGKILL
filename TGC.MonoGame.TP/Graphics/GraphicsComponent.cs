@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using TGC.MonoGame.TP.Content.Actors;
 
-namespace TGC.MonoGame.TP.Components
+namespace TGC.MonoGame.TP.Graphics
 {
     class GraphicsComponent : IGraphicsComponent
     {
