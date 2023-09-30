@@ -22,8 +22,6 @@ namespace TGC.MonoGame.TP.Graphics
         private Dictionary<string, Texture> Textures;
         private BoundingBox ObjectBox { get; set; }
 
-
-
         public GraphicsComponent(ContentManager content, string model, string defaultEffect, string defaultTexture)
         {
             Content = content;
@@ -45,8 +43,6 @@ namespace TGC.MonoGame.TP.Graphics
             Effects = EffectPaths.ToDictionary(kv => kv.Key, kv => Content.Load<Effect>(kv.Value));
             Textures = TexturePaths.ToDictionary(kv => kv.Key, kv => Content.Load<Texture>(kv.Value));
             ObjectBox = BoundingVolumesExtensions.CreateAABBFrom(Model);
-            System.Diagnostics.Debug.WriteLine("Posicion Objeto: " + gameObject.Position);
-
 
             gameObject.BoundingBox = new BoundingBox(ObjectBox.Min + gameObject.Position, ObjectBox.Max + gameObject.Position);
 
