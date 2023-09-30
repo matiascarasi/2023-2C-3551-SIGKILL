@@ -36,28 +36,24 @@ namespace TGC.MonoGame.TP
             IsMouseVisible = false;
         }
         private GraphicsDeviceManager Graphics { get; }
+        private GraphicsDevice _device { get; }
+
         private SpriteBatch SpriteBatch { get; set; }
         private Matrix View { get; set; }
         private Matrix Projection { get; set; }
         private GameObject Player { get; set; }
-        private GameObject Box { get; set; }
         private Terrain Terrain;
 
 
         public const string ContentFolderEffects = "Effects/";
 
-        private Effect Effect { get; set; }
-
-        private float Rotation { get; set; }
-        private Matrix World { get; set; }
-
-        private Model Model { get; set; }
-
         private MouseCamera MouseCamera { get; set; }
 
+        private BoundingBox ObjectBox { get; set; }
 
 
         List<GameObject> objects = new List<GameObject>();
+
 
         protected override void Initialize()
         {
@@ -71,13 +67,7 @@ namespace TGC.MonoGame.TP
             Graphics.ApplyChanges();
 
             Terrain = new Terrain(Content, GraphicsDevice, "Textures/heightmaps/hills-heightmap", "Textures/heightmaps/hills", 20.0f, 8.0f);
-            Player = new GameObject(
-                new PanzerGraphicsComponent(Content),
-                new PlayerInputComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed),
-                new Vector3(0f, Terrain.Height(0f, 0f), 0f),
-                PlayerDefaults.YAxisRotation,
-                PlayerDefaults.Scale
-            );
+      
 
             MouseCamera = new MouseCamera(GraphicsDevice);
 
@@ -91,13 +81,25 @@ namespace TGC.MonoGame.TP
                 float randomObjectZ = (float)random.NextDouble() * 20000f - 10000f;
                 GameObject obj = new GameObject(
                     new RockGraphicsComponent(Content),
-                    new PlayerInputComponent(0f, 0f),
+                    new PlayerInputComponent(0f, 0f, Terrain),
                     new Vector3(randomObjectX, Terrain.Height(randomObjectX, randomObjectZ), randomObjectZ),
                     0f,
-                    1f
+                    1f,
+                    new BoundingBox()
                 );
                 objects.Add(obj);
             }
+
+       
+            Player = new GameObject(
+                new PanzerGraphicsComponent(Content),
+                new PlayerInputComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, Terrain),
+                 new Vector3(0f, Terrain.Height(0f, 0f), 0f),
+                PlayerDefaults.YAxisRotation,
+                PlayerDefaults.Scale,
+                ObjectBox
+            );
+
 
             base.Initialize();
         }
@@ -109,16 +111,15 @@ namespace TGC.MonoGame.TP
 
 
             Terrain.LoadContent(Content, GraphicsDevice);
-            Player.LoadContent();
-            MouseCamera.SetModelVariables(Player.GraphicsComponent.Model, "Turret", "Cannon");
             //
             // Box.LoadContent();
 
-
-            foreach (var obj in objects)
+            for (int i = 0; i < objects.Count; i++)
             {
-                obj.LoadContent();
+                objects[i].LoadContent(objects[i]);
             }
+            Player.LoadContent(Player);
+            MouseCamera.SetModelVariables(Player.GraphicsComponent.Model, "Turret", "Cannon");
 
             base.LoadContent();
         }
@@ -135,7 +136,7 @@ namespace TGC.MonoGame.TP
                 Exit();
             }
 
-            Player.Update(gameTime);
+            Player.Update(gameTime, objects, MouseCamera);
             MouseCamera.Update(gameTime, Player.World);
 
             base.Update(gameTime);
@@ -147,14 +148,12 @@ namespace TGC.MonoGame.TP
             GraphicsDevice.Clear(Color.Blue);
             Terrain.Draw(GraphicsDevice, MouseCamera.View, MouseCamera.Projection);
 
-            Player.Draw(gameTime, MouseCamera.View, MouseCamera.Projection);
-
-
             foreach (var obj in objects)
             {
                 obj.Draw(gameTime, MouseCamera.View, MouseCamera.Projection);
             }
 
+            Player.Draw(gameTime, MouseCamera.View, MouseCamera.Projection);
         }
 
 

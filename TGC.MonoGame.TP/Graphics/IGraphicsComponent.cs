@@ -10,7 +10,7 @@ namespace TGC.MonoGame.TP.Graphics
         {
             get;
         }
-        public void LoadContent();
+        public void LoadContent(GameObject gameObject);
         public void Draw(GameObject gameObject, GameTime gameTime, Matrix view, Matrix projection);
     }
 }

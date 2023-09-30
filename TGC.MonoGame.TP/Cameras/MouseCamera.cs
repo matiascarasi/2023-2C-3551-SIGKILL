@@ -36,9 +36,9 @@ namespace TGC.MonoGame.TP
 
         public Matrix View { get; private set; }
 
-        private Vector3 FollowedPosition { get; set; }
+        public Vector3 FollowedPosition { get; set; }
 
-        private Vector3 OffsetPosition { get; set; }
+        public Vector3 OffsetPosition { get; set; }
 
         private Vector2 screenCenterCoordinates { get; set; }
         private float mouseSensibility { get; set; } = 10f;
