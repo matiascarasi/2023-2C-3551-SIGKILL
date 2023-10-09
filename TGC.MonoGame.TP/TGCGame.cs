@@ -5,6 +5,7 @@ using Microsoft.VisualBasic.CompilerServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using TGC.MonoGame.TP.Collisions;
 using TGC.MonoGame.TP.Content.Actors;
 using TGC.MonoGame.TP.Controllers;
 using TGC.MonoGame.TP.Defaults;
@@ -34,7 +35,9 @@ namespace TGC.MonoGame.TP
             // Carpeta raiz donde va a estar toda la Media.
             Content.RootDirectory = "Content";
             IsMouseVisible = false;
+            Gizmos = new Gizmos.Gizmos();
         }
+        public Gizmos.Gizmos Gizmos { get; }
         private GraphicsDeviceManager Graphics { get; }
         private GraphicsDevice _device { get; }
 
@@ -48,9 +51,6 @@ namespace TGC.MonoGame.TP
         public const string ContentFolderEffects = "Effects/";
 
         private MouseCamera MouseCamera { get; set; }
-
-        private BoundingBox ObjectBox { get; set; }
-
 
         List<GameObject> objects = new List<GameObject>();
 
@@ -67,7 +67,7 @@ namespace TGC.MonoGame.TP
             Graphics.ApplyChanges();
 
             Terrain = new Terrain(Content, GraphicsDevice, "Textures/heightmaps/hills-heightmap", "Textures/heightmaps/hills", 20.0f, 8.0f);
-      
+
 
             MouseCamera = new MouseCamera(GraphicsDevice);
 
@@ -84,20 +84,18 @@ namespace TGC.MonoGame.TP
                     new PlayerInputComponent(0f, 0f, Terrain),
                     new Vector3(randomObjectX, Terrain.Height(randomObjectX, randomObjectZ), randomObjectZ),
                     0f,
-                    1f,
-                    new BoundingBox()
+                    1f
                 );
                 objects.Add(obj);
             }
 
-       
+
             Player = new GameObject(
                 new PanzerGraphicsComponent(Content),
                 new PlayerInputComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, Terrain),
                  new Vector3(0f, Terrain.Height(0f, 0f), 0f),
                 PlayerDefaults.YAxisRotation,
-                PlayerDefaults.Scale,
-                ObjectBox
+                PlayerDefaults.Scale
             );
 
 
@@ -111,8 +109,6 @@ namespace TGC.MonoGame.TP
 
 
             Terrain.LoadContent(Content, GraphicsDevice);
-            //
-            // Box.LoadContent();
 
             for (int i = 0; i < objects.Count; i++)
             {
@@ -120,6 +116,8 @@ namespace TGC.MonoGame.TP
             }
             Player.LoadContent(Player);
             MouseCamera.SetModelVariables(Player.GraphicsComponent.Model, "Turret", "Cannon");
+
+            Gizmos.LoadContent(GraphicsDevice, Content);
 
             base.LoadContent();
         }
@@ -136,12 +134,13 @@ namespace TGC.MonoGame.TP
                 Exit();
             }
 
-            Player.Update(gameTime, objects, MouseCamera);
+            Player.Update(gameTime, MouseCamera);
             MouseCamera.Update(gameTime, Player.World);
+
+            DetectCollisions();
 
             base.Update(gameTime);
         }
-
 
         protected override void Draw(GameTime gameTime)
         {
@@ -154,6 +153,8 @@ namespace TGC.MonoGame.TP
             }
 
             Player.Draw(gameTime, MouseCamera.View, MouseCamera.Projection);
+
+            DrawGizmos(gameTime);
         }
 
 
@@ -163,6 +164,32 @@ namespace TGC.MonoGame.TP
             Terrain.UnloadContent();
 
             base.UnloadContent();
+        }
+
+        private void DetectCollisions()
+        {
+            var collision = false;
+            for (int i = 0; i < objects.Count; i++)
+            {
+                if (objects[i].CollidesWith(Player))
+                {
+                    collision = true;
+                }
+            }
+            var color = collision ? Color.Red : Color.Yellow;
+            Gizmos.SetColor(color);
+
+            Gizmos.UpdateViewProjection(MouseCamera.View, MouseCamera.Projection);
+        }
+
+        private void DrawGizmos(GameTime gameTime)
+        {
+            foreach (var obj in objects)
+            {
+                obj.DrawBoundingVolume(Gizmos);
+            }
+            Player.DrawBoundingVolume(Gizmos);
+            Gizmos.Draw();
         }
     }
 }

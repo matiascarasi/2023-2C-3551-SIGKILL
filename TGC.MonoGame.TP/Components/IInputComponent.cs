@@ -8,8 +8,8 @@ using TGC.MonoGame.TP.Content.Actors;
 
 namespace TGC.MonoGame.TP.Components
 {
-    interface IInputComponent
+    public interface IInputComponent
     {
-        public void Update(GameObject gameObject, GameTime gameTime, List<GameObject> gameObjects, MouseCamera mouseCamera);
+        public void Update(GameObject gameObject, GameTime gameTime, MouseCamera mouseCamera);
     }
 }

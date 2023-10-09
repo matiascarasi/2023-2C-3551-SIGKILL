@@ -9,7 +9,7 @@ namespace TGC.MonoGame.TP
     /// <summary>
     /// Una camara que sigue objetos
     /// </summary>
-    class MouseCamera
+    public class MouseCamera
     {
         private const float AxisDistanceToTarget = 1800f;
         private const float UpVectorDistance = 500f;

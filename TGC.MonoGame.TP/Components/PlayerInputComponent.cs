@@ -13,9 +13,6 @@ namespace TGC.MonoGame.TP.Controllers
         private Terrain Terrain { get; set; }
         private MouseState prevMouseState { get; set; }
 
-
-        public bool isCollision;
-
         public PlayerInputComponent(float driveSpeed, float rotationSpeed, Terrain terrain)
         {
             MovementController = new MovementController(driveSpeed, rotationSpeed);
@@ -23,7 +20,7 @@ namespace TGC.MonoGame.TP.Controllers
             prevMouseState = Mouse.GetState();
         }
 
-        public void Update(GameObject Player, GameTime gameTime, List<GameObject> objects, MouseCamera mouseCamera)
+        public void Update(GameObject Player, GameTime gameTime, MouseCamera mouseCamera)
         {
 
 
@@ -69,24 +66,6 @@ namespace TGC.MonoGame.TP.Controllers
             }
 
             MovementController.Move(Player, deltaTime);
-
-
-            //DETECCION DE COLISIÓN
-            isCollision = CheckForCollisions(objects, Player.BoundingBox);
-            if (isCollision) {
-                MovementController.Stop();
-            };
-
-
-        }
-
-        public bool CheckForCollisions(List<GameObject> objects, BoundingBox playerbox)
-        {
-            for (int i = 0; i < objects.Count ; i++)
-            {
-                if (objects[i].BoundingBox.Intersects(playerbox)) return true;
-            }
-            return false;
         }
     }
 

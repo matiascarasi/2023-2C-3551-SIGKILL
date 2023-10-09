@@ -56,7 +56,6 @@ namespace TGC.MonoGame.TP.Controllers
             Speed += Acceleration * deltaTime;
             Velocity = gameObject.World.Forward * Speed;
             gameObject.Position += Velocity * deltaTime;
-            gameObject.BoundingBox = new BoundingBox(gameObject.BoundingBox.Min + Velocity * deltaTime, gameObject.BoundingBox.Max + Velocity * deltaTime);
         }
 
     }

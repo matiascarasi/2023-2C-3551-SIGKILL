@@ -4,7 +4,7 @@ using TGC.MonoGame.TP.Content.Actors;
 
 namespace TGC.MonoGame.TP.Graphics
 {
-    interface IGraphicsComponent
+    public interface IGraphicsComponent
     {
         Model Model
         {

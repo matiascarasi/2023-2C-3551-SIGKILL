@@ -4,7 +4,6 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using TGC.MonoGame.TP.Collisions;
 using TGC.MonoGame.TP.Content.Actors;
 
 namespace TGC.MonoGame.TP.Graphics
@@ -20,7 +19,6 @@ namespace TGC.MonoGame.TP.Graphics
         public Model Model { get; set; }
         private Dictionary<string, Effect> Effects;
         private Dictionary<string, Texture> Textures;
-        private BoundingBox ObjectBox { get; set; }
 
         public GraphicsComponent(ContentManager content, string model, string defaultEffect, string defaultTexture)
         {
@@ -42,9 +40,6 @@ namespace TGC.MonoGame.TP.Graphics
             Model = Content.Load<Model>(ModelPath);
             Effects = EffectPaths.ToDictionary(kv => kv.Key, kv => Content.Load<Effect>(kv.Value));
             Textures = TexturePaths.ToDictionary(kv => kv.Key, kv => Content.Load<Texture>(kv.Value));
-            ObjectBox = BoundingVolumesExtensions.CreateAABBFrom(Model);
-
-            gameObject.BoundingBox = new BoundingBox(ObjectBox.Min + gameObject.Position, ObjectBox.Max + gameObject.Position);
 
             var meshNames = Model.Meshes.Select(mesh => mesh.Name);
             foreach (var meshName in Effects.Keys)
