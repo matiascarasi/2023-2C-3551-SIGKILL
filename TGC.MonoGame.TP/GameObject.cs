@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using TGC.MonoGame.TP.Collisions;
 using TGC.MonoGame.TP.Components;
 using TGC.MonoGame.TP.Graphics;
 
@@ -11,22 +12,26 @@ namespace TGC.MonoGame.TP.Content.Actors
         public Matrix World { get; set; }
         public Vector3 Position { get; set; }
         public float YAxisRotation { get; set; }
+        public float Speed { get; set; }
         public float Scale { get; set; }
-        public BoundingBox BoundingBox { get; set; }
+        public Matrix OBBWorld { get; set; }
+        public OrientedBoundingBox OBB {  get; set; }
 
         public IGraphicsComponent GraphicsComponent { get; }
         private readonly IInputComponent InputComponent;
 
 
-        public GameObject(IGraphicsComponent graphics, IInputComponent inputComponent, Vector3 position, float yAxisRotation, float scale, BoundingBox box)
+        public GameObject(IGraphicsComponent graphics, IInputComponent inputComponent, Vector3 position, float yAxisRotation, float speed, float scale, Matrix obbworld, OrientedBoundingBox obb)
         {
             GraphicsComponent = graphics;
             InputComponent = inputComponent;
             World = Matrix.CreateScale(scale) * Matrix.CreateRotationY(MathHelper.ToRadians(yAxisRotation)) * Matrix.CreateTranslation(position);
             Position = position;
             YAxisRotation = yAxisRotation;
+            Speed = speed;
             Scale = scale;
-            BoundingBox = box;
+            OBBWorld = obbworld;
+            OBB = obb;
         }
 
         public void LoadContent(GameObject gameObject)

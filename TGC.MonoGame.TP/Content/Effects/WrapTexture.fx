@@ -11,6 +11,8 @@ uniform float4x4 World;
 uniform float4x4 View;
 uniform float4x4 Projection;
 
+uniform float Time;
+uniform float Speed;
 uniform texture Texture;
 
 sampler2D textureSampler = sampler_state
@@ -18,8 +20,8 @@ sampler2D textureSampler = sampler_state
     Texture = (Texture);
     MagFilter = Linear;
     MinFilter = Linear;
-    AddressU = Wrap;
-    AddressV = Wrap;
+    AddressU = Mirror;
+    AddressV = Mirror;
 };
 
 struct VertexShaderInput
@@ -31,7 +33,7 @@ struct VertexShaderInput
 struct VertexShaderOutput
 {
 	float4 Position : SV_POSITION;
-	float2 TextureCoordinate : TEXCOORD0;
+	float2 TextureCoordinate : TEXCOORD1;
 };
 
 VertexShaderOutput MainVS(in VertexShaderInput input)
@@ -40,8 +42,10 @@ VertexShaderOutput MainVS(in VertexShaderInput input)
     float4 worldPosition = mul(input.Position, World);
     float4 viewPosition = mul(worldPosition, View);	
     output.Position = mul(viewPosition, Projection);
-	output.TextureCoordinate = input.TextureCoordinate;
+	   
+    input.TextureCoordinate.y += Time * Speed;
 
+	output.TextureCoordinate = input.TextureCoordinate;
     return output;
 }
 

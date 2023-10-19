@@ -54,9 +54,11 @@ namespace TGC.MonoGame.TP.Controllers
         public void Move(GameObject gameObject, float deltaTime)
         {
             Speed += Acceleration * deltaTime;
+            //gameObject.Speed = Speed;
+
             Velocity = gameObject.World.Forward * Speed;
             gameObject.Position += Velocity * deltaTime;
-            gameObject.BoundingBox = new BoundingBox(gameObject.BoundingBox.Min + Velocity * deltaTime, gameObject.BoundingBox.Max + Velocity * deltaTime);
+            //gameObject.BoundingBox = new BoundingBox(gameObject.BoundingBox.Min + Velocity * deltaTime, gameObject.BoundingBox.Max + Velocity * deltaTime);
         }
 
     }

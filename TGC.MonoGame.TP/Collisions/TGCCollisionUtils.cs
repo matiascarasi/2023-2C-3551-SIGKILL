@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
-
+using System.Collections.Generic;
+using TGC.MonoGame.TP.Content.Actors;
 namespace TGC.MonoGame.TP.Collisions
 {
     /// <summary>
@@ -70,5 +71,7 @@ namespace TGC.MonoGame.TP.Collisions
             col = p + t * (p - q);
             return true;
         }
+
+       
     }
 }

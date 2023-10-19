@@ -5,6 +5,7 @@ using Microsoft.VisualBasic.CompilerServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using TGC.MonoGame.TP.Collisions;
 using TGC.MonoGame.TP.Content.Actors;
 using TGC.MonoGame.TP.Controllers;
 using TGC.MonoGame.TP.Defaults;
@@ -43,13 +44,13 @@ namespace TGC.MonoGame.TP
         private Matrix Projection { get; set; }
         private GameObject Player { get; set; }
         private Terrain Terrain;
-
+        public Gizmos.Gizmos Gizmos { get; set; }
+        public OrientedBoundingBox orientedBoundingBox { get; set; }
 
         public const string ContentFolderEffects = "Effects/";
 
         private MouseCamera MouseCamera { get; set; }
-
-        private BoundingBox ObjectBox { get; set; }
+        private Texture TargetText { get; set; }
 
 
         List<GameObject> objects = new List<GameObject>();
@@ -65,7 +66,8 @@ namespace TGC.MonoGame.TP
             Graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width - 100;
             Graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height - 100;
             Graphics.ApplyChanges();
-
+            Gizmos = new Gizmos.Gizmos();
+            Gizmos.Enabled = true;
             Terrain = new Terrain(Content, GraphicsDevice, "Textures/heightmaps/hills-heightmap", "Textures/heightmaps/hills", 20.0f, 8.0f);
       
 
@@ -81,11 +83,13 @@ namespace TGC.MonoGame.TP
                 float randomObjectZ = (float)random.NextDouble() * 20000f - 10000f;
                 GameObject obj = new GameObject(
                     new RockGraphicsComponent(Content),
-                    new PlayerInputComponent(0f, 0f, Terrain),
+                    new PlayerInputComponent(0f, 0f, Terrain, MouseCamera),
                     new Vector3(randomObjectX, Terrain.Height(randomObjectX, randomObjectZ), randomObjectZ),
                     0f,
+                    0f,
                     1f,
-                    new BoundingBox()
+                    new Matrix(),
+                    new OrientedBoundingBox()
                 );
                 objects.Add(obj);
             }
@@ -93,11 +97,13 @@ namespace TGC.MonoGame.TP
        
             Player = new GameObject(
                 new PanzerGraphicsComponent(Content),
-                new PlayerInputComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, Terrain),
+                new PlayerInputComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, Terrain, MouseCamera),
                  new Vector3(0f, Terrain.Height(0f, 0f), 0f),
                 PlayerDefaults.YAxisRotation,
+                0f,
                 PlayerDefaults.Scale,
-                ObjectBox
+                new Matrix(),
+                new OrientedBoundingBox()
             );
 
 
@@ -107,12 +113,12 @@ namespace TGC.MonoGame.TP
 
         protected override void LoadContent()
         {
-            // SpriteBatch = new SpriteBatch(GraphicsDevice);
-
+            SpriteBatch = new SpriteBatch(GraphicsDevice);
 
             Terrain.LoadContent(Content, GraphicsDevice);
             //
             // Box.LoadContent();
+            Gizmos.LoadContent(GraphicsDevice, Content);
 
             for (int i = 0; i < objects.Count; i++)
             {
@@ -120,6 +126,8 @@ namespace TGC.MonoGame.TP
             }
             Player.LoadContent(Player);
             MouseCamera.SetModelVariables(Player.GraphicsComponent.Model, "Turret", "Cannon");
+
+        
 
             base.LoadContent();
         }
@@ -135,9 +143,12 @@ namespace TGC.MonoGame.TP
                 //Salgo del juego.
                 Exit();
             }
-
+          
             Player.Update(gameTime, objects, MouseCamera);
+
+
             MouseCamera.Update(gameTime, Player.World);
+            Gizmos.UpdateViewProjection(MouseCamera.View, MouseCamera.Projection);
 
             base.Update(gameTime);
         }
@@ -151,9 +162,13 @@ namespace TGC.MonoGame.TP
             foreach (var obj in objects)
             {
                 obj.Draw(gameTime, MouseCamera.View, MouseCamera.Projection);
-            }
+                Gizmos.DrawCube(obj.OBBWorld, Color.Red);
 
+            }
             Player.Draw(gameTime, MouseCamera.View, MouseCamera.Projection);
+            Gizmos.DrawCube(Player.OBBWorld, Color.Red);
+            Gizmos.Draw();
+            //SpriteBatch.Draw(texture, new Vector2(Graphics.PreferredBackBufferWidth / 2, Graphics.PreferredBackBufferHeight / 2), Color.White);
         }
 
 
