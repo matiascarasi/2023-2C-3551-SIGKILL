@@ -45,7 +45,7 @@ namespace TGC.MonoGame.TP.Content.Actors
         public void Update(GameTime gameTime, MouseCamera mouseCamera)
         {
             InputComponent.Update(this, gameTime, mouseCamera);
-            CollisionComponent.Update(Position);
+            CollisionComponent.Update(Position, YAxisRotation);
             Console.WriteLine(Position);
         }
         public void Draw(GameTime gameTime, Matrix view, Matrix projection)
