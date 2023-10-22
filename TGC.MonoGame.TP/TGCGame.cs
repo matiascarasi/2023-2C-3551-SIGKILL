@@ -88,7 +88,7 @@ namespace TGC.MonoGame.TP
             Mouse.SetCursor(MouseCursor.FromTexture2D(Content.Load<Texture2D>("Textures/Menu/cursor"), 0, 0));
 
             Menu = new MenuComponent(this);
-            HUD = new HUDComponent(PlayerDefaults.TankName, PlayerDefaults.Health);
+            HUD = new HUDComponent(PlayerDefaults.TankName, PlayerDefaults.Health, PlayerDefaults.CoolDown);
             Terrain = new Terrain(Content, GraphicsDevice, "Textures/heightmaps/hills-heightmap", "Textures/heightmaps/hills", 20.0f, 8.0f);
             MouseCamera = new MouseCamera(GraphicsDevice);
 
@@ -101,7 +101,7 @@ namespace TGC.MonoGame.TP
                 float randomObjectZ = (float)random.NextDouble() * 20000f - 10000f;
                 GameObject obj = new GameObject(
                     new RockGraphicsComponent(Content),
-                    new PlayerInputComponent(0f, 0f, Terrain),
+                    new PlayerInputComponent(0f, 0f, Terrain, 0f),
                     new Vector3(randomObjectX, Terrain.Height(randomObjectX, randomObjectZ), randomObjectZ),
                     0f,
                     1f,
@@ -114,7 +114,7 @@ namespace TGC.MonoGame.TP
 
             Player = new GameObject(
                 new PanzerGraphicsComponent(Content),
-                new PlayerInputComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, Terrain),
+                new PlayerInputComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, Terrain, PlayerDefaults.CoolDown),
                  new Vector3(0f, Terrain.Height(0f, 0f), 0f),
                 PlayerDefaults.YAxisRotation,
                 PlayerDefaults.Scale,

@@ -13,13 +13,14 @@ namespace TGC.MonoGame.TP.HUD
     {
         private List<HUDElement> elementsList = new List<HUDElement>();
         private float initialHealth;
-
+        private float shootingCooldown;
         private float health;
         private string tankName;
-        public HUDComponent(string tankName, float health)
+        public HUDComponent(string tankName, float health, float shootingCooldown)
         {
             System.Diagnostics.Debug.WriteLine(tankName);
             this.health = health;
+            this.shootingCooldown = shootingCooldown;
             this.initialHealth = health;
             this.tankName = tankName;
             elementsList.Add(new HUDElement("cannonBar"));
@@ -36,7 +37,7 @@ namespace TGC.MonoGame.TP.HUD
                 elementsList[i].LoadContent(content);
             }
             elementsList.Find(x => x.AssetName == "healthGauge").SetWidth(initialHealth);
-            elementsList.Find(x => x.AssetName == "cannonGauge").SetWidth(5f);
+            elementsList.Find(x => x.AssetName == "cannonGauge").SetWidth(shootingCooldown);
 
             elementsList.Find(x => x.AssetName == tankName).MoveElement(80, 50);
             elementsList.Find(x => x.AssetName == "healthBar").MoveElement(150, 50);
@@ -53,9 +54,9 @@ namespace TGC.MonoGame.TP.HUD
                 float healthDifference = initialHealth - newhealth;
                 elementsList.Find(x => x.AssetName == "healthGauge").Update(healthDifference);
             }
-            if(cooldown < 5f)
+            if(cooldown < shootingCooldown)
             {
-                float cooldownDifference = 5f - cooldown;
+                float cooldownDifference = shootingCooldown - cooldown;
                 elementsList.Find(x => x.AssetName == "cannonGauge").Update(cooldownDifference);
             }
              health = newhealth;

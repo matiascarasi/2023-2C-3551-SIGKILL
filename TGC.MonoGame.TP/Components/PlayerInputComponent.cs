@@ -15,14 +15,15 @@ namespace TGC.MonoGame.TP.Controllers
         private MouseState prevMouseState { get; set; }
         private SoundEffectInstance Instance { get; set; }
         private SoundEffect SoundEffect { get; set; }
+        private float shootingCooldown;
 
 
-
-        public PlayerInputComponent(float driveSpeed, float rotationSpeed, Terrain terrain)
+        public PlayerInputComponent(float driveSpeed, float rotationSpeed, Terrain terrain, float shootingCooldown)
         {
             MovementController = new MovementController(driveSpeed, rotationSpeed);
             Terrain = terrain;
             prevMouseState = Mouse.GetState();
+            this.shootingCooldown = shootingCooldown;
         }
 
         public void LoadContent(ContentManager content) {
@@ -45,7 +46,7 @@ namespace TGC.MonoGame.TP.Controllers
 
             Player.CoolDown += deltaTime;
             //DETECCION DE CLICK
-            if (Player.CoolDown > 5f && prevMouseState.LeftButton == ButtonState.Released && Mouse.GetState().LeftButton == ButtonState.Pressed)
+            if (Player.CoolDown > shootingCooldown && prevMouseState.LeftButton == ButtonState.Released && Mouse.GetState().LeftButton == ButtonState.Pressed)
             {
                 Player.ShootProyectile(deltaTime, mouseCamera);
                 Instance = SoundEffect.CreateInstance();
