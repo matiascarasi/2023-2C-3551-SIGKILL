@@ -11,10 +11,10 @@ namespace TGC.MonoGame.TP
     /// </summary>
     public class MouseCamera
     {
-        private const float AxisDistanceToTarget = 1800f;
         private const float UpVectorDistance = 500f;
         private const float AngleFollowSpeed = .25f;
         private const float AngleThreshold = 0.85f;
+        private float AxisDistanceToTarget = 10000f;
 
         private float zoomVal = 1f;
         private float BackVectorInterpolator { get; set; } = 0f;
@@ -57,40 +57,32 @@ namespace TGC.MonoGame.TP
 
             var aspectRatio = GraphicsDevice.Viewport.AspectRatio;
             screenCenterCoordinates = new Vector2((GraphicsDevice.Viewport.Width / 2), (GraphicsDevice.Viewport.Height / 2));
-
             Projection = Matrix.CreatePerspectiveFieldOfView(MathF.PI / 3.5f, aspectRatio, 0.1f, 100000f);
         }
-
-
-        public void SetModelVariables(Model model, String turretBoneName, String CannonBoneName)
-        {
-
-            turretBone = model.Bones[turretBoneName];
-            cannonBone = model.Bones[CannonBoneName];
-
-            turretTransform = turretBone.Transform;
-            cannonTransform = cannonBone.Transform;
-        }
-
-        /// <summary>
-        /// Actualiza la Camara usando una matriz de mundo actualizada para seguirla
-        /// </summary>
-        /// <param name="gameTime">The Game Time to calculate framerate-independent movement</param>
-        /// <param name="followedWorld">The World matrix to follow</param>
-        public void Update(GameTime gameTime, Matrix playerWorld)
+        public void Update(GameTime gameTime, Matrix playerWorld, bool IsMenuActive)
         {
 
             var elapsedTime = Convert.ToSingle(gameTime.ElapsedGameTime.TotalSeconds);
+            if (IsMenuActive) SetMenuCamera(playerWorld);
+            else SetTankCamera(elapsedTime, playerWorld);
+
+
+            var forward = (playerWorld.Translation - OffsetPosition);
+            forward.Normalize();
+            var right = Vector3.Cross(forward, Vector3.Up);
+            var cameraCorrectUp = Vector3.Cross(right, forward);
+
+            View = Matrix.CreateLookAt(OffsetPosition, FollowedPosition, cameraCorrectUp);
+
+        }
+
+        public void SetTankCamera(float elapsedTime, Matrix playerWorld)
+        {
+            AxisDistanceToTarget = 1800f;
 
             var mouseDifference = new Vector2(0f, 0f);
 
             mouse = Mouse.GetState();
-
-            //if((float) mouse.ScrollWheelValue / 1000f + 1f - zoomVal != 0f)
-            //{
-            //    zoomVal = Math.Min(Math.Max((float) mouse.ScrollWheelValue / 1000f, .5f), 2f);
-            //}
-
 
             mouseDifference.X = mouse.X - screenCenterCoordinates.X;
             mouseDifference.Y = mouse.Y - screenCenterCoordinates.Y;
@@ -109,17 +101,24 @@ namespace TGC.MonoGame.TP
 
             FollowedPosition = Vector3.Transform(playerWorld.Forward * AxisDistanceToTarget * zoomVal + UpCamera * AxisDistanceToTarget, cameraAngle * Matrix.CreateTranslation(playerWorld.Translation));
 
-            //var offsetedPosition = Vector3.Transform(CurrentTargetPosition, cameraAngle);
             OffsetPosition = Vector3.Transform(playerWorld.Backward * AxisDistanceToTarget * zoomVal + UpCamera * AxisDistanceToTarget, cameraAngle * Matrix.CreateTranslation(playerWorld.Translation));
 
+        }
 
-            var forward = (playerWorld.Translation - OffsetPosition);
-            forward.Normalize();
-            var right = Vector3.Cross(forward, Vector3.Up);
-            var cameraCorrectUp = Vector3.Cross(right, forward);
+        public void SetMenuCamera(Matrix playerWorld)
+        {
+            FollowedPosition = Vector3.Transform(playerWorld.Forward * AxisDistanceToTarget * zoomVal + UpCamera * AxisDistanceToTarget, cameraAngle * Matrix.CreateTranslation(playerWorld.Translation));
 
-            View = Matrix.CreateLookAt(OffsetPosition, FollowedPosition, cameraCorrectUp);
+            OffsetPosition = Vector3.Transform(playerWorld.Backward * AxisDistanceToTarget * zoomVal + UpCamera * AxisDistanceToTarget, cameraAngle * Matrix.CreateTranslation(playerWorld.Translation));
+        }
+        public void SetModelVariables(Model model, String turretBoneName, String CannonBoneName)
+        {
 
+            turretBone = model.Bones[turretBoneName];
+            cannonBone = model.Bones[CannonBoneName];
+
+            turretTransform = turretBone.Transform;
+            cannonTransform = cannonBone.Transform;
         }
     }
 }

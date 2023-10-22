@@ -14,6 +14,7 @@ namespace TGC.MonoGame.TP.Content.Actors
         public Vector3 Position { get; set; }
         public float YAxisRotation { get; set; }
         public float Scale { get; set; }
+        public float Health { get; set; }
         public IGraphicsComponent GraphicsComponent { get; }
         public Model Model
         {
@@ -27,7 +28,7 @@ namespace TGC.MonoGame.TP.Content.Actors
         private CollisionComponent CollisionComponent;
 
 
-        public GameObject(IGraphicsComponent graphics, IInputComponent inputComponent, Vector3 position, float yAxisRotation, float scale)
+        public GameObject(IGraphicsComponent graphics, IInputComponent inputComponent, Vector3 position, float yAxisRotation, float scale, float health)
         {
             GraphicsComponent = graphics;
             InputComponent = inputComponent;
@@ -35,6 +36,7 @@ namespace TGC.MonoGame.TP.Content.Actors
             Position = position;
             YAxisRotation = yAxisRotation;
             Scale = scale;
+            Health = health;
         }
 
         public void LoadContent(GameObject gameObject)
@@ -42,11 +44,10 @@ namespace TGC.MonoGame.TP.Content.Actors
             GraphicsComponent.LoadContent(gameObject);
             CollisionComponent = new CollisionComponent(this);
         }
-        public void Update(GameTime gameTime, MouseCamera mouseCamera)
+        public void Update(GameTime gameTime, MouseCamera mouseCamera, bool IsMenuActive)
         {
-            InputComponent.Update(this, gameTime, mouseCamera);
+            InputComponent.Update(this, gameTime, mouseCamera, IsMenuActive);
             CollisionComponent.Update(Position, YAxisRotation);
-            Console.WriteLine(Position);
         }
         public void Draw(GameTime gameTime, Matrix view, Matrix projection)
         {

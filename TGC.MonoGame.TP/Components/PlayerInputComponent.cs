@@ -20,9 +20,10 @@ namespace TGC.MonoGame.TP.Controllers
             prevMouseState = Mouse.GetState();
         }
 
-        public void Update(GameObject Player, GameTime gameTime, MouseCamera mouseCamera)
+        public void Update(GameObject Player, GameTime gameTime, MouseCamera mouseCamera, bool IsMenuActive)
         {
 
+            if (IsMenuActive) return;
 
             var keyboardState = Keyboard.GetState();
             var deltaTime = Convert.ToSingle(gameTime.ElapsedGameTime.TotalSeconds);

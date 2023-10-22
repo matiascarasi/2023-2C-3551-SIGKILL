@@ -10,6 +10,6 @@ namespace TGC.MonoGame.TP.Components
 {
     public interface IInputComponent
     {
-        public void Update(GameObject gameObject, GameTime gameTime, MouseCamera mouseCamera);
+        public void Update(GameObject gameObject, GameTime gameTime, MouseCamera mouseCamera, bool IsMenuActive);
     }
 }
