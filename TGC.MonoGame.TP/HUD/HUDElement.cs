@@ -19,8 +19,7 @@ namespace TGC.MonoGame.TP.Menu
             set { assetName = value; }
         }
         private float InitialWidth;
-        private float InitialHealth;
-        private float Health;
+        private float Width;
 
         public HUDElement(string assetName)
         {
@@ -33,18 +32,14 @@ namespace TGC.MonoGame.TP.Menu
             InitialWidth = HudElementTexture.Width;
             HudElementRect = new Rectangle(0,0, HudElementTexture.Width , HudElementTexture.Height);
         }
-
-        public void Update(float newHealth)
+        public void Update(float widthDifference)
         {
-            if (newHealth < Health) {
-                float healthDifference = InitialHealth - newHealth;
-                float amount = InitialWidth * (healthDifference) / InitialHealth;
-                if(healthDifference <= 0 ) {
-                    amount = HudElementTexture.Width;
-                }
-                HudElementRect = new Rectangle(HudElementRect.X, HudElementRect.Y, HudElementTexture.Width - (int) amount, HudElementRect.Height);
-            }
-            Health = newHealth;
+            System.Diagnostics.Debug.WriteLine(widthDifference);
+            float amount = InitialWidth * (widthDifference) / Width;
+            System.Diagnostics.Debug.WriteLine(amount);
+
+            if (widthDifference <= 0) amount = HudElementTexture.Width;
+            HudElementRect = new Rectangle(HudElementRect.X, HudElementRect.Y, HudElementTexture.Width - (int) amount, HudElementRect.Height);
         }
 
         public void Draw(SpriteBatch spriteBatch) {         
@@ -56,10 +51,9 @@ namespace TGC.MonoGame.TP.Menu
             HudElementRect = new Rectangle(HudElementRect.X + x, HudElementRect.Y + y, HudElementRect.Width, HudElementRect.Height);
         }
 
-        public void SetHealth(float health)
+        public void SetWidth(float width)
         {
-            InitialHealth = health;
-            Health = health;
+            Width = width;
         }
     }
 }

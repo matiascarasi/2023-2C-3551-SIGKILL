@@ -105,7 +105,8 @@ namespace TGC.MonoGame.TP
                     new Vector3(randomObjectX, Terrain.Height(randomObjectX, randomObjectZ), randomObjectZ),
                     0f,
                     1f,
-                    10f
+                    10f,
+                    0f
                 );
                 objects.Add(obj);
             }
@@ -117,7 +118,8 @@ namespace TGC.MonoGame.TP
                  new Vector3(0f, Terrain.Height(0f, 0f), 0f),
                 PlayerDefaults.YAxisRotation,
                 PlayerDefaults.Scale,
-                PlayerDefaults.Health
+                PlayerDefaults.Health,
+                PlayerDefaults.CoolDown
             ); ;
 
 
@@ -134,9 +136,9 @@ namespace TGC.MonoGame.TP
 
             for (int i = 0; i < objects.Count; i++)
             {
-                objects[i].LoadContent(objects[i]);
+                objects[i].LoadContent(objects[i], Content);
             }
-            Player.LoadContent(Player);
+            Player.LoadContent(Player, Content);
             MouseCamera.SetModelVariables(Player.GraphicsComponent.Model, "Turret", "Cannon");
 
             Gizmos.LoadContent(GraphicsDevice, Content);
@@ -157,7 +159,7 @@ namespace TGC.MonoGame.TP
             }
 
             Menu.Update();
-            HUD.Update(Player.Health);
+            HUD.Update(Player.Health, Player.CoolDown);
             Player.Update(gameTime, MouseCamera, IsMenuActive);
             MouseCamera.Update(gameTime, Player.World, IsMenuActive);
 

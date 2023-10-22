@@ -12,15 +12,20 @@ namespace TGC.MonoGame.TP.HUD
     internal class HUDComponent
     {
         private List<HUDElement> elementsList = new List<HUDElement>();
+        private float initialHealth;
+
         private float health;
         private string tankName;
         public HUDComponent(string tankName, float health)
         {
             System.Diagnostics.Debug.WriteLine(tankName);
             this.health = health;
+            this.initialHealth = health;
             this.tankName = tankName;
+            elementsList.Add(new HUDElement("cannonBar"));
             elementsList.Add(new HUDElement("healthBar"));
             elementsList.Add(new HUDElement("healthGauge"));
+            elementsList.Add(new HUDElement("cannonGauge"));
             elementsList.Add(new HUDElement(tankName));
 
         }
@@ -30,16 +35,30 @@ namespace TGC.MonoGame.TP.HUD
             {
                 elementsList[i].LoadContent(content);
             }
-            elementsList.Find(x => x.AssetName == "healthGauge").SetHealth(health);
+            elementsList.Find(x => x.AssetName == "healthGauge").SetWidth(initialHealth);
+            elementsList.Find(x => x.AssetName == "cannonGauge").SetWidth(5f);
+
             elementsList.Find(x => x.AssetName == tankName).MoveElement(80, 50);
             elementsList.Find(x => x.AssetName == "healthBar").MoveElement(150, 50);
             elementsList.Find(x => x.AssetName == "healthGauge").MoveElement(183, 57);
+            elementsList.Find(x => x.AssetName == "cannonBar").MoveElement(160, 70);
+            elementsList.Find(x => x.AssetName == "cannonGauge").MoveElement(194, 97);
 
         }
 
-        public void Update(float health)
+        public void Update(float newhealth, float cooldown)
         {
-            elementsList.Find(x => x.AssetName == "healthGauge").Update(health);
+            if (newhealth < health)
+            {
+                float healthDifference = initialHealth - newhealth;
+                elementsList.Find(x => x.AssetName == "healthGauge").Update(healthDifference);
+            }
+            if(cooldown < 5f)
+            {
+                float cooldownDifference = 5f - cooldown;
+                elementsList.Find(x => x.AssetName == "cannonGauge").Update(cooldownDifference);
+            }
+             health = newhealth;
         }
 
         public void Draw(SpriteBatch spriteBatch)

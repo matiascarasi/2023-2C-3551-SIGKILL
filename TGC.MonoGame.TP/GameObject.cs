@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using TGC.MonoGame.TP.Collisions;
 using TGC.MonoGame.TP.Components;
@@ -15,6 +16,7 @@ namespace TGC.MonoGame.TP.Content.Actors
         public float YAxisRotation { get; set; }
         public float Scale { get; set; }
         public float Health { get; set; }
+        public float CoolDown { get; set; }
         public IGraphicsComponent GraphicsComponent { get; }
         public Model Model
         {
@@ -28,7 +30,7 @@ namespace TGC.MonoGame.TP.Content.Actors
         private CollisionComponent CollisionComponent;
 
 
-        public GameObject(IGraphicsComponent graphics, IInputComponent inputComponent, Vector3 position, float yAxisRotation, float scale, float health)
+        public GameObject(IGraphicsComponent graphics, IInputComponent inputComponent, Vector3 position, float yAxisRotation, float scale, float health, float cooldown)
         {
             GraphicsComponent = graphics;
             InputComponent = inputComponent;
@@ -37,10 +39,12 @@ namespace TGC.MonoGame.TP.Content.Actors
             YAxisRotation = yAxisRotation;
             Scale = scale;
             Health = health;
+            CoolDown = cooldown;
         }
 
-        public void LoadContent(GameObject gameObject)
+        public void LoadContent(GameObject gameObject, ContentManager content)
         {
+            InputComponent.LoadContent(content);
             GraphicsComponent.LoadContent(gameObject);
             CollisionComponent = new CollisionComponent(this);
         }

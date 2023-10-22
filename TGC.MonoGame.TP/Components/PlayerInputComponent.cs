@@ -1,7 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Input;
 using System;
-using System.Collections.Generic;
 using TGC.MonoGame.TP.Components;
 using TGC.MonoGame.TP.Content.Actors;
 
@@ -12,12 +13,21 @@ namespace TGC.MonoGame.TP.Controllers
         private MovementController MovementController { get; set; }
         private Terrain Terrain { get; set; }
         private MouseState prevMouseState { get; set; }
+        private SoundEffectInstance Instance { get; set; }
+        private SoundEffect SoundEffect { get; set; }
+
+
 
         public PlayerInputComponent(float driveSpeed, float rotationSpeed, Terrain terrain)
         {
             MovementController = new MovementController(driveSpeed, rotationSpeed);
             Terrain = terrain;
             prevMouseState = Mouse.GetState();
+        }
+
+        public void LoadContent(ContentManager content) {
+
+            SoundEffect = content.Load<SoundEffect>("Audio/cannonFire");
         }
 
         public void Update(GameObject Player, GameTime gameTime, MouseCamera mouseCamera, bool IsMenuActive)
@@ -30,15 +40,17 @@ namespace TGC.MonoGame.TP.Controllers
 
             var X = Player.Position.X;
             var Z = Player.Position.Z;
-
             var height = Terrain.Height(X, Z);
             Player.Position = new Vector3(X, height, Z);
 
-
+            Player.CoolDown += deltaTime;
             //DETECCION DE CLICK
-            if (prevMouseState.LeftButton == ButtonState.Released && Mouse.GetState().LeftButton == ButtonState.Pressed)
+            if (Player.CoolDown > 5f && prevMouseState.LeftButton == ButtonState.Released && Mouse.GetState().LeftButton == ButtonState.Pressed)
             {
                 Player.ShootProyectile(deltaTime, mouseCamera);
+                Instance = SoundEffect.CreateInstance();
+                Instance.Play();
+                Player.CoolDown = 0f;
             }
 
             prevMouseState = Mouse.GetState();
