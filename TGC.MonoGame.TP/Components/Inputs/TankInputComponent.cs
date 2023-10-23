@@ -3,21 +3,21 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using TGC.MonoGame.TP.Components;
-using TGC.MonoGame.TP.Content.Actors;
+using TGC.MonoGame.TP.Controllers;
 
-namespace TGC.MonoGame.TP.Controllers
+namespace TGC.MonoGame.TP.Components.Inputs
 {
-    class PlayerInputComponent : IInputComponent
+    class TankInputComponent : IInputComponent
     {
         private MovementController MovementController { get; set; }
         private Terrain Terrain { get; set; }
-        private MouseState prevMouseState { get; set; }
+        private MouseState PrevMouseState { get; set; }
 
-        public PlayerInputComponent(float driveSpeed, float rotationSpeed, Terrain terrain)
+        public TankInputComponent(float driveSpeed, float rotationSpeed, Terrain terrain)
         {
             MovementController = new MovementController(driveSpeed, rotationSpeed);
             Terrain = terrain;
-            prevMouseState = Mouse.GetState();
+            PrevMouseState = Mouse.GetState();
         }
 
         public void Update(GameObject Player, GameTime gameTime, MouseCamera mouseCamera, bool IsMenuActive)
@@ -36,12 +36,12 @@ namespace TGC.MonoGame.TP.Controllers
 
 
             //DETECCION DE CLICK
-            if (prevMouseState.LeftButton == ButtonState.Released && Mouse.GetState().LeftButton == ButtonState.Pressed)
+            if (PrevMouseState.LeftButton == ButtonState.Released && Mouse.GetState().LeftButton == ButtonState.Pressed)
             {
-                Player.ShootProyectile(deltaTime, mouseCamera);
+                // Player.ShootProyectile(deltaTime, mouseCamera);
             }
 
-            prevMouseState = Mouse.GetState();
+            PrevMouseState = Mouse.GetState();
 
             //DETECCION DE TECLA
             if (keyboardState.IsKeyDown(Keys.W))

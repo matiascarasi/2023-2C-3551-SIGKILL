@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using TGC.MonoGame.TP.Collisions;
-using TGC.MonoGame.TP.Components;
-using TGC.MonoGame.TP.Graphics;
+using TGC.MonoGame.TP.Components.Collisions;
+using TGC.MonoGame.TP.Components.Graphics;
+using TGC.MonoGame.TP.Components.Inputs;
 
-namespace TGC.MonoGame.TP.Content.Actors
+namespace TGC.MonoGame.TP
 {
     public class GameObject
     {
@@ -15,58 +15,60 @@ namespace TGC.MonoGame.TP.Content.Actors
         public float YAxisRotation { get; set; }
         public float Scale { get; set; }
         public float Health { get; set; }
+        public Model Model { get; set; }
         public IGraphicsComponent GraphicsComponent { get; }
-        public Model Model
-        {
-            get
-            {
-                return GraphicsComponent.Model;
-            }
-        }
+
         private readonly IInputComponent InputComponent;
 
-        private CollisionComponent CollisionComponent;
+        private readonly CollisionComponent CollisionComponent;
 
 
-        public GameObject(IGraphicsComponent graphics, IInputComponent inputComponent, Vector3 position, float yAxisRotation, float scale, float health)
+        public GameObject(IGraphicsComponent graphics, IInputComponent inputComponent, CollisionComponent collisionComponent, Vector3 position, float yAxisRotation, float scale, float health)
         {
             GraphicsComponent = graphics;
             InputComponent = inputComponent;
+            CollisionComponent = collisionComponent;
+
             World = Matrix.CreateScale(scale) * Matrix.CreateRotationY(MathHelper.ToRadians(yAxisRotation)) * Matrix.CreateTranslation(position);
             Position = position;
             YAxisRotation = yAxisRotation;
             Scale = scale;
             Health = health;
+
+            Initialize();
+
         }
 
-        public void LoadContent(GameObject gameObject)
+        private void Initialize()
         {
-            GraphicsComponent.LoadContent(gameObject);
-            CollisionComponent = new CollisionComponent(this);
+        }
+
+        public void LoadContent(ContentManager content)
+        {
+            GraphicsComponent.LoadContent(this, content);
+            CollisionComponent.LoadContent(this);
         }
         public void Update(GameTime gameTime, MouseCamera mouseCamera, bool IsMenuActive)
         {
+            GraphicsComponent.Update(this, mouseCamera);
             InputComponent.Update(this, gameTime, mouseCamera, IsMenuActive);
-            CollisionComponent.Update(Position, YAxisRotation);
+            CollisionComponent.Update(this);
+
         }
         public void Draw(GameTime gameTime, Matrix view, Matrix projection)
         {
             GraphicsComponent.Draw(this, gameTime, view, projection);
         }
-        public void ShootProyectile(float deltatime, MouseCamera camera)
-        {
-            System.Diagnostics.Debug.WriteLine("CLICK");
-            System.Diagnostics.Debug.WriteLine(camera.FollowedPosition);
 
+        public void Draw(GameTime gameTime, Matrix view, Matrix projection, Gizmos.Gizmos gizmos)
+        {
+            GraphicsComponent.Draw(this, gameTime, view, projection);
+            CollisionComponent.Draw(gizmos);
         }
+
         public bool CollidesWith(GameObject gameObject)
         {
             return CollisionComponent.CollidesWith(gameObject.CollisionComponent);
-        }
-
-        public void DrawBoundingVolume(Gizmos.Gizmos gizmos)
-        {
-            CollisionComponent.DrawBoundingVolume(gizmos);
         }
     }
 }

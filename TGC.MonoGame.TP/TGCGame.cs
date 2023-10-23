@@ -7,12 +7,14 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using TGC.MonoGame.TP.Collisions;
-using TGC.MonoGame.TP.Content.Actors;
+using TGC.MonoGame.TP.Components.Collisions;
+using TGC.MonoGame.TP.Components.Graphics;
+using TGC.MonoGame.TP.Components.Inputs;
 using TGC.MonoGame.TP.Controllers;
 using TGC.MonoGame.TP.Defaults;
-using TGC.MonoGame.TP.Graphics;
 using TGC.MonoGame.TP.HUD;
 using TGC.MonoGame.TP.Menu;
+using TGC.MonoGame.TP.Scenes;
 
 namespace TGC.MonoGame.TP
 {
@@ -45,12 +47,9 @@ namespace TGC.MonoGame.TP
         }
         public Gizmos.Gizmos Gizmos { get; }
         private GraphicsDeviceManager Graphics { get; }
-        private GraphicsDevice _device { get; }
         private MenuComponent Menu { get; set; }
         private HUDComponent HUD { get; set; }
         private SpriteBatch SpriteBatch { get; set; }
-        private Matrix View { get; set; }
-        private Matrix Projection { get; set; }
         private GameObject Player { get; set; }
         private Terrain Terrain;
         public bool IsMenuActive { get; set; }
@@ -62,25 +61,23 @@ namespace TGC.MonoGame.TP
 
         private Song song { get; set; }
 
-        List<GameObject> objects = new List<GameObject>();
+        private List<GameObject> Objects { get; set; }
+
+        private Forest Forest { get; set; }
 
 
         protected override void Initialize()
         {
-            View = Matrix.CreateLookAt(new Vector3(0f, 2500f, 5000f), Vector3.Zero, Vector3.Up);
-            Projection =
-                Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, GraphicsDevice.Viewport.AspectRatio, 1, 200000);
 
             //Pantalla Completa
             Graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width - 100;
             Graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height - 100;
             Graphics.ApplyChanges();
 
-            //song = Content.Load<Song>("Audio/mainSong");
-            //MediaPlayer.Volume -= .7f;
-            //MediaPlayer.IsRepeating = true;
-            //MediaPlayer.Play(song);
-
+            song = Content.Load<Song>("Audio/mainSong");
+            MediaPlayer.Volume -= .7f;
+            MediaPlayer.IsRepeating = true;
+            MediaPlayer.Play(song);
 
             IsMenuActive = true;
             
@@ -91,35 +88,18 @@ namespace TGC.MonoGame.TP
             HUD = new HUDComponent(PlayerDefaults.TankName, PlayerDefaults.Health);
             Terrain = new Terrain(Content, GraphicsDevice, "Textures/heightmaps/hills-heightmap", "Textures/heightmaps/hills", 20.0f, 8.0f);
             MouseCamera = new MouseCamera(GraphicsDevice);
-
-            Random random = new Random();
-
-            for (int i = 0; i < 20; i++)
-            {
-
-                float randomObjectX = (float)random.NextDouble() * 20000f - 10000f;
-                float randomObjectZ = (float)random.NextDouble() * 20000f - 10000f;
-                GameObject obj = new GameObject(
-                    new RockGraphicsComponent(Content),
-                    new PlayerInputComponent(0f, 0f, Terrain),
-                    new Vector3(randomObjectX, Terrain.Height(randomObjectX, randomObjectZ), randomObjectZ),
-                    0f,
-                    1f,
-                    10f
-                );
-                objects.Add(obj);
-            }
-
+            Objects = new List<GameObject>();
+            Forest = new Forest(ForestDefaults.Center, ForestDefaults.Radius, ForestDefaults.Density);
 
             Player = new GameObject(
-                new PanzerGraphicsComponent(Content),
-                new PlayerInputComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, Terrain),
-                 new Vector3(0f, Terrain.Height(0f, 0f), 0f),
+                new PanzerGraphicsComponent(),
+                new TankInputComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, Terrain),
+                new PanzerCollisionComponent(),
+                new Vector3(0f, Terrain.Height(0f, 0f), 0f),
                 PlayerDefaults.YAxisRotation,
                 PlayerDefaults.Scale,
                 PlayerDefaults.Health
-            ); ;
-
+            );
 
             base.Initialize();
         }
@@ -131,14 +111,8 @@ namespace TGC.MonoGame.TP
             Menu.LoadContent(Content, GraphicsDevice);
             HUD.LoadContent(Content);   
             Terrain.LoadContent(Content, GraphicsDevice);
-
-            for (int i = 0; i < objects.Count; i++)
-            {
-                objects[i].LoadContent(objects[i]);
-            }
-            Player.LoadContent(Player);
-            MouseCamera.SetModelVariables(Player.GraphicsComponent.Model, "Turret", "Cannon");
-
+            Forest.LoadContent(Content, Terrain, Objects);
+            Player.LoadContent(Content);
             Gizmos.LoadContent(GraphicsDevice, Content);
 
             base.LoadContent();
@@ -158,8 +132,10 @@ namespace TGC.MonoGame.TP
 
             Menu.Update();
             HUD.Update(Player.Health);
-            Player.Update(gameTime, MouseCamera, IsMenuActive);
+
             MouseCamera.Update(gameTime, Player.World, IsMenuActive);
+
+            Player.Update(gameTime, MouseCamera, IsMenuActive);
 
             DetectCollisions();
 
@@ -170,29 +146,10 @@ namespace TGC.MonoGame.TP
         {
             GraphicsDevice.Clear(Color.Black);
             Terrain.Draw(GraphicsDevice, MouseCamera.View, MouseCamera.Projection);
-
-
-            foreach (var obj in objects)
-            {
-                obj.Draw(gameTime, MouseCamera.View, MouseCamera.Projection);
-            }
-
-            Player.Draw(gameTime, MouseCamera.View, MouseCamera.Projection);
-
-            DrawGizmos(gameTime);
-
-            if (IsMenuActive)
-            {
-                SpriteBatch.Begin();
-                Menu.Draw(SpriteBatch);
-                SpriteBatch.End();
-            }
-            else
-            {
-                SpriteBatch.Begin();
-                HUD.Draw(SpriteBatch);
-                SpriteBatch.End();
-            }
+            Forest.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, Gizmos);
+            Player.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, Gizmos);
+            Gizmos.Draw();
+            if (IsMenuActive) Menu.Draw(SpriteBatch); else HUD.Draw(SpriteBatch);
 
         }
         protected override void UnloadContent()
@@ -206,27 +163,17 @@ namespace TGC.MonoGame.TP
         private void DetectCollisions()
         {
             var collision = false;
-            for (int i = 0; i < objects.Count; i++)
+            for (int i = 0; i < Objects.Count; i++)
             {
-                if (objects[i].CollidesWith(Player))
+                if (Objects[i].CollidesWith(Player))
                 {
                     collision = true;
+                    break;
                 }
             }
             var color = collision ? Color.Red : Color.Yellow;
             Gizmos.SetColor(color);
-
             Gizmos.UpdateViewProjection(MouseCamera.View, MouseCamera.Projection);
-        }
-
-        private void DrawGizmos(GameTime gameTime)
-        {
-            foreach (var obj in objects)
-            {
-                obj.DrawBoundingVolume(Gizmos);
-            }
-            Player.DrawBoundingVolume(Gizmos);
-            Gizmos.Draw();
         }
     }
 }

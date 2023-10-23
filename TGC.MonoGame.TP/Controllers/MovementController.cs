@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using TGC.MonoGame.TP.Content.Actors;
 
 namespace TGC.MonoGame.TP.Controllers
 {
