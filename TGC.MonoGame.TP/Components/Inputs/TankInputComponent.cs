@@ -20,6 +20,8 @@ namespace TGC.MonoGame.TP.Components.Inputs
         private SoundEffect SoundEffect { get; set; }
         private readonly float _shootingCooldown;
         private GameObject Bullet;
+        private Vector3 _shootFrom;
+        private Vector3 _shootTo;
 
         public TankInputComponent(float driveSpeed, float rotationSpeed, float shootingCooldown)
         {
@@ -62,14 +64,26 @@ namespace TGC.MonoGame.TP.Components.Inputs
             if (Player.CoolDown > _shootingCooldown && PrevMouseState.LeftButton == ButtonState.Released && Mouse.GetState().LeftButton == ButtonState.Pressed)
             {
                 // Player.ShootProyectile(deltaTime, mouseCamera);
-                Bullet.Position = Player.Position + new Vector3(0f,100f,0f);
+
+                Bullet.Position = Player.Position + new Vector3(0f, 100f, 0f);
                 Bullet.Update(gameTime, mouseCamera, Terrain, IsMenuActive);
-                
+                _shootFrom = mouseCamera.OffsetPosition;
+                _shootTo = mouseCamera.FollowedPosition;
 
                 Instance = SoundEffect.CreateInstance();
                 Instance.Play();
                 Player.CoolDown = 0f;
             }
+            else if (Player.CoolDown < _shootingCooldown)
+            {
+                var aux = _shootTo - _shootFrom;
+                aux.Normalize();
+                Bullet.Position += aux * 2000f * deltaTime;
+                Bullet.Update(gameTime, mouseCamera, Terrain, IsMenuActive);
+
+            }
+
+
 
             PrevMouseState = Mouse.GetState();
 
@@ -100,11 +114,9 @@ namespace TGC.MonoGame.TP.Components.Inputs
         }
         public void Draw(GameTime gameTime, Matrix view, Matrix projection)
         {
-            System.Diagnostics.Debug.WriteLine("bala", Bullet.Position);
             Bullet.Draw(gameTime, view, projection);
         }
         public void Draw(GameTime gameTime, Matrix view, Matrix projection, Gizmos.Gizmos gizmos) {
-            System.Diagnostics.Debug.WriteLine("bala", Bullet.Position);
             Bullet.Draw(gameTime, view, projection, gizmos);
         }
        

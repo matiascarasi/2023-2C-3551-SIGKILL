@@ -24,8 +24,7 @@ namespace TGC.MonoGame.TP
         private Quaternion LeftRightQuat { get; set; }
         private Quaternion UpDownQuat { get; set; }
         private Vector3 UpCamera { get; set; } = Vector3.Up / 3;
-
-        private Matrix cameraAngle { get; set; } = Matrix.Identity;
+        public Matrix cameraAngle { get; set; } = Matrix.Identity;
 
         private MouseState mouse { get; set; }
 

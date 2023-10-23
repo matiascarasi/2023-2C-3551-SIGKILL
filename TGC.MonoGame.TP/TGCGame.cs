@@ -174,7 +174,7 @@ namespace TGC.MonoGame.TP
             {
                 if (Objects[i].CollidesWith(Player) && Objects[i] != Player )
                 {
-                    //Objects.Remove(Objects[i]);
+                    Objects.Remove(Objects[i]);
                     collision = true;
                     break;
                 }
