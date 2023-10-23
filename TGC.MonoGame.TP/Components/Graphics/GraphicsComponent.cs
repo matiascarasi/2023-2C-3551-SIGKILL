@@ -4,9 +4,8 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using TGC.MonoGame.TP.Content.Actors;
 
-namespace TGC.MonoGame.TP.Graphics
+namespace TGC.MonoGame.TP.Components.Graphics
 {
     class GraphicsComponent : IGraphicsComponent
     {
@@ -15,33 +14,30 @@ namespace TGC.MonoGame.TP.Graphics
         private readonly Dictionary<string, string> TexturePaths;
         private readonly string DefaultEffectPath;
         private readonly string DefaultTexturePath;
-        private readonly ContentManager Content;
-        public Model Model { get; set; }
         private Dictionary<string, Effect> Effects;
         private Dictionary<string, Texture> Textures;
 
-        public GraphicsComponent(ContentManager content, string model, string defaultEffect, string defaultTexture)
+        public GraphicsComponent(string model, string defaultEffect, string defaultTexture)
         {
-            Content = content;
             ModelPath = model;
             DefaultEffectPath = defaultEffect;
             DefaultTexturePath = defaultTexture;
             EffectPaths = new Dictionary<string, string>();
             TexturePaths = new Dictionary<string, string>();
         }
-        public GraphicsComponent(ContentManager content, string model, string defaultEffect, string defaultTexture, Dictionary<string, string> effects, Dictionary<string, string> textures) : this(content, model, defaultEffect, defaultTexture)
+        public GraphicsComponent(string model, string defaultEffect, string defaultTexture, Dictionary<string, string> effects, Dictionary<string, string> textures) : this(model, defaultEffect, defaultTexture)
         {
             EffectPaths = effects;
             TexturePaths = textures;
         }
 
-        public void LoadContent(GameObject gameObject)
+        public virtual void LoadContent(GameObject Object, ContentManager Content)
         {
-            Model = Content.Load<Model>(ModelPath);
+            Object.Model = Content.Load<Model>(ModelPath);
             Effects = EffectPaths.ToDictionary(kv => kv.Key, kv => Content.Load<Effect>(kv.Value));
             Textures = TexturePaths.ToDictionary(kv => kv.Key, kv => Content.Load<Texture>(kv.Value));
 
-            var meshNames = Model.Meshes.Select(mesh => mesh.Name);
+            var meshNames = Object.Model.Meshes.Select(mesh => mesh.Name);
             foreach (var meshName in Effects.Keys)
             {
                 if (!meshNames.Contains(meshName))
@@ -68,7 +64,7 @@ namespace TGC.MonoGame.TP.Graphics
                 }
             }
 
-            foreach (var mesh in Model.Meshes)
+            foreach (var mesh in Object.Model.Meshes)
             {
                 foreach (var meshPart in mesh.MeshParts)
                 {
@@ -77,19 +73,23 @@ namespace TGC.MonoGame.TP.Graphics
             }
         }
 
-        public void Draw(GameObject Object, GameTime gameTime, Matrix view, Matrix projection)
+
+
+        public virtual void Draw(GameObject Object, GameTime gameTime, Matrix view, Matrix projection)
         {
 
             var scaleMatrix = Matrix.CreateScale(Object.Scale);
             var rotationMatrix = Matrix.CreateRotationY(MathHelper.ToRadians(Object.YAxisRotation));
             var translationMatrix = Matrix.CreateTranslation(Object.Position);
+
             var world = scaleMatrix * rotationMatrix * translationMatrix;
-            Matrix[] matrices = new Matrix[Model.Bones.Count];
-            Model.CopyAbsoluteBoneTransformsTo(matrices);
+
+            Matrix[] matrices = new Matrix[Object.Model.Bones.Count];
+            Object.Model.CopyAbsoluteBoneTransformsTo(matrices);
             Object.World = world;
 
             Effect effect;
-            foreach (var mesh in Model.Meshes)
+            foreach (var mesh in Object.Model.Meshes)
             {
                 effect = Effects[mesh.Name];
                 effect.Parameters["Texture"].SetValue(Textures[mesh.Name]);
@@ -101,5 +101,9 @@ namespace TGC.MonoGame.TP.Graphics
             }
         }
 
+        public virtual void Update(GameObject gameObject, MouseCamera mouseCamera)
+        {
+            
+        }
     }
 }

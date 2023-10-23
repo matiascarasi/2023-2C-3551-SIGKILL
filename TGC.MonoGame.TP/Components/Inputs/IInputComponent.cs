@@ -5,13 +5,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TGC.MonoGame.TP.Content.Actors;
 
-namespace TGC.MonoGame.TP.Components
+namespace TGC.MonoGame.TP.Components.Inputs
 {
     public interface IInputComponent
     {
         public void LoadContent(ContentManager content);
-        public void Update(GameObject gameObject, GameTime gameTime, MouseCamera mouseCamera, bool IsMenuActive);
+        public void Update(GameObject gameObject, GameTime gameTime, MouseCamera mouseCamera, Terrain terrain, bool IsMenuActive);
     }
 }

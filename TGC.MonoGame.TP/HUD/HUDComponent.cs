@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TGC.MonoGame.TP.Content.Actors;
 using TGC.MonoGame.TP.Menu;
 
 namespace TGC.MonoGame.TP.HUD
@@ -64,10 +63,12 @@ namespace TGC.MonoGame.TP.HUD
 
         public void Draw(SpriteBatch spriteBatch)
         {
+            spriteBatch.Begin();
             foreach (HUDElement element in elementsList)
             {
                 element.Draw(spriteBatch);
             }
+            spriteBatch.End();
         }
 
     }

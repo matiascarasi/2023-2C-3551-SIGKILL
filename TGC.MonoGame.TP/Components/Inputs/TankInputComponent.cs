@@ -4,34 +4,30 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Input;
 using System;
 using TGC.MonoGame.TP.Components;
-using TGC.MonoGame.TP.Content.Actors;
+using TGC.MonoGame.TP.Controllers;
 
-namespace TGC.MonoGame.TP.Controllers
+namespace TGC.MonoGame.TP.Components.Inputs
 {
-    class PlayerInputComponent : IInputComponent
+    class TankInputComponent : IInputComponent
     {
         private MovementController MovementController { get; set; }
-        private Terrain Terrain { get; set; }
-        private MouseState prevMouseState { get; set; }
+        private MouseState PrevMouseState { get; set; }
         private SoundEffectInstance Instance { get; set; }
         private SoundEffect SoundEffect { get; set; }
-        private float shootingCooldown;
+        private readonly float _shootingCooldown;
 
-
-        public PlayerInputComponent(float driveSpeed, float rotationSpeed, Terrain terrain, float shootingCooldown)
+        public TankInputComponent(float driveSpeed, float rotationSpeed, float shootingCooldown)
         {
             MovementController = new MovementController(driveSpeed, rotationSpeed);
-            Terrain = terrain;
-            prevMouseState = Mouse.GetState();
-            this.shootingCooldown = shootingCooldown;
+            PrevMouseState = Mouse.GetState();
+            _shootingCooldown = shootingCooldown;
         }
 
         public void LoadContent(ContentManager content) {
-
             SoundEffect = content.Load<SoundEffect>("Audio/cannonFire");
         }
 
-        public void Update(GameObject Player, GameTime gameTime, MouseCamera mouseCamera, bool IsMenuActive)
+        public void Update(GameObject Player, GameTime gameTime, MouseCamera mouseCamera, Terrain Terrain, bool IsMenuActive)
         {
 
             if (IsMenuActive) return;
@@ -46,15 +42,15 @@ namespace TGC.MonoGame.TP.Controllers
 
             Player.CoolDown += deltaTime;
             //DETECCION DE CLICK
-            if (Player.CoolDown > shootingCooldown && prevMouseState.LeftButton == ButtonState.Released && Mouse.GetState().LeftButton == ButtonState.Pressed)
+            if (Player.CoolDown > _shootingCooldown && PrevMouseState.LeftButton == ButtonState.Released && Mouse.GetState().LeftButton == ButtonState.Pressed)
             {
-                Player.ShootProyectile(deltaTime, mouseCamera);
+                // Player.ShootProyectile(deltaTime, mouseCamera);
                 Instance = SoundEffect.CreateInstance();
                 Instance.Play();
                 Player.CoolDown = 0f;
             }
 
-            prevMouseState = Mouse.GetState();
+            PrevMouseState = Mouse.GetState();
 
             //DETECCION DE TECLA
             if (keyboardState.IsKeyDown(Keys.W))

@@ -50,10 +50,12 @@ namespace TGC.MonoGame.TP.Menu
 
         public void Draw (SpriteBatch spriteBatch)
         {
+            spriteBatch.Begin();
             foreach (MenuElement element in elementsList)
             {
                 element.Draw(spriteBatch);
             }
+            spriteBatch.End();
         }
 
         public void OnClick(string element)

@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
-using TGC.MonoGame.TP.Content.Actors;
 
 namespace TGC.MonoGame.TP
 {
@@ -18,12 +17,10 @@ namespace TGC.MonoGame.TP
 
         private float zoomVal = 1f;
         private float BackVectorInterpolator { get; set; } = 0f;
-        private float LeftRightRotation { get; set; } = 0f;
-        private float UpDownRotation { get; set; } = 0f;
+        public float LeftRightRotation { get; set; } = 0f;
+        public float UpDownRotation { get; set; } = 0f;
         private Vector3 PastBackwardVector { get; set; } = Vector3.Backward;
         private Vector3 CurrentBackwarVector { get; set; } = Vector3.Backward;
-
-
         private Quaternion LeftRightQuat { get; set; }
         private Quaternion UpDownQuat { get; set; }
         private Vector3 UpCamera { get; set; } = Vector3.Up / 3;
@@ -43,29 +40,24 @@ namespace TGC.MonoGame.TP
         private Vector2 screenCenterCoordinates { get; set; }
         private float mouseSensibility { get; set; } = 10f;
 
-        private ModelBone cannonBone { get; set; }
-        private ModelBone turretBone { get; set; }
-        private Matrix turretTransform { get; set; }
-        private Matrix cannonTransform { get; set; }
-
         /// <summary>
         /// Crea una FollowCamera que sigue a una matriz de mundo
         /// </summary>
         /// <param name="aspectRatio"></param>
         public MouseCamera(GraphicsDevice GraphicsDevice)
         {
-
             var aspectRatio = GraphicsDevice.Viewport.AspectRatio;
             screenCenterCoordinates = new Vector2((GraphicsDevice.Viewport.Width / 2), (GraphicsDevice.Viewport.Height / 2));
             Projection = Matrix.CreatePerspectiveFieldOfView(MathF.PI / 3.5f, aspectRatio, 0.1f, 100000f);
         }
+
         public void Update(GameTime gameTime, Matrix playerWorld, bool IsMenuActive)
         {
 
             var elapsedTime = Convert.ToSingle(gameTime.ElapsedGameTime.TotalSeconds);
-            if (IsMenuActive) SetMenuCamera(playerWorld);
-            else SetTankCamera(elapsedTime, playerWorld);
 
+            if (IsMenuActive) SetMenuCamera(playerWorld); 
+            else SetPlayerCamera(elapsedTime, playerWorld);
 
             var forward = (playerWorld.Translation - OffsetPosition);
             forward.Normalize();
@@ -76,7 +68,7 @@ namespace TGC.MonoGame.TP
 
         }
 
-        public void SetTankCamera(float elapsedTime, Matrix playerWorld)
+        public void SetPlayerCamera(float elapsedTime, Matrix playerWorld)
         {
             AxisDistanceToTarget = 1800f;
 
@@ -96,11 +88,7 @@ namespace TGC.MonoGame.TP
 
             cameraAngle = Matrix.CreateFromQuaternion(UpDownQuat) * Matrix.CreateFromQuaternion(LeftRightQuat);
 
-            if (UpDownRotation > -0.25f) cannonBone.Transform = Matrix.CreateRotationX(-UpDownRotation) * cannonTransform;
-            turretBone.Transform = Matrix.CreateRotationY(LeftRightRotation) * turretTransform;
-
             FollowedPosition = Vector3.Transform(playerWorld.Forward * AxisDistanceToTarget * zoomVal + UpCamera * AxisDistanceToTarget, cameraAngle * Matrix.CreateTranslation(playerWorld.Translation));
-
             OffsetPosition = Vector3.Transform(playerWorld.Backward * AxisDistanceToTarget * zoomVal + UpCamera * AxisDistanceToTarget, cameraAngle * Matrix.CreateTranslation(playerWorld.Translation));
 
         }
@@ -108,17 +96,8 @@ namespace TGC.MonoGame.TP
         public void SetMenuCamera(Matrix playerWorld)
         {
             FollowedPosition = Vector3.Transform(playerWorld.Forward * AxisDistanceToTarget * zoomVal + UpCamera * AxisDistanceToTarget, cameraAngle * Matrix.CreateTranslation(playerWorld.Translation));
-
             OffsetPosition = Vector3.Transform(playerWorld.Backward * AxisDistanceToTarget * zoomVal + UpCamera * AxisDistanceToTarget, cameraAngle * Matrix.CreateTranslation(playerWorld.Translation));
         }
-        public void SetModelVariables(Model model, String turretBoneName, String CannonBoneName)
-        {
 
-            turretBone = model.Bones[turretBoneName];
-            cannonBone = model.Bones[CannonBoneName];
-
-            turretTransform = turretBone.Transform;
-            cannonTransform = cannonBone.Transform;
-        }
     }
 }
