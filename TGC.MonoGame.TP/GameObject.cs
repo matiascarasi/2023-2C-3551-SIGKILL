@@ -7,6 +7,7 @@ using TGC.MonoGame.TP.Collisions;
 using TGC.MonoGame.TP.Components.Collisions;
 using TGC.MonoGame.TP.Components.Graphics;
 using TGC.MonoGame.TP.Components.Inputs;
+using TGC.MonoGame.TP.Gizmos;
 
 namespace TGC.MonoGame.TP
 {
@@ -63,11 +64,13 @@ namespace TGC.MonoGame.TP
         public void Draw(GameTime gameTime, Matrix view, Matrix projection)
         {
             GraphicsComponent.Draw(this, gameTime, view, projection);
+            InputComponent.Draw(gameTime, view, projection);
         }
 
         public void Draw(GameTime gameTime, Matrix view, Matrix projection, Gizmos.Gizmos gizmos)
         {
             GraphicsComponent.Draw(this, gameTime, view, projection);
+            InputComponent.Draw(gameTime, view, projection, gizmos);
             CollisionComponent.Draw(gizmos);
         }
 

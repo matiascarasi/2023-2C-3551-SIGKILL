@@ -12,5 +12,7 @@ namespace TGC.MonoGame.TP.Components.Inputs
     {
         public void LoadContent(ContentManager content);
         public void Update(GameObject gameObject, GameTime gameTime, MouseCamera mouseCamera, Terrain terrain, bool IsMenuActive);
+        public void Draw(GameTime gameTime, Matrix view, Matrix projection);
+        public void Draw(GameTime gameTime, Matrix view, Matrix projection, Gizmos.Gizmos gizmos);
     }
 }

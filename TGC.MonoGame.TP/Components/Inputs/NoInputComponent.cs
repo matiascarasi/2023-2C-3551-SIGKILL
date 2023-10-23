@@ -19,5 +19,13 @@ namespace TGC.MonoGame.TP.Components.Inputs
         {
             
         }
+        public void Draw(GameTime gameTime, Matrix view, Matrix projection)
+        {
+
+        }
+        public void Draw(GameTime gameTime, Matrix view, Matrix projection, Gizmos.Gizmos gizmos)
+        {
+
+        }
     }
 }

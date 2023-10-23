@@ -15,6 +15,7 @@ using TGC.MonoGame.TP.Defaults;
 using TGC.MonoGame.TP.HUD;
 using TGC.MonoGame.TP.Menu;
 using TGC.MonoGame.TP.Scenes;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace TGC.MonoGame.TP
 {
@@ -88,6 +89,8 @@ namespace TGC.MonoGame.TP
             HUD = new HUDComponent(PlayerDefaults.TankName, PlayerDefaults.Health, PlayerDefaults.CoolDown);
             Terrain = new Terrain(Content, GraphicsDevice, "Textures/heightmaps/hills-heightmap", "Textures/heightmaps/hills", 20.0f, 8.0f);
             MouseCamera = new MouseCamera(GraphicsDevice);
+
+            
             Player = new GameObject(
                 new PanzerGraphicsComponent(),
                 new TankInputComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, PlayerDefaults.CoolDown),
@@ -171,11 +174,13 @@ namespace TGC.MonoGame.TP
             {
                 if (Objects[i].CollidesWith(Player) && Objects[i] != Player )
                 {
+                    //Objects.Remove(Objects[i]);
                     collision = true;
                     break;
                 }
             }
             var color = collision ? Color.Red : Color.Yellow;
+            
             Gizmos.SetColor(color);
             Gizmos.UpdateViewProjection(MouseCamera.View, MouseCamera.Projection);
         }
