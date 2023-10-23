@@ -88,9 +88,6 @@ namespace TGC.MonoGame.TP
             HUD = new HUDComponent(PlayerDefaults.TankName, PlayerDefaults.Health, PlayerDefaults.CoolDown);
             Terrain = new Terrain(Content, GraphicsDevice, "Textures/heightmaps/hills-heightmap", "Textures/heightmaps/hills", 20.0f, 8.0f);
             MouseCamera = new MouseCamera(GraphicsDevice);
-            Objects = new List<GameObject>();
-            Forest = new Forest(ForestDefaults.Center, ForestDefaults.Radius, ForestDefaults.Density);
-
             Player = new GameObject(
                 new PanzerGraphicsComponent(),
                 new TankInputComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, PlayerDefaults.CoolDown),
@@ -101,6 +98,10 @@ namespace TGC.MonoGame.TP
                 PlayerDefaults.Health,
                 PlayerDefaults.CoolDown
             );
+            Objects = new List<GameObject>() { Player };
+
+            Forest = new Forest(ForestDefaults.Center, ForestDefaults.Radius, ForestDefaults.Density);
+
 
             base.Initialize();
         }
@@ -112,8 +113,8 @@ namespace TGC.MonoGame.TP
             Menu.LoadContent(Content, GraphicsDevice);
             HUD.LoadContent(Content);   
             Terrain.LoadContent(Content, GraphicsDevice);
-            Forest.LoadContent(Content, Terrain, Objects);
             Player.LoadContent(Content);
+            Forest.LoadContent(Content, Terrain, Objects);
             Gizmos.LoadContent(GraphicsDevice, Content);
 
             base.LoadContent();
@@ -147,8 +148,10 @@ namespace TGC.MonoGame.TP
         {
             GraphicsDevice.Clear(Color.Black);
             Terrain.Draw(GraphicsDevice, MouseCamera.View, MouseCamera.Projection);
-            Forest.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, Gizmos);
-            Player.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, Gizmos);
+            foreach(var obj in Objects)
+            {
+                obj.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, Gizmos);
+            }
             Gizmos.Draw();
             if (IsMenuActive) Menu.Draw(SpriteBatch); else HUD.Draw(SpriteBatch);
 
@@ -166,7 +169,7 @@ namespace TGC.MonoGame.TP
             var collision = false;
             for (int i = 0; i < Objects.Count; i++)
             {
-                if (Objects[i].CollidesWith(Player))
+                if (Objects[i].CollidesWith(Player) && Objects[i] != Player )
                 {
                     collision = true;
                     break;

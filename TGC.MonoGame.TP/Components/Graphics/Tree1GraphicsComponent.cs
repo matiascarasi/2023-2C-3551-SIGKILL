@@ -4,9 +4,9 @@
     class Tree1GraphicsComponent : GraphicsComponent
     {
         public Tree1GraphicsComponent() : base(
-                "Models/TankWars/Miscellaneous/Rock/Rock07-Base",
+                "Models/TankWars/Miscellaneous/Dumpster/dumpster_fbx",
                 "Effects/BasicTexture",
-                "Models/TankWars/Miscellaneous/Rock/Rock07-Base-Diffuse_0"
+                "Models/TankWars/Miscellaneous/Dumpster/dumpsters_Dumpster_BaseColor"
             )
         { }
     }

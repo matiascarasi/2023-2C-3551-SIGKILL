@@ -25,6 +25,7 @@ namespace TGC.MonoGame.TP.Components.Inputs
 
         public void LoadContent(ContentManager content) {
             SoundEffect = content.Load<SoundEffect>("Audio/cannonFire");
+            SoundEffect.MasterVolume -= .7f;
         }
 
         public void Update(GameObject Player, GameTime gameTime, MouseCamera mouseCamera, Terrain Terrain, bool IsMenuActive)

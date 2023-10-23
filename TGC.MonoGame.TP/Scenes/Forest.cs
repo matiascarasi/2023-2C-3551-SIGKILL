@@ -13,8 +13,7 @@ namespace TGC.MonoGame.TP.Scenes
     class Forest : IScene
     {
 
-        private const double SMALL_TREES_MIN_SCALE = 0.5;
-        private readonly List<GameObject> Miscellaneous;
+        private const double SMALL_TREES_MIN_SCALE = 1.5;
         private Vector2 Center;
         private readonly double _radius;
         private readonly int smallTreesAmount;
@@ -24,7 +23,6 @@ namespace TGC.MonoGame.TP.Scenes
             Center = center;
             _radius = radius;
             smallTreesAmount = (int) (Math.PI * Math.Pow(_radius, 2) * 0.000001 * density);
-            Miscellaneous = new List<GameObject>();
         }
 
         public void LoadContent(ContentManager Content, Terrain Terrain, List<GameObject> Objects)
@@ -54,29 +52,12 @@ namespace TGC.MonoGame.TP.Scenes
                 if (Objects.Any(obj => obj.CollidesWith(tree)))
                     continue;
 
-                Miscellaneous.Add(tree);
                 Objects.Add(tree);
 
             }
 
             // TODO: LOAD FERNS
 
-        }
-
-        public void Draw(GameTime gameTime, Matrix view, Matrix projection)
-        {
-            foreach( var misc in Miscellaneous )
-            {
-                misc.Draw(gameTime, view, projection);
-            }
-        }
-
-        public void Draw(GameTime gameTime, Matrix view, Matrix projection, Gizmos.Gizmos Gizmos)
-        {
-            foreach (var misc in Miscellaneous)
-            {
-                misc.Draw(gameTime, view, projection, Gizmos);
-            }
         }
     }
 }
