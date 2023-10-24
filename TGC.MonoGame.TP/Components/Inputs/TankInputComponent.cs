@@ -43,7 +43,6 @@ namespace TGC.MonoGame.TP.Components.Inputs
 
         public void LoadContent(ContentManager content) {
             SoundEffect = content.Load<SoundEffect>("Audio/cannonFire");
-            SoundEffect.MasterVolume -= .7f;
             Bullet.LoadContent(content);
         }
 
@@ -78,7 +77,7 @@ namespace TGC.MonoGame.TP.Components.Inputs
             {
                 var aux = _shootTo - _shootFrom;
                 aux.Normalize();
-                Bullet.Position += aux * 2000f * deltaTime;
+                Bullet.Position += aux * 10000f * deltaTime;
                 Bullet.Update(gameTime, mouseCamera, Terrain, IsMenuActive);
 
             }

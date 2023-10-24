@@ -15,8 +15,9 @@ namespace TGC.MonoGame.TP
         private readonly string HeightmapPath;
         private readonly string TexturePath;
         private Texture2D Texture;
+        public Texture2D currentHeightmap;
         public const string ContentFolderEffects = "Effects/";
-        private float[,] heightmap;
+        public float[,] heightmap;
 
         private readonly float scaleXZ;
         private readonly float scaleY;
@@ -27,9 +28,9 @@ namespace TGC.MonoGame.TP
             TexturePath = texturePath;
             scaleXZ = _scaleXZ;
             scaleY = _scaleY;
-            var currentHeightmap = contentManager.Load<Texture2D>(HeightmapPath);
+            currentHeightmap = contentManager.Load<Texture2D>(HeightmapPath);
 
-            CreateHeightmapMesh(graphicsDevice, currentHeightmap);
+            CreateHeightmapMesh(graphicsDevice);
         }
 
         public void LoadContent(ContentManager contentManager, GraphicsDevice graphicsDevice)
@@ -55,9 +56,9 @@ namespace TGC.MonoGame.TP
             }
         }
 
-        private void CreateHeightmapMesh(GraphicsDevice graphicsDevice, Texture2D texture)
+        private void CreateHeightmapMesh(GraphicsDevice graphicsDevice)
         {
-            LoadHeightmap(texture);
+            LoadHeightmap(currentHeightmap);
 
             CreateVertexBuffer(graphicsDevice);
 
