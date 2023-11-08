@@ -34,10 +34,7 @@ namespace TGC.MonoGame.TP.Menu
         }
         public void Update(float widthDifference)
         {
-            System.Diagnostics.Debug.WriteLine(widthDifference);
             float amount = InitialWidth * (widthDifference) / Width;
-            System.Diagnostics.Debug.WriteLine(amount);
-
             if (widthDifference <= 0) amount = HudElementTexture.Width;
             HudElementRect = new Rectangle(HudElementRect.X, HudElementRect.Y, HudElementTexture.Width - (int) amount, HudElementRect.Height);
         }

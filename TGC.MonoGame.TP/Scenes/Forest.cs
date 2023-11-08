@@ -18,12 +18,14 @@ namespace TGC.MonoGame.TP.Scenes
         private Vector2 Center;
         private readonly double _radius;
         private readonly int smallTreesAmount;
-
+        private readonly int rocksAmount;
         public Forest(Vector2 center, double radius, double density)
         {
             Center = center;
             _radius = radius;
             smallTreesAmount = (int) (Math.PI * Math.Pow(_radius, 2) * 0.000001 * density);
+            rocksAmount = (int)(Math.PI * Math.Pow(_radius, 2) * 0.00000075 * density);
+
         }
 
         public void LoadContent(ContentManager Content, Terrain Terrain, List<GameObject> Objects)
@@ -56,6 +58,29 @@ namespace TGC.MonoGame.TP.Scenes
             }
 
             // TODO: LOAD FERNS
+            for (var i = 0; i < rocksAmount; i++)
+            {
+                var position = AlgebraHelper.GetRandomPointInCircle(Center, _radius, Random);
+                var rotation = Convert.ToSingle(AlgebraHelper.FULL_ROTATION * Random.NextDouble());
+                var scale = Convert.ToSingle(Math.Max(SMALL_TREES_MIN_SCALE, Random.NextDouble()));
+
+                var rock = new GameObject(
+                    new RockGraphicsComponent(),
+                    new Vector3(position.X, Terrain.Height(position.X, position.Y), position.Y),
+                    rotation,
+                    Vector3.Up,
+                    scale,
+                    0.1f
+                );
+
+                rock.LoadContent(Content);
+
+                if (Objects.Any(obj => obj.CollidesWith(rock)))
+                    continue;
+
+                Objects.Add(rock);
+
+            }
 
         }
     }

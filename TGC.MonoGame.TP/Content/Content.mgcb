@@ -25,6 +25,12 @@
 /processorParam:Quality=Best
 /build:Audio/mainSong.mp3
 
+#begin Audio/warsounds.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/warsounds.mp3
+
 #begin Effects/BasicShader.fx
 /importer:EffectImporter
 /processor:EffectProcessor

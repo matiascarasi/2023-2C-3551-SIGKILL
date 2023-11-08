@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using Microsoft.VisualBasic.CompilerServices;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using TGC.MonoGame.TP.Actors;
+using TGC.MonoGame.TP.Bounds;
 using TGC.MonoGame.TP.Collisions;
 using TGC.MonoGame.TP.Components;
 using TGC.MonoGame.TP.Components.Collisions;
@@ -50,11 +53,12 @@ namespace TGC.MonoGame.TP
         }
         public Gizmos.Gizmos Gizmos { get; }
         private GraphicsDeviceManager Graphics { get; }
+
         private MenuComponent Menu { get; set; }
         private HUDComponent HUD { get; set; }
         private SpriteBatch SpriteBatch { get; set; }
         private GameObject Player { get; set; }
-
+        private BoundsComponent Bounds { get; set; }
         private Terrain Terrain;
         public bool IsMenuActive { get; set; }
 
@@ -63,8 +67,9 @@ namespace TGC.MonoGame.TP
 
         private MouseCamera MouseCamera { get; set; }
 
-        private Song song { get; set; }
-
+        private Song MainSong { get; set; }
+        private SoundEffectInstance Instance { get; set; }
+        private SoundEffect SoundEffect { get; set; }
         private List<GameObject> Objects { get; set; }
 
         private Forest Forest { get; set; }
@@ -79,10 +84,13 @@ namespace TGC.MonoGame.TP
             Graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height - 100;
             Graphics.ApplyChanges();
 
-            song = Content.Load<Song>("Audio/mainSong");
+            MainSong = Content.Load<Song>("Audio/mainSong");
+            SoundEffect = Content.Load<SoundEffect>("Audio/warsounds");
+            SoundEffect.MasterVolume -= .9f;
             MediaPlayer.Volume -= .7f;
             MediaPlayer.IsRepeating = true;
-            MediaPlayer.Play(song);
+            MediaPlayer.Play(MainSong);
+            Instance = SoundEffect.CreateInstance();
 
             IsMenuActive = true;
             
@@ -93,6 +101,7 @@ namespace TGC.MonoGame.TP
             HUD = new HUDComponent(PlayerDefaults.TankName, PlayerDefaults.Health, PlayerDefaults.CoolDown);
             Terrain = new Terrain(Content, GraphicsDevice, "Textures/heightmaps/hills-heightmap", "Textures/heightmaps/hills", 20.0f, 8.0f);
             MouseCamera = new MouseCamera(GraphicsDevice);
+            Bounds = new BoundsComponent(Content, Terrain);
 
             var playerGraphics = new PanzerGraphicsComponent();
 
@@ -121,6 +130,7 @@ namespace TGC.MonoGame.TP
             Menu.LoadContent(Content, GraphicsDevice);
             HUD.LoadContent(Content);   
             Terrain.LoadContent(Content, GraphicsDevice);
+            Bounds.LoadContent(Content);
             Player.LoadContent(Content);
             Forest.LoadContent(Content, Terrain, Objects);
             Gizmos.LoadContent(GraphicsDevice, Content);
@@ -140,6 +150,14 @@ namespace TGC.MonoGame.TP
                 Exit();
             }
 
+            if(!IsMenuActive)
+            {
+                MediaPlayer.Volume = .1f;
+
+                //MediaPlayer.Stop();
+                Instance.Play();
+            }
+          
             Menu.Update();
             MouseCamera.Update(gameTime, Player.World, IsMenuActive);
 
@@ -147,6 +165,7 @@ namespace TGC.MonoGame.TP
             {
                 obj.Update(gameTime);
             }
+            Bounds.Update(gameTime, MouseCamera, IsMenuActive);
 
             DetectCollisions();
 
@@ -157,9 +176,10 @@ namespace TGC.MonoGame.TP
         {
             GraphicsDevice.Clear(Color.Black);
             Terrain.Draw(GraphicsDevice, MouseCamera.View, MouseCamera.Projection);
+            Bounds.Draw(gameTime, MouseCamera.View, MouseCamera.Projection);
             foreach(var obj in Objects)
             {
-                obj.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, Gizmos);
+                obj.Draw(gameTime, MouseCamera.View, MouseCamera.Projection);
             }
             Gizmos.Draw();
             if (IsMenuActive) Menu.Draw(SpriteBatch); else HUD.Draw(SpriteBatch);

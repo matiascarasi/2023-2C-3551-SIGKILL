@@ -17,7 +17,6 @@ namespace TGC.MonoGame.TP.HUD
         private string tankName;
         public HUDComponent(string tankName, float health, float shootingCooldown)
         {
-            System.Diagnostics.Debug.WriteLine(tankName);
             this.health = health;
             this.shootingCooldown = shootingCooldown;
             this.initialHealth = health;
