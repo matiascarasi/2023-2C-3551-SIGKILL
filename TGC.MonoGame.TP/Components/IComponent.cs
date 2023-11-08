@@ -1,13 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
+using TGC.MonoGame.TP.Actors;
 
-namespace TGC.MonoGame.TP.Components.Graphics
+namespace TGC.MonoGame.TP.Components
 {
-    public interface IGraphicsComponent
+    public interface IComponent
     {
         public void LoadContent(GameObject gameObject, ContentManager content);
-        public void Update(GameObject gameObject, MouseCamera mouseCamera);
+        public void Update(GameObject gameObject, GameTime gameTime);
         public void Draw(GameObject gameObject, GameTime gameTime, Matrix view, Matrix projection);
     }
 }

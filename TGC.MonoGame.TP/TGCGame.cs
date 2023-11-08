@@ -6,7 +6,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using TGC.MonoGame.TP.Actors;
 using TGC.MonoGame.TP.Collisions;
+using TGC.MonoGame.TP.Components;
 using TGC.MonoGame.TP.Components.Collisions;
 using TGC.MonoGame.TP.Components.Graphics;
 using TGC.MonoGame.TP.Components.Inputs;
@@ -52,6 +54,7 @@ namespace TGC.MonoGame.TP
         private HUDComponent HUD { get; set; }
         private SpriteBatch SpriteBatch { get; set; }
         private GameObject Player { get; set; }
+
         private Terrain Terrain;
         public bool IsMenuActive { get; set; }
 
@@ -65,6 +68,7 @@ namespace TGC.MonoGame.TP
         private List<GameObject> Objects { get; set; }
 
         private Forest Forest { get; set; }
+
 
 
         protected override void Initialize()
@@ -90,17 +94,18 @@ namespace TGC.MonoGame.TP
             Terrain = new Terrain(Content, GraphicsDevice, "Textures/heightmaps/hills-heightmap", "Textures/heightmaps/hills", 20.0f, 8.0f);
             MouseCamera = new MouseCamera(GraphicsDevice);
 
-            
+            var playerGraphics = new PanzerGraphicsComponent();
+
             Player = new GameObject(
-                new PanzerGraphicsComponent(),
-                new TankInputComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, PlayerDefaults.CoolDown),
+                new List<IComponent> { playerGraphics, new TankInputComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, PlayerDefaults.CoolDown, MouseCamera, Terrain, playerGraphics) },
                 new PanzerCollisionComponent(),
                 new Vector3(0f, Terrain.Height(0f, 0f), 0f),
                 PlayerDefaults.YAxisRotation,
+                Vector3.Up,
                 PlayerDefaults.Scale,
-                PlayerDefaults.Health,
-                PlayerDefaults.CoolDown
+                PlayerDefaults.Health            
             );
+
             Objects = new List<GameObject>() { Player };
 
             Forest = new Forest(ForestDefaults.Center, ForestDefaults.Radius, ForestDefaults.Density);
@@ -136,11 +141,12 @@ namespace TGC.MonoGame.TP
             }
 
             Menu.Update();
-            HUD.Update(Player.Health, Player.CoolDown);
-
             MouseCamera.Update(gameTime, Player.World, IsMenuActive);
 
-            Player.Update(gameTime, MouseCamera, Terrain, IsMenuActive);
+            foreach (var obj in Objects)
+            {
+                obj.Update(gameTime);
+            }
 
             DetectCollisions();
 

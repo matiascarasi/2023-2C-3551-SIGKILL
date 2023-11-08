@@ -4,10 +4,11 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using TGC.MonoGame.TP.Actors;
 
 namespace TGC.MonoGame.TP.Components.Graphics
 {
-    class GraphicsComponent : IGraphicsComponent
+    class GraphicsComponent : IComponent
     {
         private readonly string ModelPath;
         private readonly Dictionary<string, string> EffectPaths;
@@ -72,14 +73,11 @@ namespace TGC.MonoGame.TP.Components.Graphics
                 }
             }
         }
-
-
-
         public virtual void Draw(GameObject Object, GameTime gameTime, Matrix view, Matrix projection)
         {
 
             var scaleMatrix = Matrix.CreateScale(Object.Scale);
-            var rotationMatrix = Matrix.CreateRotationY(MathHelper.ToRadians(Object.YAxisRotation));
+            var rotationMatrix = Matrix.CreateRotationY(MathHelper.ToRadians(Object.RotationAngle));
             var translationMatrix = Matrix.CreateTranslation(Object.Position);
 
             var world = scaleMatrix * rotationMatrix * translationMatrix;
@@ -101,9 +99,8 @@ namespace TGC.MonoGame.TP.Components.Graphics
             }
         }
 
-        public virtual void Update(GameObject gameObject, MouseCamera mouseCamera)
+        public virtual void Update(GameObject gameObject, GameTime gameTime)
         {
-            
         }
     }
 }

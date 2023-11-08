@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using TGC.MonoGame.TP.Actors;
 
 namespace TGC.MonoGame.TP.Controllers
 {
@@ -32,12 +33,12 @@ namespace TGC.MonoGame.TP.Controllers
 
         public void TurnRight(GameObject gameObject, float deltaTime)
         {
-            gameObject.YAxisRotation -= RotationSpeed * deltaTime;
+            gameObject.RotationAngle -= RotationSpeed * deltaTime;
         }
 
         public void TurnLeft(GameObject gameObject, float deltaTime)
         {
-            gameObject.YAxisRotation += RotationSpeed * deltaTime;
+            gameObject.RotationAngle += RotationSpeed * deltaTime;
         }
 
         public void Settle()

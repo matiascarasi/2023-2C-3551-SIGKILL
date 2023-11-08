@@ -8,7 +8,7 @@ using TGC.MonoGame.TP.Menu;
 
 namespace TGC.MonoGame.TP.HUD
 {
-    internal class HUDComponent
+    public class HUDComponent
     {
         private List<HUDElement> elementsList = new List<HUDElement>();
         private float initialHealth;

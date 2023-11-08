@@ -3,54 +3,40 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Collections.Generic;
 using System.Reflection.Metadata;
+using TGC.MonoGame.TP.Actors;
 using TGC.MonoGame.TP.Components;
 using TGC.MonoGame.TP.Components.Collisions;
 using TGC.MonoGame.TP.Components.Graphics;
 using TGC.MonoGame.TP.Controllers;
 using TGC.MonoGame.TP.Gizmos;
+using TGC.MonoGame.TP.HUD;
 
 namespace TGC.MonoGame.TP.Components.Inputs
 {
-    class TankInputComponent : IInputComponent
+    class TankInputComponent : IComponent
     {
         private MovementController MovementController { get; set; }
+        private ShootingController ShootingController { get; set; }
         private MouseState PrevMouseState { get; set; }
-        private SoundEffectInstance Instance { get; set; }
-        private SoundEffect SoundEffect { get; set; }
-        private readonly float _shootingCooldown;
-        private GameObject Bullet;
-        private Vector3 _shootFrom;
-        private Vector3 _shootTo;
+        private MouseCamera MouseCamera { get; }
+        private Terrain Terrain { get; }
+        private TankGraphicsComponent GraphicsComponent { get; }
 
-        public TankInputComponent(float driveSpeed, float rotationSpeed, float shootingCooldown)
+        public TankInputComponent(float driveSpeed, float rotationSpeed, float shootingCooldown, MouseCamera mouseCamera, Terrain terrain, TankGraphicsComponent graphicsComponent)
         {
             MovementController = new MovementController(driveSpeed, rotationSpeed);
+            ShootingController = new ShootingController(shootingCooldown);
             PrevMouseState = Mouse.GetState();
-            _shootingCooldown = shootingCooldown;
-            Bullet = new GameObject(
-                    new BulletGraphicsComponent(),
-                    new NoInputComponent(),
-                    new CollisionComponent(),
-                    new Vector3(0, 0, 0),
-                    0f,
-                    20f,
-                    1f,
-                    0f
-                );
 
+            MouseCamera = mouseCamera;
+            Terrain = terrain;
+            GraphicsComponent = graphicsComponent;
         }
 
-        public void LoadContent(ContentManager content) {
-            SoundEffect = content.Load<SoundEffect>("Audio/cannonFire");
-            SoundEffect.MasterVolume -= .7f;
-            Bullet.LoadContent(content);
-        }
-
-        public void Update(GameObject Player, GameTime gameTime, MouseCamera mouseCamera, Terrain Terrain, bool IsMenuActive)
+        public void Update(GameObject Player, GameTime gameTime)
         {
-            if (IsMenuActive) return;
-
             var keyboardState = Keyboard.GetState();
             var deltaTime = Convert.ToSingle(gameTime.ElapsedGameTime.TotalSeconds);
 
@@ -59,31 +45,17 @@ namespace TGC.MonoGame.TP.Components.Inputs
             var height = Terrain.Height(X, Z);
             Player.Position = new Vector3(X, height, Z);
 
-            Player.CoolDown += deltaTime;
+            //DETECCION DE MOVIMIENTO DEL MOUSE
+            GraphicsComponent.CannonRotation = MouseCamera.UpDownRotation;
+            GraphicsComponent.TurretRotation = MouseCamera.LeftRightRotation;
+
             //DETECCION DE CLICK
-            if (Player.CoolDown > _shootingCooldown && PrevMouseState.LeftButton == ButtonState.Released && Mouse.GetState().LeftButton == ButtonState.Pressed)
-            {
-                // Player.ShootProyectile(deltaTime, mouseCamera);
-
-                Bullet.Position = Player.Position + new Vector3(0f, 100f, 0f);
-                Bullet.Update(gameTime, mouseCamera, Terrain, IsMenuActive);
-                _shootFrom = mouseCamera.OffsetPosition;
-                _shootTo = mouseCamera.FollowedPosition;
-
-                Instance = SoundEffect.CreateInstance();
-                Instance.Play();
-                Player.CoolDown = 0f;
-            }
-            else if (Player.CoolDown < _shootingCooldown)
-            {
-                var aux = _shootTo - _shootFrom;
-                aux.Normalize();
-                Bullet.Position += aux * 2000f * deltaTime;
-                Bullet.Update(gameTime, mouseCamera, Terrain, IsMenuActive);
-
-            }
-
-
+            //if (Mouse.GetState().LeftButton == ButtonState.Pressed && PrevMouseState.LeftButton == ButtonState.Released)
+            //{
+            //    var direction = MouseCamera.FollowedPosition - MouseCamera.OffsetPosition;
+            //    direction.Normalize();
+            //    ShootingController.Shoot(Player.Position, direction, 2000f);
+            //}
 
             PrevMouseState = Mouse.GetState();
 
@@ -112,14 +84,15 @@ namespace TGC.MonoGame.TP.Components.Inputs
 
             MovementController.Move(Player, deltaTime);
         }
-        public void Draw(GameTime gameTime, Matrix view, Matrix projection)
+
+        public void LoadContent(GameObject gameObject, ContentManager content)
         {
-            Bullet.Draw(gameTime, view, projection);
         }
-        public void Draw(GameTime gameTime, Matrix view, Matrix projection, Gizmos.Gizmos gizmos) {
-            Bullet.Draw(gameTime, view, projection, gizmos);
+
+        public void Draw(GameObject gameObject, GameTime gameTime, Matrix view, Matrix projection)
+        {
+
         }
-       
     }
 
 }

@@ -7,6 +7,7 @@ using TGC.MonoGame.TP.Components.Collisions;
 using TGC.MonoGame.TP.Components.Graphics;
 using TGC.MonoGame.TP.Components.Inputs;
 using TGC.MonoGame.TP.Helpers;
+using TGC.MonoGame.TP.Actors;
 
 namespace TGC.MonoGame.TP.Scenes
 {
@@ -38,13 +39,11 @@ namespace TGC.MonoGame.TP.Scenes
                 
                 var tree = new GameObject(
                     new Tree1GraphicsComponent(),
-                    new NoInputComponent(),
-                    new CollisionComponent(),
                     new Vector3(position.X, Terrain.Height(position.X, position.Y), position.Y),
                     rotation,
+                    Vector3.Up,
                     scale,
-                    0.1f,
-                    0f
+                    0.1f
                 );
 
                 tree.LoadContent(Content);

@@ -1,14 +1,13 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
+using TGC.MonoGame.TP.Actors;
 
 namespace TGC.MonoGame.TP.Components.Graphics
 {
-    class PanzerGraphicsComponent : GraphicsComponent
+    class PanzerGraphicsComponent : TankGraphicsComponent
     {
         const float MAX_TURRET_ANGLE = -0.25f;
-        private Matrix TurretTransform { get; set; }
-        private Matrix CannonTransform { get; set; }
         public PanzerGraphicsComponent() : base(
                 "Models/TankWars/Panzer/Panzer",
                 "Effects/BasicTexture",
@@ -25,12 +24,11 @@ namespace TGC.MonoGame.TP.Components.Graphics
             TurretTransform = gameObject.Model.Bones["Turret"].Transform;
         }
 
-        public override void Update(GameObject gameObject, MouseCamera mouseCamera)
+        public override void Update(GameObject gameObject, GameTime gameTime)
         {
-
-            if (mouseCamera.UpDownRotation > MAX_TURRET_ANGLE) 
-                gameObject.Model.Bones["Cannon"].Transform = Matrix.CreateRotationX(-mouseCamera.UpDownRotation) * CannonTransform;
-            gameObject.Model.Bones["Turret"].Transform = Matrix.CreateRotationY(mouseCamera.LeftRightRotation) * TurretTransform;
+            if (CannonRotation > MAX_TURRET_ANGLE) 
+                gameObject.Model.Bones["Cannon"].Transform = Matrix.CreateRotationX(-CannonRotation) * CannonTransform;
+            gameObject.Model.Bones["Turret"].Transform = Matrix.CreateRotationY(TurretRotation) * TurretTransform;
         }
     }
 }
