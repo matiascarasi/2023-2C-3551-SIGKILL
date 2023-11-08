@@ -33,6 +33,14 @@ namespace TGC.MonoGame.TP.Actors
             Initialize(position, rotationDirection, rotationAngle, scale, health);
         }
 
+        public GameObject(List<IComponent> components, Vector3 position, float rotationAngle, Vector3 rotationDirection, float scale, float health)
+        {
+            Components = components;
+            CollisionComponent = new CollisionComponent();
+
+            Initialize(position, rotationDirection, rotationAngle, scale, health);
+        }
+
         public GameObject(IComponent component, Vector3 position, float rotationAngle, Vector3 rotationDirection, float scale, float health)
         {
             Components = new List<IComponent> { component };
@@ -41,12 +49,12 @@ namespace TGC.MonoGame.TP.Actors
             Initialize(position, rotationDirection, rotationAngle, scale, health);
         }
 
-        public GameObject(List<IComponent> components, Vector3 position, float rotationAngle, Vector3 rotationDirection, float scale, float health)
+        public GameObject(IComponent component, Vector3 position, float rotationAngle, float scale, float health)
         {
-            Components = components;
+            Components = new List<IComponent> { component };
             CollisionComponent = new CollisionComponent();
 
-            Initialize(position, rotationDirection, rotationAngle, scale, health);
+            Initialize(position, Vector3.Up, rotationAngle, scale, health);
         }
 
         private void Initialize(Vector3 position, Vector3 rotationDirection, float rotationAngle, float scale, float health)

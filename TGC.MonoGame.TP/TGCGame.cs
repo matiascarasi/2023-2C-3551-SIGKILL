@@ -165,7 +165,7 @@ namespace TGC.MonoGame.TP
             {
                 obj.Update(gameTime);
             }
-            Bounds.Update(gameTime, MouseCamera, IsMenuActive);
+            Bounds.Update(gameTime);
 
             DetectCollisions();
 

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using TGC.MonoGame.TP.Actors;
 using TGC.MonoGame.TP.Collisions;
 using TGC.MonoGame.TP.Components.Collisions;
 using TGC.MonoGame.TP.Components.Graphics;
@@ -56,27 +57,21 @@ namespace TGC.MonoGame.TP.Bounds
                     
                     var fence = new GameObject(
                         new FenceGraphicsComponent(),
-                        new NoInputComponent(),
-                        new CollisionComponent(),
                         new Vector3(xPosition, terrain.Height(0f, 0f), zPosition),
                         rotation,
                         scale,
-                        1f,
-                        0f
+                        1f
                     );
 
                     if (i % 2 == 0)
                     {
                         rotation = 90f;
                         fence = new GameObject(
-                        new FenceGraphicsComponent(),
-                        new NoInputComponent(),
-                        new CollisionComponent(),
-                        new Vector3(zPosition, terrain.Height(0f, 0f), xPosition),
-                        rotation,
-                        scale,
-                        1f,
-                        0f
+                            new FenceGraphicsComponent(),
+                            new Vector3(zPosition, terrain.Height(0f, 0f), xPosition),
+                            rotation,
+                            scale,
+                            1f
                         );
                     }
                     Fences.Add(fence);
@@ -100,27 +95,21 @@ namespace TGC.MonoGame.TP.Bounds
 
                     var fence = new GameObject(
                         new FenceGraphicsComponent(),
-                        new NoInputComponent(),
-                        new CollisionComponent(),
                         new Vector3(xPosition, terrain.Height(0f, 0f), zPosition),
                         rotation,
                         scale,
-                        1f,
-                        0f
+                        1f
                     );
 
                     if (i % 2 == 0)
                     {
                         rotation = 0f;
-                        fence = new GameObject(
-                        new FenceGraphicsComponent(),
-                        new NoInputComponent(),
-                        new CollisionComponent(),
-                        new Vector3(zPosition, terrain.Height(0f, 0f), xPosition),
-                        rotation,
-                        scale,
-                        1f,
-                        0f
+                            fence = new GameObject(
+                            new FenceGraphicsComponent(),
+                            new Vector3(zPosition, terrain.Height(0f, 0f), xPosition),
+                            rotation,
+                            scale,
+                            1f
                         );
                     }
                     Fences.Add(fence);
@@ -140,12 +129,12 @@ namespace TGC.MonoGame.TP.Bounds
                 fence.LoadContent( contentManager );
             }
         }
-        public void Update(GameTime gameTime, MouseCamera mouseCamera, bool IsMenuActive)
+        public void Update(GameTime gameTime)
         {
             foreach (GameObject fence in Fences)
             {
                 fence.Position = new Vector3(fence.Position.X, terrain.Height(fence.Position.X, fence.Position.Z) - 600f, fence.Position.Z);
-                fence.Update(gameTime, mouseCamera, terrain, IsMenuActive);
+                fence.Update(gameTime);
             }
         }
         public void Draw(GameTime gameTime, Matrix view, Matrix projection)

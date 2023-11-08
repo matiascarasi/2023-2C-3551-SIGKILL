@@ -43,7 +43,6 @@ namespace TGC.MonoGame.TP.Scenes
                     new Tree1GraphicsComponent(),
                     new Vector3(position.X, Terrain.Height(position.X, position.Y), position.Y),
                     rotation,
-                    Vector3.Up,
                     scale,
                     0.1f
                 );
@@ -68,7 +67,6 @@ namespace TGC.MonoGame.TP.Scenes
                     new RockGraphicsComponent(),
                     new Vector3(position.X, Terrain.Height(position.X, position.Y), position.Y),
                     rotation,
-                    Vector3.Up,
                     scale,
                     0.1f
                 );
