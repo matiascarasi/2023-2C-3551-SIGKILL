@@ -21,6 +21,7 @@ namespace TGC.MonoGame.TP.Actors
         public Vector3 RotationDirection { get; set; }
         public float Scale { get; set; }
         public float Health { get; set; }
+        public Vector3 Velocity { get; set; }
         public Model Model { get; set; }
         public List<IComponent> Components { get; }
         public CollisionComponent CollisionComponent { get; }
@@ -30,7 +31,7 @@ namespace TGC.MonoGame.TP.Actors
             Components = components;
             CollisionComponent = collisionComponent;
 
-            Initialize(position, rotationDirection, rotationAngle, scale, health);
+            Initialize(position, rotationDirection, rotationAngle, scale, health, Vector3.Zero);
         }
 
         public GameObject(List<IComponent> components, Vector3 position, float rotationAngle, Vector3 rotationDirection, float scale, float health)
@@ -38,7 +39,15 @@ namespace TGC.MonoGame.TP.Actors
             Components = components;
             CollisionComponent = new CollisionComponent();
 
-            Initialize(position, rotationDirection, rotationAngle, scale, health);
+            Initialize(position, rotationDirection, rotationAngle, scale, health, Vector3.Zero);
+        }
+
+        public GameObject(IComponent component)
+        {
+            Components = new List<IComponent> { component };
+            CollisionComponent = new CollisionComponent();
+
+            Initialize(Vector3.Zero, Vector3.Up, 0f, 1f, 0f, Vector3.Zero);
         }
 
         public GameObject(IComponent component, Vector3 position, float rotationAngle, Vector3 rotationDirection, float scale, float health)
@@ -46,7 +55,7 @@ namespace TGC.MonoGame.TP.Actors
             Components = new List<IComponent> { component };
             CollisionComponent = new CollisionComponent();
 
-            Initialize(position, rotationDirection, rotationAngle, scale, health);
+            Initialize(position, rotationDirection, rotationAngle, scale, health, Vector3.Zero);
         }
 
         public GameObject(IComponent component, Vector3 position, float rotationAngle, float scale, float health)
@@ -54,16 +63,17 @@ namespace TGC.MonoGame.TP.Actors
             Components = new List<IComponent> { component };
             CollisionComponent = new CollisionComponent();
 
-            Initialize(position, Vector3.Up, rotationAngle, scale, health);
+            Initialize(position, Vector3.Up, rotationAngle, scale, health, Vector3.Zero);
         }
 
-        private void Initialize(Vector3 position, Vector3 rotationDirection, float rotationAngle, float scale, float health)
+        private void Initialize(Vector3 position, Vector3 rotationDirection, float rotationAngle, float scale, float health, Vector3 velocity)
         {
             Position = position;
             RotationAngle = rotationAngle;
             RotationDirection = rotationDirection;
             Scale = scale;
             Health = health;
+            Velocity = velocity;
             World = Matrix.CreateScale(Scale) * Matrix.CreateFromQuaternion(new Quaternion(RotationDirection, RotationAngle)) * Matrix.CreateTranslation(Position);
         }
 
@@ -78,10 +88,16 @@ namespace TGC.MonoGame.TP.Actors
 
         public void Update(GameTime gameTime)
         {
+
+            float deltaTime = Convert.ToSingle(gameTime.ElapsedGameTime.TotalSeconds);
+
             foreach (var component in Components)
             {
                 component.Update(this, gameTime);
             }
+
+            Position += Velocity * deltaTime;
+
             CollisionComponent.Update(this);
         }
 

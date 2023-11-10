@@ -23,8 +23,9 @@ namespace TGC.MonoGame.TP.Components.Inputs
         private MouseCamera MouseCamera { get; }
         private Terrain Terrain { get; }
         private TankGraphicsComponent GraphicsComponent { get; }
+        private HUDComponent HUDComponent { get; }
 
-        public TankInputComponent(float driveSpeed, float rotationSpeed, float shootingCooldown, MouseCamera mouseCamera, Terrain terrain, TankGraphicsComponent graphicsComponent)
+        public TankInputComponent(float driveSpeed, float rotationSpeed, float shootingCooldown, MouseCamera mouseCamera, Terrain terrain, HUDComponent hudComponent, TankGraphicsComponent graphicsComponent)
         {
             MovementController = new MovementController(driveSpeed, rotationSpeed);
             ShootingController = new ShootingController(shootingCooldown);
@@ -33,15 +34,19 @@ namespace TGC.MonoGame.TP.Components.Inputs
             MouseCamera = mouseCamera;
             Terrain = terrain;
             GraphicsComponent = graphicsComponent;
+            HUDComponent = hudComponent;
         }
 
         public void Update(GameObject Player, GameTime gameTime)
         {
+
+            ShootingController.Update(gameTime);
+
             var keyboardState = Keyboard.GetState();
             var deltaTime = Convert.ToSingle(gameTime.ElapsedGameTime.TotalSeconds);
 
             var X = Player.Position.X;
-            var Z = Player.Position.Z;
+            var Z = Player.Position.Z; 
             var height = Terrain.Height(X, Z);
             Player.Position = new Vector3(X, height, Z);
 
@@ -50,16 +55,18 @@ namespace TGC.MonoGame.TP.Components.Inputs
             GraphicsComponent.TurretRotation = MouseCamera.LeftRightRotation;
 
             //DETECCION DE CLICK
-            //if (Mouse.GetState().LeftButton == ButtonState.Pressed && PrevMouseState.LeftButton == ButtonState.Released)
-            //{
-            //    var direction = MouseCamera.FollowedPosition - MouseCamera.OffsetPosition;
-            //    direction.Normalize();
-            //    ShootingController.Shoot(Player.Position, direction, 2000f);
-            //}
+            if (Mouse.GetState().LeftButton == ButtonState.Pressed && PrevMouseState.LeftButton == ButtonState.Released)
+            {
+                var direction = MouseCamera.FollowedPosition - MouseCamera.OffsetPosition;
+                direction.Normalize();
+                ShootingController.Shoot(Player.Position, direction, 2000f);
+            }
+            HUDComponent.UpdatePlayerCooldown(ShootingController._cooldownTimer);
 
-            PrevMouseState = Mouse.GetState();
 
             //DETECCION DE TECLA
+            PrevMouseState = Mouse.GetState();
+
             if (keyboardState.IsKeyDown(Keys.W))
             {
                 MovementController.Accelerate();
@@ -87,11 +94,12 @@ namespace TGC.MonoGame.TP.Components.Inputs
 
         public void LoadContent(GameObject gameObject, ContentManager content)
         {
+            ShootingController.LoadContent(content);
         }
 
         public void Draw(GameObject gameObject, GameTime gameTime, Matrix view, Matrix projection)
         {
-
+            ShootingController.Draw(gameTime, view, projection);
         }
     }
 

@@ -10,60 +10,62 @@ namespace TGC.MonoGame.TP.HUD
 {
     public class HUDComponent
     {
-        private List<HUDElement> elementsList = new List<HUDElement>();
+        private Dictionary<string, HUDElement> Elements;
         private float initialHealth;
         private float shootingCooldown;
-        private float health;
         private string tankName;
         public HUDComponent(string tankName, float health, float shootingCooldown)
         {
-            this.health = health;
             this.shootingCooldown = shootingCooldown;
             this.initialHealth = health;
             this.tankName = tankName;
-            elementsList.Add(new HUDElement("cannonBar"));
-            elementsList.Add(new HUDElement("healthBar"));
-            elementsList.Add(new HUDElement("healthGauge"));
-            elementsList.Add(new HUDElement("cannonGauge"));
-            elementsList.Add(new HUDElement(tankName));
+
+            Elements = new Dictionary<string, HUDElement>()
+            {
+                { "cannonBar", new HUDElement("cannonBar") },
+                { "healthBar", new HUDElement("healthBar") },
+                { "healthGauge", new HUDElement("healthGauge") },
+                { "cannonGauge", new HUDElement("cannonGauge") },
+                { tankName, new HUDElement(tankName) }
+            };
 
         }
         public void LoadContent(ContentManager content)
         {
-            for (int i = 0; i < elementsList.Count; i++)
+            foreach (var (_, element) in Elements) 
             {
-                elementsList[i].LoadContent(content);
+                element.LoadContent(content);
             }
-            elementsList.Find(x => x.AssetName == "healthGauge").SetWidth(initialHealth);
-            elementsList.Find(x => x.AssetName == "cannonGauge").SetWidth(shootingCooldown);
 
-            elementsList.Find(x => x.AssetName == tankName).MoveElement(80, 50);
-            elementsList.Find(x => x.AssetName == "healthBar").MoveElement(150, 50);
-            elementsList.Find(x => x.AssetName == "healthGauge").MoveElement(183, 57);
-            elementsList.Find(x => x.AssetName == "cannonBar").MoveElement(160, 70);
-            elementsList.Find(x => x.AssetName == "cannonGauge").MoveElement(194, 97);
+            Elements["healthGauge"].SetWidth(initialHealth);
+            Elements["cannonGauge"].SetWidth(shootingCooldown);
+
+            Elements[tankName].MoveElement(80, 50);
+            Elements["healthBar"].MoveElement(150, 50);
+            Elements["healthGauge"].MoveElement(183, 57);
+            Elements["cannonBar"].MoveElement(160, 70);
+            Elements["cannonGauge"].MoveElement(194, 97);
 
         }
 
-        public void Update(float newhealth, float cooldown)
+        public void UpdatePlayerHealth(float newHealth)
         {
-            if (newhealth < health)
-            {
-                float healthDifference = initialHealth - newhealth;
-                elementsList.Find(x => x.AssetName == "healthGauge").Update(healthDifference);
-            }
+            Elements["healthGauge"].Update(newHealth);
+        }
+
+        public void UpdatePlayerCooldown(float cooldown)
+        {
             if(cooldown < shootingCooldown)
             {
                 float cooldownDifference = shootingCooldown - cooldown;
-                elementsList.Find(x => x.AssetName == "cannonGauge").Update(cooldownDifference);
+                Elements["cannonGauge"].Update(cooldownDifference);
             }
-             health = newhealth;
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Begin();
-            foreach (HUDElement element in elementsList)
+            foreach (var (_, element) in Elements)
             {
                 element.Draw(spriteBatch);
             }

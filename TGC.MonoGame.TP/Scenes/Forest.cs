@@ -33,14 +33,14 @@ namespace TGC.MonoGame.TP.Scenes
             Random Random = new(Guid.NewGuid().GetHashCode());
 
             // LOAD SMALL TREES
-            for(var i = 0; i < smallTreesAmount; i++)
+            for (var i = 0; i < smallTreesAmount; i++)
             {
                 var position = AlgebraHelper.GetRandomPointInCircle(Center, _radius, Random);
                 var rotation = Convert.ToSingle(AlgebraHelper.FULL_ROTATION * Random.NextDouble());
                 var scale = Convert.ToSingle(Math.Max(SMALL_TREES_MIN_SCALE, Random.NextDouble()));
-                
+
                 var tree = new GameObject(
-                    new Tree1GraphicsComponent(),
+                    new BushGraphicsComponent(),
                     new Vector3(position.X, Terrain.Height(position.X, position.Y), position.Y),
                     rotation,
                     scale,

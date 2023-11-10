@@ -62,9 +62,7 @@ namespace TGC.MonoGame.TP
         private Terrain Terrain;
         public bool IsMenuActive { get; set; }
 
-
         public const string ContentFolderEffects = "Effects/";
-
         private MouseCamera MouseCamera { get; set; }
 
         private Song MainSong { get; set; }
@@ -103,10 +101,10 @@ namespace TGC.MonoGame.TP
             MouseCamera = new MouseCamera(GraphicsDevice);
             Bounds = new BoundsComponent(Content, Terrain);
 
-            var playerGraphics = new PanzerGraphicsComponent();
+            TankGraphicsComponent playerGraphics = new PanzerGraphicsComponent();
 
             Player = new GameObject(
-                new List<IComponent> { playerGraphics, new TankInputComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, PlayerDefaults.CoolDown, MouseCamera, Terrain, playerGraphics) },
+                new List<IComponent> { playerGraphics, new TankInputComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, PlayerDefaults.CoolDown, MouseCamera, Terrain, HUD, playerGraphics) },
                 new PanzerCollisionComponent(),
                 new Vector3(0f, Terrain.Height(0f, 0f), 0f),
                 PlayerDefaults.YAxisRotation,
@@ -167,7 +165,7 @@ namespace TGC.MonoGame.TP
             }
             Bounds.Update(gameTime);
 
-            DetectCollisions();
+            //DetectCollisions();
 
             base.Update(gameTime);
         }

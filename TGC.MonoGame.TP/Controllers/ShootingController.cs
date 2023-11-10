@@ -16,16 +16,24 @@ namespace TGC.MonoGame.TP.Controllers
 {
     class ShootingController
     {
+        private const int MAX_BULLTES_AMOUNT = 5;
+
+        private int currentBulletIdx = 0;
+        private readonly Queue<int> ActiveBullets;
         private float CoolDown { get; }
-        private float _cooldownTimer;
-        private List<GameObject> Bullets { get; }
+        public float _cooldownTimer;
+        private GameObject[] Bullets { get; }
         private SoundEffectInstance ShootingSoundEffect { get; set; }
 
         public ShootingController(float cooldown)
         {
             CoolDown = cooldown;
             _cooldownTimer = cooldown;
-            Bullets = new List<GameObject>();
+
+            Bullets = new GameObject[MAX_BULLTES_AMOUNT];
+            ActiveBullets = new Queue<int>(MAX_BULLTES_AMOUNT);
+
+            for (var i = 0; i < MAX_BULLTES_AMOUNT; i++) Bullets[i] = new(new BushGraphicsComponent());
         }
 
         private bool IsShooting()
@@ -37,48 +45,44 @@ namespace TGC.MonoGame.TP.Controllers
         {
             var soundEffect = Content.Load<SoundEffect>("Audio/cannonFire");
             ShootingSoundEffect = soundEffect.CreateInstance();
+            foreach (var bullet in Bullets) bullet.LoadContent(Content);
         }
 
-        public void Update(GameTime gameTime, MouseCamera mouseCamera, Terrain Terrain, bool IsMenuActive)
+        public void Update(GameTime gameTime)
         {
-
             float deltaTime = Convert.ToSingle(gameTime.ElapsedGameTime.TotalSeconds);
 
-            _cooldownTimer += deltaTime;
-            foreach (var bullet in Bullets)
-            {
-                bullet.Update(gameTime);
-            }
+            if (IsShooting()) _cooldownTimer += deltaTime;
+
+            foreach (var i in ActiveBullets) Bullets[i].Update(gameTime);
         }
 
         public void Draw(GameTime gameTime, Matrix view, Matrix projection)
         {
-            foreach (var bullet in Bullets)
-            {
-                bullet.Draw(gameTime, view, projection);
-            }
+            foreach (var i in ActiveBullets) Bullets[i].Draw(gameTime, view, projection);
         }
 
         public void Shoot(Vector3 position, Vector3 direction, float speed)
         {
             if(!IsShooting())
             {
-
+                // START COOLDOWN
                 _cooldownTimer = 0;
 
-                var bullet = new GameObject(
-                    new List<IComponent> { new BulletGraphicsComponent() },
-                    position,
-                    0f,
-                    Vector3.Up,
-                    20f,
-                    1f
-                );
+                // ADD BULLET TO QUEUE
+                if (ActiveBullets.Count == MAX_BULLTES_AMOUNT) ActiveBullets.Dequeue();
+                ActiveBullets.Enqueue(currentBulletIdx);
 
-                Bullets.Add(bullet);
+                // SET BULLET CONFIG
+                var bullet = Bullets[currentBulletIdx];
+                bullet.Position = position;
+                bullet.RotationDirection = direction;
+                bullet.Velocity = direction * speed;
 
+                // PLAY SHOOTING SOUND
                 ShootingSoundEffect.Play();
 
+                currentBulletIdx++;
             }
         }
 
