@@ -3,14 +3,8 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TGC.MonoGame.TP.Actors;
-using TGC.MonoGame.TP.Components;
-using TGC.MonoGame.TP.Components.Collisions;
 using TGC.MonoGame.TP.Components.Graphics;
-using TGC.MonoGame.TP.Components.Inputs;
 
 namespace TGC.MonoGame.TP.Controllers
 {
@@ -19,7 +13,7 @@ namespace TGC.MonoGame.TP.Controllers
         private const int MAX_BULLTES_AMOUNT = 5;
 
         private int currentBulletIdx = 0;
-        private readonly Queue<int> ActiveBullets;
+        private readonly LinkedList<int> ActiveBullets;
         private float CoolDown { get; }
         public float _cooldownTimer;
         private GameObject[] Bullets { get; }
@@ -31,7 +25,7 @@ namespace TGC.MonoGame.TP.Controllers
             _cooldownTimer = cooldown;
 
             Bullets = new GameObject[MAX_BULLTES_AMOUNT];
-            ActiveBullets = new Queue<int>(MAX_BULLTES_AMOUNT);
+            ActiveBullets = new LinkedList<int>();
 
             for (var i = 0; i < MAX_BULLTES_AMOUNT; i++) Bullets[i] = new(new BushGraphicsComponent());
         }
@@ -70,8 +64,8 @@ namespace TGC.MonoGame.TP.Controllers
                 _cooldownTimer = 0;
 
                 // ADD BULLET TO QUEUE
-                if (ActiveBullets.Count == MAX_BULLTES_AMOUNT) ActiveBullets.Dequeue();
-                ActiveBullets.Enqueue(currentBulletIdx);
+                if (ActiveBullets.Count == MAX_BULLTES_AMOUNT) ActiveBullets.RemoveLast();
+                ActiveBullets.AddFirst(currentBulletIdx);
 
                 // SET BULLET CONFIG
                 var bullet = Bullets[currentBulletIdx];
@@ -83,6 +77,7 @@ namespace TGC.MonoGame.TP.Controllers
                 ShootingSoundEffect.Play();
 
                 currentBulletIdx++;
+                if (currentBulletIdx == MAX_BULLTES_AMOUNT) currentBulletIdx = 0;
             }
         }
 

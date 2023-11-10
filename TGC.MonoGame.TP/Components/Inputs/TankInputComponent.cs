@@ -59,7 +59,7 @@ namespace TGC.MonoGame.TP.Components.Inputs
             {
                 var direction = MouseCamera.FollowedPosition - MouseCamera.OffsetPosition;
                 direction.Normalize();
-                ShootingController.Shoot(Player.Position, direction, 2000f);
+                ShootingController.Shoot(Player.Position, direction, 10000f);
             }
             HUDComponent.UpdatePlayerCooldown(ShootingController._cooldownTimer);
 

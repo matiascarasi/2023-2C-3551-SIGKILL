@@ -164,6 +164,7 @@ namespace TGC.MonoGame.TP
                 obj.Update(gameTime);
             }
             Bounds.Update(gameTime);
+            Gizmos.UpdateViewProjection(MouseCamera.View, MouseCamera.Projection);
 
             //DetectCollisions();
 
