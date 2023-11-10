@@ -77,7 +77,7 @@ namespace TGC.MonoGame.TP.Components.Graphics
         {
 
             var scaleMatrix = Matrix.CreateScale(Object.Scale);
-            var rotationMatrix = Matrix.CreateRotationY(MathHelper.ToRadians(Object.RotationAngle));
+            var rotationMatrix = Matrix.CreateFromQuaternion(Quaternion.CreateFromAxisAngle(Object.RotationDirection, MathHelper.ToRadians(Object.RotationAngle)));
             var translationMatrix = Matrix.CreateTranslation(Object.Position);
 
             var world = scaleMatrix * rotationMatrix * translationMatrix;

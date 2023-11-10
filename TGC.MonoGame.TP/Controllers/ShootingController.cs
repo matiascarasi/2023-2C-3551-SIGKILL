@@ -10,29 +10,30 @@ namespace TGC.MonoGame.TP.Controllers
 {
     class ShootingController
     {
-        private const int MAX_BULLTES_AMOUNT = 5;
 
-        private int currentBulletIdx = 0;
+        private int _currentBulletIdx = 0;
+        private readonly int _maxBulletsAmount;
         private readonly LinkedList<int> ActiveBullets;
-        private float CoolDown { get; }
-        public float _cooldownTimer;
+        private readonly float _coolDown;
+        public float CooldownTimer { get; set; }
         private GameObject[] Bullets { get; }
         private SoundEffectInstance ShootingSoundEffect { get; set; }
 
-        public ShootingController(float cooldown)
+        public ShootingController(float cooldown, int maxBulletsAmount)
         {
-            CoolDown = cooldown;
-            _cooldownTimer = cooldown;
+            _coolDown = cooldown;
+            CooldownTimer = cooldown;
+            _maxBulletsAmount = maxBulletsAmount;
 
-            Bullets = new GameObject[MAX_BULLTES_AMOUNT];
+            Bullets = new GameObject[_maxBulletsAmount];
             ActiveBullets = new LinkedList<int>();
 
-            for (var i = 0; i < MAX_BULLTES_AMOUNT; i++) Bullets[i] = new(new BushGraphicsComponent());
+            for (var i = 0; i < _maxBulletsAmount; i++) Bullets[i] = new(new BulletGraphicsComponent(), Vector3.Zero, 0f, 20f, 0f);
         }
 
         private bool IsShooting()
         {
-            return CoolDown > _cooldownTimer;
+            return _coolDown > CooldownTimer;
         }
 
         public void LoadContent(ContentManager Content)
@@ -46,7 +47,7 @@ namespace TGC.MonoGame.TP.Controllers
         {
             float deltaTime = Convert.ToSingle(gameTime.ElapsedGameTime.TotalSeconds);
 
-            if (IsShooting()) _cooldownTimer += deltaTime;
+            if (IsShooting()) CooldownTimer += deltaTime;
 
             foreach (var i in ActiveBullets) Bullets[i].Update(gameTime);
         }
@@ -61,23 +62,34 @@ namespace TGC.MonoGame.TP.Controllers
             if(!IsShooting())
             {
                 // START COOLDOWN
-                _cooldownTimer = 0;
+                CooldownTimer = 0;
 
                 // ADD BULLET TO QUEUE
-                if (ActiveBullets.Count == MAX_BULLTES_AMOUNT) ActiveBullets.RemoveLast();
-                ActiveBullets.AddFirst(currentBulletIdx);
+                if (ActiveBullets.Count == _maxBulletsAmount) ActiveBullets.RemoveLast();
+                ActiveBullets.AddFirst(_currentBulletIdx);
 
+                // GET ROTATIONS ANGLE AND DIRECTION
+                var right = Vector3.Cross(direction, Vector3.Up);
+                var upDirection = Vector3.Cross(right, direction);
+
+                var crossDirection = Vector3.Cross(Vector3.Forward, direction);
+                var dotDirection = Vector3.Dot(Vector3.Forward, direction);
+
+                var angleSideFactor = Vector3.Dot(Vector3.Up, crossDirection) > 0f ? 1 : -1;
+                var rotationAngle = MathHelper.ToDegrees(MathF.Atan2(crossDirection.Length(), dotDirection)) * angleSideFactor;
+                
                 // SET BULLET CONFIG
-                var bullet = Bullets[currentBulletIdx];
+                var bullet = Bullets[_currentBulletIdx];
                 bullet.Position = position;
-                bullet.RotationDirection = direction;
+                bullet.RotationDirection = upDirection;
+                bullet.RotationAngle = rotationAngle;
                 bullet.Velocity = direction * speed;
 
                 // PLAY SHOOTING SOUND
                 ShootingSoundEffect.Play();
 
-                currentBulletIdx++;
-                if (currentBulletIdx == MAX_BULLTES_AMOUNT) currentBulletIdx = 0;
+                _currentBulletIdx++;
+                if (_currentBulletIdx == _maxBulletsAmount) _currentBulletIdx = 0;
             }
         }
 

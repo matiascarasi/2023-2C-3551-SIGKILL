@@ -7,7 +7,6 @@ namespace TGC.MonoGame.TP.Components.Graphics
 {
     class T90GraphicsComponent : TankGraphicsComponent
     {
-        const float MAX_TURRET_ANGLE = -0.25f;
         public T90GraphicsComponent() : base(
                 "Models/TankWars/T90/T90",
                 "Effects/BasicTexture",
@@ -27,8 +26,7 @@ namespace TGC.MonoGame.TP.Components.Graphics
 
         public override void Update(GameObject gameObject, GameTime gameTime)
         {
-            if (CannonRotation > MAX_TURRET_ANGLE)
-                gameObject.Model.Bones["Cannon"].Transform = Matrix.CreateRotationX(CannonRotation) * CannonTransform;
+            gameObject.Model.Bones["Cannon"].Transform = Matrix.CreateRotationX(CannonRotation) * CannonTransform;
             gameObject.Model.Bones["Turret"].Transform = Matrix.CreateRotationY(TurretRotation) * TurretTransform;
         }
     }

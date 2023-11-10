@@ -17,6 +17,8 @@ namespace TGC.MonoGame.TP.Components.Inputs
 {
     class TankInputComponent : IComponent
     {
+        const float MAX_TURRET_ANGLE = -0.25f;
+        const int MAX_BULLETS_AMOUNT = 3;
         private MovementController MovementController { get; set; }
         private ShootingController ShootingController { get; set; }
         private MouseState PrevMouseState { get; set; }
@@ -28,7 +30,7 @@ namespace TGC.MonoGame.TP.Components.Inputs
         public TankInputComponent(float driveSpeed, float rotationSpeed, float shootingCooldown, MouseCamera mouseCamera, Terrain terrain, HUDComponent hudComponent, TankGraphicsComponent graphicsComponent)
         {
             MovementController = new MovementController(driveSpeed, rotationSpeed);
-            ShootingController = new ShootingController(shootingCooldown);
+            ShootingController = new ShootingController(shootingCooldown, MAX_BULLETS_AMOUNT);
             PrevMouseState = Mouse.GetState();
 
             MouseCamera = mouseCamera;
@@ -51,18 +53,18 @@ namespace TGC.MonoGame.TP.Components.Inputs
             Player.Position = new Vector3(X, height, Z);
 
             //DETECCION DE MOVIMIENTO DEL MOUSE
-            GraphicsComponent.CannonRotation = MouseCamera.UpDownRotation;
+            GraphicsComponent.CannonRotation = MathF.Max(MouseCamera.UpDownRotation, MAX_TURRET_ANGLE);
             GraphicsComponent.TurretRotation = MouseCamera.LeftRightRotation;
 
             //DETECCION DE CLICK
             if (Mouse.GetState().LeftButton == ButtonState.Pressed && PrevMouseState.LeftButton == ButtonState.Released)
             {
                 var direction = MouseCamera.FollowedPosition - MouseCamera.OffsetPosition;
+                if (MouseCamera.UpDownRotation < MAX_TURRET_ANGLE) direction.Y = 0f;
                 direction.Normalize();
-                ShootingController.Shoot(Player.Position, direction, 10000f);
+                ShootingController.Shoot(Player.Position, direction, 8000f);
             }
-            HUDComponent.UpdatePlayerCooldown(ShootingController._cooldownTimer);
-
+            HUDComponent.UpdatePlayerCooldown(ShootingController.CooldownTimer);
 
             //DETECCION DE TECLA
             PrevMouseState = Mouse.GetState();

@@ -74,7 +74,7 @@ namespace TGC.MonoGame.TP.Actors
             Scale = scale;
             Health = health;
             Velocity = velocity;
-            World = Matrix.CreateScale(Scale) * Matrix.CreateFromQuaternion(new Quaternion(RotationDirection, RotationAngle)) * Matrix.CreateTranslation(Position);
+            World = Matrix.CreateScale(Scale) * Matrix.CreateFromQuaternion(Quaternion.CreateFromAxisAngle(RotationDirection, MathHelper.ToRadians(RotationAngle))) * Matrix.CreateTranslation(Position);
         }
 
         public void LoadContent(ContentManager content)

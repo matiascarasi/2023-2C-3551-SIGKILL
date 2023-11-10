@@ -9,7 +9,7 @@ namespace TGC.MonoGame.TP.Defaults
         public const float Scale = 1f;
         public const string TankName = "Panzer";
         public const float Health = 50f;
-        public const float CoolDown = 5f;
+        public const float CoolDown = 3f;
         public const float Damage = 100f;
         public const float DriveSpeed = 300f;
         public const float RotationSpeed = 20f;
