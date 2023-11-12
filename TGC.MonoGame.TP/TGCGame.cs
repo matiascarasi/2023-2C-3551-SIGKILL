@@ -166,7 +166,7 @@ namespace TGC.MonoGame.TP
             Bounds.Update(gameTime);
             Gizmos.UpdateViewProjection(MouseCamera.View, MouseCamera.Projection);
 
-            //DetectCollisions();
+            DetectCollisions();
 
             base.Update(gameTime);
         }
@@ -178,7 +178,7 @@ namespace TGC.MonoGame.TP
             Bounds.Draw(gameTime, MouseCamera.View, MouseCamera.Projection);
             foreach(var obj in Objects)
             {
-                obj.Draw(gameTime, MouseCamera.View, MouseCamera.Projection);
+                obj.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, Gizmos);
             }
             Gizmos.Draw();
             if (IsMenuActive) Menu.Draw(SpriteBatch); else HUD.Draw(SpriteBatch);

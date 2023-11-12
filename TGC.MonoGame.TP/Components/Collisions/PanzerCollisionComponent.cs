@@ -1,11 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using TGC.MonoGame.TP.Actors;
 using TGC.MonoGame.TP.Collisions;
 
 namespace TGC.MonoGame.TP.Components.Collisions
 {
-    class PanzerCollisionComponent : CollisionComponent
+    class PanzerCollisionComponent : OrientedBoundingBoxComponent
     {
         public override void LoadContent(GameObject gameObject)
         {

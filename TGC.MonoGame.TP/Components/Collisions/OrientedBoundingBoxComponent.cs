@@ -1,13 +1,10 @@
-using System;
-using System.Linq;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using TGC.MonoGame.TP.Actors;
 using TGC.MonoGame.TP.Collisions;
 
 namespace TGC.MonoGame.TP.Components.Collisions
 {
-    public class CollisionComponent
+    public class OrientedBoundingBoxComponent: ICollisionComponent
     {
         private OrientedBoundingBox OrientedBoundingBox;
         private Matrix OrientedBoundingBoxWorld;
@@ -30,9 +27,9 @@ namespace TGC.MonoGame.TP.Components.Collisions
             gizmos.DrawCube(OrientedBoundingBoxWorld);
         }
 
-        public bool CollidesWith(CollisionComponent other)
+        public bool CollidesWith(ICollisionComponent other)
         {
-            return OrientedBoundingBox.Intersects(other.OrientedBoundingBox);
+            return other.CollidesWithOBB(this);
         }
 
         protected void SetBoundingBox(GameObject gameObject, BoundingBox boundingBox)
@@ -43,12 +40,16 @@ namespace TGC.MonoGame.TP.Components.Collisions
             OrientedBoundingBoxWorld = CreateObjectWorld(gameObject.Position, gameObject.RotationAngle);
         }
 
+        public bool CollidesWithOBB(OrientedBoundingBoxComponent other)
+        {
+            return other.OrientedBoundingBox.Intersects(OrientedBoundingBox);
+        }
+
         private Matrix CreateObjectWorld(Vector3 position, float rotation)
         {
             return Matrix.CreateScale(OrientedBoundingBox.Extents * 2f) 
                     * Matrix.CreateRotationY(MathHelper.ToRadians(rotation)) 
                         * Matrix.CreateTranslation(position + new Vector3(0f, OrientedBoundingBox.Extents.Y, 0f));
         }
-        
     }
 }

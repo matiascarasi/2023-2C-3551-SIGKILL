@@ -5,11 +5,6 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using TGC.MonoGame.TP.Collisions;
 using TGC.MonoGame.TP.Components;
-using TGC.MonoGame.TP.Components.Collisions;
-using TGC.MonoGame.TP.Components.Graphics;
-using TGC.MonoGame.TP.Components.Inputs;
-using TGC.MonoGame.TP.Gizmos;
-using TGC.MonoGame.TP.HUD;
 
 namespace TGC.MonoGame.TP.Actors
 {
@@ -24,9 +19,9 @@ namespace TGC.MonoGame.TP.Actors
         public Vector3 Velocity { get; set; }
         public Model Model { get; set; }
         public List<IComponent> Components { get; }
-        public CollisionComponent CollisionComponent { get; }
+        public ICollisionComponent CollisionComponent { get; }
 
-        public GameObject(List<IComponent> components, CollisionComponent collisionComponent, Vector3 position, float rotationAngle, Vector3 rotationDirection, float scale, float health)
+        public GameObject(List<IComponent> components, ICollisionComponent collisionComponent, Vector3 position, float rotationAngle, Vector3 rotationDirection, float scale, float health)
         {
             Components = components;
             CollisionComponent = collisionComponent;
@@ -37,7 +32,7 @@ namespace TGC.MonoGame.TP.Actors
         public GameObject(List<IComponent> components, Vector3 position, float rotationAngle, Vector3 rotationDirection, float scale, float health)
         {
             Components = components;
-            CollisionComponent = new CollisionComponent();
+            CollisionComponent = new Components.Collisions.OrientedBoundingBoxComponent();
 
             Initialize(position, rotationDirection, rotationAngle, scale, health, Vector3.Zero);
         }
@@ -45,7 +40,7 @@ namespace TGC.MonoGame.TP.Actors
         public GameObject(IComponent component)
         {
             Components = new List<IComponent> { component };
-            CollisionComponent = new CollisionComponent();
+            CollisionComponent = new Components.Collisions.OrientedBoundingBoxComponent();
 
             Initialize(Vector3.Zero, Vector3.Up, 0f, 1f, 0f, Vector3.Zero);
         }
@@ -53,7 +48,7 @@ namespace TGC.MonoGame.TP.Actors
         public GameObject(IComponent component, Vector3 position, float rotationAngle, Vector3 rotationDirection, float scale, float health)
         {
             Components = new List<IComponent> { component };
-            CollisionComponent = new CollisionComponent();
+            CollisionComponent = new Components.Collisions.OrientedBoundingBoxComponent();
 
             Initialize(position, rotationDirection, rotationAngle, scale, health, Vector3.Zero);
         }
@@ -61,7 +56,7 @@ namespace TGC.MonoGame.TP.Actors
         public GameObject(IComponent component, Vector3 position, float rotationAngle, float scale, float health)
         {
             Components = new List<IComponent> { component };
-            CollisionComponent = new CollisionComponent();
+            CollisionComponent = new Components.Collisions.OrientedBoundingBoxComponent();
 
             Initialize(position, Vector3.Up, rotationAngle, scale, health, Vector3.Zero);
         }
