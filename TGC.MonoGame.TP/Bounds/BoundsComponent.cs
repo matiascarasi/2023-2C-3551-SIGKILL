@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using TGC.MonoGame.TP.Actors;
-using TGC.MonoGame.TP.Collisions;
-using TGC.MonoGame.TP.Components.Collisions;
+using TGC.MonoGame.TP.Components.Collisions.Volumes;
 using TGC.MonoGame.TP.Components.Graphics;
-using TGC.MonoGame.TP.Components.Inputs;
 
 namespace TGC.MonoGame.TP.Bounds
 {

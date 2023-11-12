@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using TGC.MonoGame.TP.Collisions;
 using TGC.MonoGame.TP.Components;
+using TGC.MonoGame.TP.Components.Collisions;
 
 namespace TGC.MonoGame.TP.Actors
 {

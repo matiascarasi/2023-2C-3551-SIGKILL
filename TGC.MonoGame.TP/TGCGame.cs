@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata;
-using Microsoft.VisualBasic.CompilerServices;
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
@@ -10,17 +6,14 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using TGC.MonoGame.TP.Actors;
 using TGC.MonoGame.TP.Bounds;
-using TGC.MonoGame.TP.Collisions;
 using TGC.MonoGame.TP.Components;
 using TGC.MonoGame.TP.Components.Collisions;
 using TGC.MonoGame.TP.Components.Graphics;
 using TGC.MonoGame.TP.Components.Inputs;
-using TGC.MonoGame.TP.Controllers;
 using TGC.MonoGame.TP.Defaults;
 using TGC.MonoGame.TP.HUD;
 using TGC.MonoGame.TP.Menu;
 using TGC.MonoGame.TP.Scenes;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace TGC.MonoGame.TP
 {
@@ -91,7 +84,7 @@ namespace TGC.MonoGame.TP
             Instance = SoundEffect.CreateInstance();
 
             IsMenuActive = true;
-            
+
             //Cambio textura de cursor
             Mouse.SetCursor(MouseCursor.FromTexture2D(Content.Load<Texture2D>("Textures/Menu/cursor"), 0, 0));
 
@@ -105,12 +98,12 @@ namespace TGC.MonoGame.TP
 
             Player = new GameObject(
                 new List<IComponent> { playerGraphics, new TankInputComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, PlayerDefaults.CoolDown, MouseCamera, Terrain, HUD, playerGraphics) },
-                new PanzerCollisionComponent(),
+                new OrientedBoundingBoxComponent(),
                 new Vector3(0f, Terrain.Height(0f, 0f), 0f),
                 PlayerDefaults.YAxisRotation,
                 Vector3.Up,
                 PlayerDefaults.Scale,
-                PlayerDefaults.Health            
+                PlayerDefaults.Health
             );
 
             Objects = new List<GameObject>() { Player };
@@ -126,7 +119,7 @@ namespace TGC.MonoGame.TP
         {
             SpriteBatch = new SpriteBatch(GraphicsDevice);
             Menu.LoadContent(Content, GraphicsDevice);
-            HUD.LoadContent(Content);   
+            HUD.LoadContent(Content);
             Terrain.LoadContent(Content, GraphicsDevice);
             Bounds.LoadContent(Content);
             Player.LoadContent(Content);
@@ -148,14 +141,14 @@ namespace TGC.MonoGame.TP
                 Exit();
             }
 
-            if(!IsMenuActive)
+            if (!IsMenuActive)
             {
                 MediaPlayer.Volume = .1f;
 
                 //MediaPlayer.Stop();
                 Instance.Play();
             }
-          
+
             Menu.Update();
             MouseCamera.Update(gameTime, Player.World, IsMenuActive);
 
@@ -176,7 +169,7 @@ namespace TGC.MonoGame.TP
             GraphicsDevice.Clear(Color.Black);
             Terrain.Draw(GraphicsDevice, MouseCamera.View, MouseCamera.Projection);
             Bounds.Draw(gameTime, MouseCamera.View, MouseCamera.Projection);
-            foreach(var obj in Objects)
+            foreach (var obj in Objects)
             {
                 obj.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, Gizmos);
             }
@@ -194,19 +187,15 @@ namespace TGC.MonoGame.TP
 
         private void DetectCollisions()
         {
-            var collision = false;
             for (int i = 0; i < Objects.Count; i++)
             {
-                if (Objects[i].CollidesWith(Player) && Objects[i] != Player )
+                if (Objects[i].CollidesWith(Player) && Objects[i] != Player)
                 {
                     Objects.Remove(Objects[i]);
-                    collision = true;
                     break;
                 }
             }
-            var color = collision ? Color.Red : Color.Yellow;
-            
-            Gizmos.SetColor(color);
+            Gizmos.SetColor(Color.Yellow);
             Gizmos.UpdateViewProjection(MouseCamera.View, MouseCamera.Projection);
         }
     }

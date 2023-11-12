@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace TGC.MonoGame.TP.Collisions
+namespace TGC.MonoGame.TP.Components.Collisions.Volumes
 {
     /// <summary>
     ///     Utilidades para hacer detección de colisiones

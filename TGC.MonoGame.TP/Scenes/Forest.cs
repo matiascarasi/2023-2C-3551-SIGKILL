@@ -8,6 +8,7 @@ using TGC.MonoGame.TP.Components.Graphics;
 using TGC.MonoGame.TP.Components.Inputs;
 using TGC.MonoGame.TP.Helpers;
 using TGC.MonoGame.TP.Actors;
+using TGC.MonoGame.TP.Components;
 
 namespace TGC.MonoGame.TP.Scenes
 {
@@ -40,9 +41,11 @@ namespace TGC.MonoGame.TP.Scenes
                 var scale = Convert.ToSingle(Math.Max(SMALL_TREES_MIN_SCALE, Random.NextDouble()));
 
                 var tree = new GameObject(
-                    new BushGraphicsComponent(),
+                    new List<IComponent> { new BushGraphicsComponent() },
+                    new BoundingSphereComponent(),
                     new Vector3(position.X, Terrain.Height(position.X, position.Y), position.Y),
                     rotation,
+                    Vector3.Up,
                     scale,
                     0.1f
                 );

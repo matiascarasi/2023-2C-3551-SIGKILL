@@ -1,12 +1,12 @@
 using Microsoft.Xna.Framework;
 using TGC.MonoGame.TP.Actors;
-using TGC.MonoGame.TP.Collisions;
+using TGC.MonoGame.TP.Components.Collisions.Volumes;
 
 namespace TGC.MonoGame.TP.Components.Collisions
 {
     public class OrientedBoundingBoxComponent: ICollisionComponent
     {
-        private OrientedBoundingBox OrientedBoundingBox;
+        public OrientedBoundingBox OrientedBoundingBox;
         private Matrix OrientedBoundingBoxWorld;
         public virtual void LoadContent(GameObject gameObject)
         {
@@ -43,6 +43,11 @@ namespace TGC.MonoGame.TP.Components.Collisions
         public bool CollidesWithOBB(OrientedBoundingBoxComponent other)
         {
             return other.OrientedBoundingBox.Intersects(OrientedBoundingBox);
+        }
+
+        public bool CollidesWithSphere(BoundingSphereComponent sphereComponent)
+        {
+            return OrientedBoundingBox.Intersects(sphereComponent.BoundingSphere);
         }
 
         private Matrix CreateObjectWorld(Vector3 position, float rotation)
