@@ -12,6 +12,7 @@ using TGC.MonoGame.TP.Actors;
 using TGC.MonoGame.TP.Bounds;
 using TGC.MonoGame.TP.Collisions;
 using TGC.MonoGame.TP.Components;
+using TGC.MonoGame.TP.Components.AI;
 using TGC.MonoGame.TP.Components.Collisions;
 using TGC.MonoGame.TP.Components.Graphics;
 using TGC.MonoGame.TP.Components.Inputs;
@@ -58,6 +59,7 @@ namespace TGC.MonoGame.TP
         private HUDComponent HUD { get; set; }
         private SpriteBatch SpriteBatch { get; set; }
         private GameObject Player { get; set; }
+        private GameObject Enemy { get; set; }
         private BoundsComponent Bounds { get; set; }
         private Terrain Terrain;
         public bool IsMenuActive { get; set; }
@@ -101,22 +103,36 @@ namespace TGC.MonoGame.TP
             MouseCamera = new MouseCamera(GraphicsDevice);
             Bounds = new BoundsComponent(Content, Terrain);
 
-            TankGraphicsComponent playerGraphics = new PanzerGraphicsComponent();
+            Objects = new List<GameObject>();
+
+            var playerGraphics = new T90GraphicsComponent();
+            var enemyGraphics = new T90GraphicsComponent();
 
             Player = new GameObject(
-                new List<IComponent> { playerGraphics, new TankInputComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, PlayerDefaults.CoolDown, MouseCamera, Terrain, HUD, playerGraphics) },
-                new PanzerCollisionComponent(),
-                new Vector3(0f, Terrain.Height(0f, 0f), 0f),
+                playerGraphics,
+                new T90CollisionComponent(),
+                new Vector3(-2000f, Terrain.Height(-2000f, -2000f), -2000f),
                 PlayerDefaults.YAxisRotation,
-                Vector3.Up,
                 PlayerDefaults.Scale,
                 PlayerDefaults.Health            
             );
 
-            Objects = new List<GameObject>() { Player };
+            Enemy = new GameObject(
+                enemyGraphics,
+                new T90CollisionComponent(),
+                new Vector3(2000f, Terrain.Height(2000f, 2000f), 2000f),
+                PlayerDefaults.YAxisRotation,
+                PlayerDefaults.Scale,
+                PlayerDefaults.Health
+            );
 
-            Forest = new Forest(ForestDefaults.Center, ForestDefaults.Radius, ForestDefaults.Density);
+            Enemy.AddComponent(new AITankComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, PlayerDefaults.CoolDown, 5000, Player, Objects, Terrain, enemyGraphics));
+            Player.AddComponent(new AITankComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, PlayerDefaults.CoolDown, 5000, Enemy, Objects, Terrain, playerGraphics));
 
+            Objects.Add(Enemy);
+            Objects.Add(Player);
+
+            Forest = new Forest(ForestDefaults.Center, ForestDefaults.Radius,  0f);
 
             base.Initialize();
         }
@@ -130,6 +146,7 @@ namespace TGC.MonoGame.TP
             Terrain.LoadContent(Content, GraphicsDevice);
             Bounds.LoadContent(Content);
             Player.LoadContent(Content);
+            Enemy.LoadContent(Content);
             Forest.LoadContent(Content, Terrain, Objects);
             Gizmos.LoadContent(GraphicsDevice, Content);
 

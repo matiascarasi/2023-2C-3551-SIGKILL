@@ -20,13 +20,7 @@ namespace TGC.MonoGame.TP.Components.Graphics
 
         public TankGraphicsComponent(string model, string defaultEffect, string defaultTexture, Dictionary<string, string> effects, Dictionary<string, string> textures) : base(model, defaultEffect, defaultTexture, effects, textures)
         { }
-        public Vector3 GetCannonDirection(GameObject gameObject)
-        {
-            var direction = gameObject.Model.Bones["Turret"].Transform.Forward;
-            direction.Y = gameObject.Model.Bones["Cannon"].Transform.Forward.Y;
-            direction.Normalize();
-            return direction;
-        }
+        abstract public Vector3 GetCannonDirection(GameObject gameObject);
 
     }
 }

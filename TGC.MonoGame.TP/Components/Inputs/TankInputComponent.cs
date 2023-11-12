@@ -17,7 +17,7 @@ namespace TGC.MonoGame.TP.Components.Inputs
 {
     class TankInputComponent : IComponent
     {
-        const float MAX_TURRET_ANGLE = -0.25f;
+        const float MAX_TURRET_ANGLE = -0.05f;
         const int MAX_BULLETS_AMOUNT = 3;
         private MovementController MovementController { get; set; }
         private ShootingController ShootingController { get; set; }
@@ -42,14 +42,15 @@ namespace TGC.MonoGame.TP.Components.Inputs
         public void Update(GameObject Player, GameTime gameTime)
         {
 
-            ShootingController.Update(gameTime);
+            ShootingController.Update(Player, gameTime);
+            MovementController.Update(Player, gameTime);
 
             var keyboardState = Keyboard.GetState();
             var deltaTime = Convert.ToSingle(gameTime.ElapsedGameTime.TotalSeconds);
 
             var X = Player.Position.X;
             var Z = Player.Position.Z; 
-            var height = Terrain.Height(X, Z);
+            var height = MathF.Max(Terrain.Height(X, Z), Player.Position.Y);
             Player.Position = new Vector3(X, height, Z);
 
             //DETECCION DE MOVIMIENTO DEL MOUSE
@@ -59,9 +60,7 @@ namespace TGC.MonoGame.TP.Components.Inputs
             //DETECCION DE CLICK
             if (Mouse.GetState().LeftButton == ButtonState.Pressed && PrevMouseState.LeftButton == ButtonState.Released)
             {
-                var direction = MouseCamera.FollowedPosition - MouseCamera.OffsetPosition;
-                if (MouseCamera.UpDownRotation < MAX_TURRET_ANGLE) direction.Y = 0f;
-                direction.Normalize();
+                var direction = GraphicsComponent.GetCannonDirection(Player);
                 ShootingController.Shoot(Player.Position, direction, 8000f);
             }
             HUDComponent.UpdatePlayerCooldown(ShootingController.CooldownTimer);
@@ -91,7 +90,6 @@ namespace TGC.MonoGame.TP.Components.Inputs
                 MovementController.TurnRight(Player, deltaTime);
             }
 
-            MovementController.Move(Player, deltaTime);
         }
 
         public void LoadContent(GameObject gameObject, ContentManager content)

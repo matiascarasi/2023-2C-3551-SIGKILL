@@ -23,6 +23,7 @@ namespace TGC.MonoGame.TP.Actors
         public float Health { get; set; }
         public Vector3 Velocity { get; set; }
         public Model Model { get; set; }
+        public Matrix[] Bones { get; set; }
         public List<IComponent> Components { get; }
         public CollisionComponent CollisionComponent { get; }
 
@@ -34,28 +35,12 @@ namespace TGC.MonoGame.TP.Actors
             Initialize(position, rotationDirection, rotationAngle, scale, health, Vector3.Zero);
         }
 
-        public GameObject(List<IComponent> components, Vector3 position, float rotationAngle, Vector3 rotationDirection, float scale, float health)
-        {
-            Components = components;
-            CollisionComponent = new CollisionComponent();
-
-            Initialize(position, rotationDirection, rotationAngle, scale, health, Vector3.Zero);
-        }
-
-        public GameObject(IComponent component)
+        public GameObject(IComponent component, CollisionComponent collisionComponent, Vector3 position, float rotationAngle, float scale, float health)
         {
             Components = new List<IComponent> { component };
-            CollisionComponent = new CollisionComponent();
+            CollisionComponent = collisionComponent;
 
-            Initialize(Vector3.Zero, Vector3.Up, 0f, 1f, 0f, Vector3.Zero);
-        }
-
-        public GameObject(IComponent component, Vector3 position, float rotationAngle, Vector3 rotationDirection, float scale, float health)
-        {
-            Components = new List<IComponent> { component };
-            CollisionComponent = new CollisionComponent();
-
-            Initialize(position, rotationDirection, rotationAngle, scale, health, Vector3.Zero);
+            Initialize(position, Vector3.Up, rotationAngle, scale, health, Vector3.Zero);
         }
 
         public GameObject(IComponent component, Vector3 position, float rotationAngle, float scale, float health)
@@ -122,5 +107,21 @@ namespace TGC.MonoGame.TP.Actors
         {
             return CollisionComponent.CollidesWith(other.CollisionComponent);
         }
+
+        public float GetRotationAngleInRadians()
+        {
+            return MathHelper.ToRadians(RotationAngle);
+        }
+
+        public Matrix GetRotationMatrix()
+        {
+            return Matrix.CreateFromQuaternion(Quaternion.CreateFromAxisAngle(RotationDirection, GetRotationAngleInRadians()));
+        }
+
+        public void AddComponent(IComponent Component)
+        {
+            Components.Add(Component);
+        }
+
     }
 }

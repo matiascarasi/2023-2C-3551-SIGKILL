@@ -17,17 +17,26 @@ namespace TGC.MonoGame.TP.Components.Graphics
             )
         { }
 
+        public override Vector3 GetCannonDirection(GameObject gameObject)
+        {
+            var turretMatrix = gameObject.Bones[gameObject.Model.Bones["Turret"].Index] * gameObject.GetRotationMatrix();
+            var cannonMatrix = gameObject.Bones[gameObject.Model.Bones["Cannon"].Index] * gameObject.GetRotationMatrix();
+            return -Vector3.Normalize(turretMatrix.Up + cannonMatrix.Up);
+        }
+
         public override void LoadContent(GameObject gameObject, ContentManager Content)
         {
             base.LoadContent(gameObject, Content);
-            CannonTransform = gameObject.Model.Bones["Cannon"].Transform;
-            TurretTransform = gameObject.Model.Bones["Turret"].Transform;
+            CannonTransform = gameObject.Bones[gameObject.Model.Bones["Cannon"].Index];
+            TurretTransform = gameObject.Bones[gameObject.Model.Bones["Turret"].Index];
+            gameObject.Position += Vector3.Up * 150f;
         }
 
         public override void Update(GameObject gameObject, GameTime gameTime)
         {
-            gameObject.Model.Bones["Cannon"].Transform = Matrix.CreateRotationX(CannonRotation) * CannonTransform;
-            gameObject.Model.Bones["Turret"].Transform = Matrix.CreateRotationY(TurretRotation) * TurretTransform;
+            var turretRotation = Matrix.CreateRotationZ(TurretRotation);
+            gameObject.Bones[gameObject.Model.Bones["Cannon"].Index] = Matrix.CreateRotationX(-CannonRotation) * CannonTransform * Matrix.CreateRotationY(TurretRotation);
+            gameObject.Bones[gameObject.Model.Bones["Turret"].Index] = turretRotation * TurretTransform;
         }
     }
 }
