@@ -32,10 +32,7 @@ namespace TGC.MonoGame.TP.Controllers
         public void Update(GameObject gameObject, GameTime gameTime)
         {
 
-            if (Target == null)
-            {
-                return;
-            }
+            if (Target == null) return;
 
             Direction = Target.Position - gameObject.Position;
             var deltaTime = Convert.ToSingle(gameTime.ElapsedGameTime.TotalSeconds);
@@ -43,10 +40,13 @@ namespace TGC.MonoGame.TP.Controllers
             _rotationAngle = AlgebraHelper.GetAngleBetweenTwoVectors(gameObject.World.Forward, Direction);
             
             var distance = Direction.Length();
-            if (distance < _minDistance) {
-                MovementController.Settle();
+            if (distance < _minDistance)
+            {
+                MovementController.Stop();
                 return;
             }
+
+            
             if (_rotationAngle > 0f)
             {
                 MovementController.TurnLeft(gameObject, deltaTime);
@@ -60,14 +60,14 @@ namespace TGC.MonoGame.TP.Controllers
             if (gameTime.TotalGameTime.TotalSeconds < _lastPrediction + PREDICTION_DELAY) return;
             _lastPrediction = gameTime.TotalGameTime.TotalSeconds;
 
-            var willCollide = PredictCollision(gameObject);
-
-            if (!willCollide)
+            if (PredictCollision(gameObject))
             {
-                MovementController.Accelerate();
+                MovementController.Stop();
                 return;
             }
-                
+
+            MovementController.Accelerate();
+
         }
 
         private bool PredictCollision(GameObject gameObject)

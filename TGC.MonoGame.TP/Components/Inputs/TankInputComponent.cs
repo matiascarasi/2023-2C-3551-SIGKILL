@@ -19,15 +19,15 @@ namespace TGC.MonoGame.TP.Components.Inputs
     {
         const float MAX_TURRET_ANGLE = -0.05f;
         const int MAX_BULLETS_AMOUNT = 3;
+        const float BULLET_SPEED = 8000f;
         private MovementController MovementController { get; set; }
         private ShootingController ShootingController { get; set; }
         private MouseState PrevMouseState { get; set; }
         private MouseCamera MouseCamera { get; }
         private Terrain Terrain { get; }
-        private TankGraphicsComponent GraphicsComponent { get; }
         private HUDComponent HUDComponent { get; }
 
-        public TankInputComponent(float driveSpeed, float rotationSpeed, float shootingCooldown, MouseCamera mouseCamera, Terrain terrain, HUDComponent hudComponent, TankGraphicsComponent graphicsComponent)
+        public TankInputComponent(float driveSpeed, float rotationSpeed, float shootingCooldown, MouseCamera mouseCamera, Terrain terrain, HUDComponent hudComponent)
         {
             MovementController = new MovementController(driveSpeed, rotationSpeed);
             ShootingController = new ShootingController(shootingCooldown, MAX_BULLETS_AMOUNT);
@@ -35,12 +35,15 @@ namespace TGC.MonoGame.TP.Components.Inputs
 
             MouseCamera = mouseCamera;
             Terrain = terrain;
-            GraphicsComponent = graphicsComponent;
             HUDComponent = hudComponent;
         }
 
-        public void Update(GameObject Player, GameTime gameTime)
+        public void Update(GameObject Player, GameTime gameTime, GraphicsComponent graphicsComponent)
         {
+
+            if (!(graphicsComponent is TankGraphicsComponent)) return;
+
+            var tankGraphics = graphicsComponent as TankGraphicsComponent;
 
             ShootingController.Update(Player, gameTime);
             MovementController.Update(Player, gameTime);
@@ -50,18 +53,19 @@ namespace TGC.MonoGame.TP.Components.Inputs
 
             var X = Player.Position.X;
             var Z = Player.Position.Z; 
-            var height = MathF.Max(Terrain.Height(X, Z), Player.Position.Y);
+            var height = Terrain.Height(X, Z);
             Player.Position = new Vector3(X, height, Z);
 
             //DETECCION DE MOVIMIENTO DEL MOUSE
-            GraphicsComponent.CannonRotation = MathF.Max(MouseCamera.UpDownRotation, MAX_TURRET_ANGLE);
-            GraphicsComponent.TurretRotation = MouseCamera.LeftRightRotation;
+            tankGraphics.CannonRotation = MathF.Max(MouseCamera.UpDownRotation, MAX_TURRET_ANGLE);
+            tankGraphics.TurretRotation = MouseCamera.LeftRightRotation;
 
             //DETECCION DE CLICK
             if (Mouse.GetState().LeftButton == ButtonState.Pressed && PrevMouseState.LeftButton == ButtonState.Released)
             {
-                var direction = GraphicsComponent.GetCannonDirection(Player);
-                ShootingController.Shoot(Player.Position, direction, 8000f);
+                var direction = tankGraphics.GetCannonDirection(Player);
+                var position = tankGraphics.GetCannonEnd(Player);
+                ShootingController.Shoot(position, direction, BULLET_SPEED);
             }
             HUDComponent.UpdatePlayerCooldown(ShootingController.CooldownTimer);
 

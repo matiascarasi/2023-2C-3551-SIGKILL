@@ -14,7 +14,10 @@ namespace TGC.MonoGame.TP.Components.Graphics
                 new Dictionary<string, string> { { "Treadmill1", "Effects/WrapTexture" }, { "Treadmill2", "Effects/WrapTexture" } },
                 new Dictionary<string, string> { { "Treadmill1", "Models/TankWars/Panzer/PzVI_Tiger_I_track_0" }, { "Treadmill2", "Models/TankWars/Panzer/PzVI_Tiger_I_track_0" } }
             )
-        { }
+        {
+            CannonLength = 650f;
+            CannonHeight = 200f;
+        }
 
         public override Vector3 GetCannonDirection(GameObject gameObject)
         {

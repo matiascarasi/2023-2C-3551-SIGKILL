@@ -14,24 +14,28 @@ namespace TGC.MonoGame.TP.Components.AI
     class AITankComponent : IComponent
     {
         private const int MAX_BULLETS_AMOUNT = 5;
+        const float BULLET_SPEED = 8000f;
         private MovementController MovementController { get; }
         private ShootingController ShootingController { get; }
         private PathFindingController PathFindingController { get; } 
-        private TankGraphicsComponent GraphicsComponent { get; }
         private Terrain Terrain { get; }
-        public AITankComponent(float driveSpeed, float rotationSpeed, float cooldown, float minDistance, GameObject target, List<GameObject> objects, Terrain terrain, TankGraphicsComponent graphicsComponent)
+        public AITankComponent(float driveSpeed, float rotationSpeed, float cooldown, float minDistance, GameObject target, List<GameObject> objects, Terrain terrain)
         {
             MovementController = new MovementController(driveSpeed, rotationSpeed);
             ShootingController = new ShootingController(cooldown, MAX_BULLETS_AMOUNT);
             PathFindingController = new PathFindingController(target, minDistance, objects, MovementController);
-            GraphicsComponent = graphicsComponent;
             Terrain = terrain;
         }
-        public void Update(GameObject gameObject, GameTime gameTime)
+        public void Update(GameObject gameObject, GameTime gameTime, GraphicsComponent graphicsComponent)
         {
+
+            if (!(graphicsComponent is TankGraphicsComponent)) return;
+
+            var tankGraphics = graphicsComponent as TankGraphicsComponent;
+
             var X = gameObject.Position.X;
             var Z = gameObject.Position.Z;
-            var height = MathF.Max(Terrain.Height(X, Z), gameObject.Position.Y);
+            var height = Terrain.Height(X, Z);
             gameObject.Position = new Vector3(X, height, Z);
 
             ShootingController.Update(gameObject, gameTime);
@@ -39,9 +43,9 @@ namespace TGC.MonoGame.TP.Components.AI
             MovementController.Update(gameObject, gameTime);
 
             var rotationAngle = MathHelper.ToRadians(PathFindingController.GetRotationAngle());
-            GraphicsComponent.TurretRotation = rotationAngle;
+            tankGraphics.TurretRotation = rotationAngle;
             
-            ShootingController.Shoot(gameObject.Position, GraphicsComponent.GetCannonDirection(gameObject), 800f);
+            ShootingController.Shoot(tankGraphics.GetCannonEnd(gameObject), tankGraphics.GetCannonDirection(gameObject), BULLET_SPEED);
 
         }
 

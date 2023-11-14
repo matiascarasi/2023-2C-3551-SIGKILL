@@ -8,7 +8,7 @@ using TGC.MonoGame.TP.Actors;
 
 namespace TGC.MonoGame.TP.Components.Graphics
 {
-    public class GraphicsComponent : IComponent
+    public class GraphicsComponent
     {
         private readonly string ModelPath;
         private readonly Dictionary<string, string> EffectPaths;

@@ -26,27 +26,31 @@ namespace TGC.MonoGame.TP.Actors
         public Matrix[] Bones { get; set; }
         public List<IComponent> Components { get; }
         public CollisionComponent CollisionComponent { get; }
+        public GraphicsComponent GraphicsComponent { get; } 
 
-        public GameObject(List<IComponent> components, CollisionComponent collisionComponent, Vector3 position, float rotationAngle, Vector3 rotationDirection, float scale, float health)
+        public GameObject(List<IComponent> components, GraphicsComponent graphicsComponent, CollisionComponent collisionComponent, Vector3 position, float rotationAngle, Vector3 rotationDirection, float scale, float health)
         {
             Components = components;
             CollisionComponent = collisionComponent;
+            GraphicsComponent = graphicsComponent;
 
             Initialize(position, rotationDirection, rotationAngle, scale, health, Vector3.Zero);
         }
 
-        public GameObject(IComponent component, CollisionComponent collisionComponent, Vector3 position, float rotationAngle, float scale, float health)
+        public GameObject(GraphicsComponent graphicsComponent, CollisionComponent collisionComponent, Vector3 position, float rotationAngle, float scale, float health)
         {
-            Components = new List<IComponent> { component };
+            Components = new List<IComponent>();
             CollisionComponent = collisionComponent;
+            GraphicsComponent = graphicsComponent;
 
             Initialize(position, Vector3.Up, rotationAngle, scale, health, Vector3.Zero);
         }
 
-        public GameObject(IComponent component, Vector3 position, float rotationAngle, float scale, float health)
+        public GameObject(GraphicsComponent graphicsComponent, Vector3 position, float rotationAngle, float scale, float health)
         {
-            Components = new List<IComponent> { component };
+            Components = new List<IComponent>();
             CollisionComponent = new CollisionComponent();
+            GraphicsComponent = graphicsComponent;
 
             Initialize(position, Vector3.Up, rotationAngle, scale, health, Vector3.Zero);
         }
@@ -68,6 +72,7 @@ namespace TGC.MonoGame.TP.Actors
             {
                 component.LoadContent(this, content);
             }
+            GraphicsComponent.LoadContent(this, content);
             CollisionComponent.LoadContent(this);
         }
 
@@ -78,11 +83,12 @@ namespace TGC.MonoGame.TP.Actors
 
             foreach (var component in Components)
             {
-                component.Update(this, gameTime);
+                component.Update(this, gameTime, GraphicsComponent);
             }
 
             Position += Velocity * deltaTime;
 
+            GraphicsComponent.Update(this, gameTime);
             CollisionComponent.Update(this);
         }
 
@@ -92,6 +98,7 @@ namespace TGC.MonoGame.TP.Actors
             {
                 component.Draw(this, gameTime, view, projection);
             }
+            GraphicsComponent.Draw(this, gameTime, view, projection);
         }
 
         public void Draw(GameTime gameTime, Matrix view, Matrix projection, Gizmos.Gizmos gizmos)
@@ -100,6 +107,7 @@ namespace TGC.MonoGame.TP.Actors
             {
                 component.Draw(this, gameTime, view, projection);
             }
+            GraphicsComponent.Draw(this, gameTime, view, projection);
             CollisionComponent.Draw(gizmos);
         }
 

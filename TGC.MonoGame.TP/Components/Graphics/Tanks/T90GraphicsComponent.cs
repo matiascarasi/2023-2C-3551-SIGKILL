@@ -15,7 +15,10 @@ namespace TGC.MonoGame.TP.Components.Graphics
                 new Dictionary<string, string> { { "Treadmill1", "Models/TankWars/T90/textures_mod/treadmills" }, 
                     { "Treadmill2", "Models/TankWars/T90/textures_mod/treadmills" } }
             )
-        { }
+        {
+            CannonLength = 620f;
+            CannonHeight = 150f;
+        }
 
         public override Vector3 GetCannonDirection(GameObject gameObject)
         {
@@ -29,7 +32,6 @@ namespace TGC.MonoGame.TP.Components.Graphics
             base.LoadContent(gameObject, Content);
             CannonTransform = gameObject.Bones[gameObject.Model.Bones["Cannon"].Index];
             TurretTransform = gameObject.Bones[gameObject.Model.Bones["Turret"].Index];
-            gameObject.Position += Vector3.Up * 150f;
         }
 
         public override void Update(GameObject gameObject, GameTime gameTime)
