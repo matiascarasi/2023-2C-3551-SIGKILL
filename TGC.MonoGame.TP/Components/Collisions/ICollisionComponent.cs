@@ -10,5 +10,6 @@ namespace TGC.MonoGame.TP.Components.Collisions
         public bool CollidesWith(ICollisionComponent boundingVolume);
         public bool CollidesWithOBB(OrientedBoundingBoxComponent orientedBoundingBox);
         public bool CollidesWithSphere(BoundingSphereComponent boundingSphereComponent);
+        public bool CollidesWithAABB(AxisAlignedBoundingBoxComponent axisAlignedBoundingBoxComponent);
     }
 }

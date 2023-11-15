@@ -50,6 +50,11 @@ namespace TGC.MonoGame.TP.Components.Collisions
             return OrientedBoundingBox.Intersects(sphereComponent.BoundingSphere);
         }
 
+        public bool CollidesWithAABB(AxisAlignedBoundingBoxComponent aabb)
+        {
+            return OrientedBoundingBox.Intersects(aabb.BoundingBox);
+        }
+
         private Matrix CreateObjectWorld(Vector3 position, float rotation)
         {
             return Matrix.CreateScale(OrientedBoundingBox.Extents * 2f) 

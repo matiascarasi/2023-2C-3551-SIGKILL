@@ -38,5 +38,10 @@ namespace TGC.MonoGame.TP.Components.Collisions
         {
             return other.BoundingSphere.Intersects(BoundingSphere);
         }
+
+        public bool CollidesWithAABB(AxisAlignedBoundingBoxComponent aabb)
+        {
+            return aabb.BoundingBox.Intersects(BoundingSphere);
+        }
     }
 }
