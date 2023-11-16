@@ -40,7 +40,7 @@ namespace TGC.MonoGame.TP.Scenes
                 var scale = Convert.ToSingle(Math.Max(SMALL_TREES_MIN_SCALE, Random.NextDouble()));
 
                 var tree = new GameObject(
-                    new BushGraphicsComponent(),
+                    new TreeGraphicsComponent(),
                     new Vector3(position.X, Terrain.Height(position.X, position.Y), position.Y),
                     rotation,
                     scale,
@@ -64,7 +64,7 @@ namespace TGC.MonoGame.TP.Scenes
                 var scale = Convert.ToSingle(Math.Max(SMALL_TREES_MIN_SCALE, Random.NextDouble()));
 
                 var rock = new GameObject(
-                    new RockGraphicsComponent(),
+                    new BushGraphicsComponent(),
                     new Vector3(position.X, Terrain.Height(position.X, position.Y), position.Y),
                     rotation,
                     scale,

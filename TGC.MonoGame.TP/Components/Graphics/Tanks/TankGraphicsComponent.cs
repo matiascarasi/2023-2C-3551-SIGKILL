@@ -19,6 +19,9 @@ namespace TGC.MonoGame.TP.Components.Graphics
         protected float CannonHeight;
         protected float CannonLength;
 
+        private const float MIN_TURRET_ANGLE = -0.05f;
+        private const float MAX_TURRET_ANGLE = 0.25f;
+
         public TankGraphicsComponent(string model, string defaultEffect, string defaultTexture, Dictionary<string, string> effects, Dictionary<string, string> textures) : base(model, defaultEffect, defaultTexture, effects, textures)
         { }
         abstract public Vector3 GetCannonDirection(GameObject gameObject);
@@ -26,6 +29,12 @@ namespace TGC.MonoGame.TP.Components.Graphics
         {
             return gameObject.Position + Vector3.Up * CannonHeight + GetCannonDirection(gameObject) * CannonLength;
         }
+
+        public float FixCannonAngle(float angle)
+        {
+            return MathF.Min(MathF.Max(angle, MIN_TURRET_ANGLE), MAX_TURRET_ANGLE);
+        }
+
 
     }
 }

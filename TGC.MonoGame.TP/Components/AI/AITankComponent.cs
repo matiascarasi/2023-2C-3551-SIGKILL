@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using TGC.MonoGame.TP.Actors;
 using TGC.MonoGame.TP.Components.Graphics;
 using TGC.MonoGame.TP.Controllers;
+using TGC.MonoGame.TP.Helpers;
 
 namespace TGC.MonoGame.TP.Components.AI
 {
@@ -42,9 +43,16 @@ namespace TGC.MonoGame.TP.Components.AI
             PathFindingController.Update(gameObject, gameTime);
             MovementController.Update(gameObject, gameTime);
 
-            var rotationAngle = MathHelper.ToRadians(PathFindingController.GetRotationAngle());
-            tankGraphics.TurretRotation = rotationAngle;
-            
+            var direction = PathFindingController.GetDirection();
+            var forward = new Vector3(direction.X, 0f, direction.Z);
+            var terrainRationXZ = Terrain.GetScaleY() / Terrain.GetScaleXZ();
+
+            var turretAngle = MathHelper.ToRadians(AlgebraHelper.GetAngleBetweenTwoVectors(gameObject.World.Forward, forward));
+            var cannonAngle = MathF.Atan2(direction.Y, forward.Length() * terrainRationXZ);
+
+            tankGraphics.TurretRotation = turretAngle;
+            tankGraphics.CannonRotation = tankGraphics.FixCannonAngle(cannonAngle);
+
             ShootingController.Shoot(tankGraphics.GetCannonEnd(gameObject), tankGraphics.GetCannonDirection(gameObject), BULLET_SPEED);
 
         }

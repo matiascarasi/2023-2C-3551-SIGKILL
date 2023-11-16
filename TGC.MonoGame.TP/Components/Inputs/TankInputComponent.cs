@@ -17,7 +17,6 @@ namespace TGC.MonoGame.TP.Components.Inputs
 {
     class TankInputComponent : IComponent
     {
-        const float MAX_TURRET_ANGLE = -0.05f;
         const int MAX_BULLETS_AMOUNT = 3;
         const float BULLET_SPEED = 8000f;
         private MovementController MovementController { get; set; }
@@ -57,7 +56,7 @@ namespace TGC.MonoGame.TP.Components.Inputs
             Player.Position = new Vector3(X, height, Z);
 
             //DETECCION DE MOVIMIENTO DEL MOUSE
-            tankGraphics.CannonRotation = MathF.Max(MouseCamera.UpDownRotation, MAX_TURRET_ANGLE);
+            tankGraphics.CannonRotation = tankGraphics.FixCannonAngle(MouseCamera.UpDownRotation);
             tankGraphics.TurretRotation = MouseCamera.LeftRightRotation;
 
             //DETECCION DE CLICK

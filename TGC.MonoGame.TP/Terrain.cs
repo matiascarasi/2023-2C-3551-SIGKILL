@@ -211,5 +211,16 @@ namespace TGC.MonoGame.TP
         {
             VertexBuffer.Dispose();
         }
+
+        public float GetScaleXZ()
+        {
+            return scaleXZ;
+        }
+
+        public float GetScaleY()
+        {
+            return scaleY;
+        }
+
     }
 }

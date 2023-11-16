@@ -12,7 +12,7 @@ namespace TGC.MonoGame.TP.Controllers
     class PathFindingController
     {
         private const float PREDICTION_DISTANCE = 750f;
-        private const double PREDICTION_DELAY = 1.5;
+        private const double PREDICTION_DELAY = 1;
         private double _lastPrediction = -PREDICTION_DELAY;
         private float _rotationAngle = 0f;
         private readonly float _minDistance;
@@ -45,7 +45,6 @@ namespace TGC.MonoGame.TP.Controllers
                 MovementController.Stop();
                 return;
             }
-
             
             if (_rotationAngle > 0f)
             {
@@ -55,7 +54,6 @@ namespace TGC.MonoGame.TP.Controllers
             {
                 MovementController.TurnRight(gameObject, deltaTime);
             }
-         
 
             if (gameTime.TotalGameTime.TotalSeconds < _lastPrediction + PREDICTION_DELAY) return;
             _lastPrediction = gameTime.TotalGameTime.TotalSeconds;
