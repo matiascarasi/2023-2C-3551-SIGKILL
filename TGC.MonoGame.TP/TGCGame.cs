@@ -57,7 +57,7 @@ namespace TGC.MonoGame.TP
         private MenuComponent Menu { get; set; }
         private HUDComponent HUD { get; set; }
         private SpriteBatch SpriteBatch { get; set; }
-        private GameObject Player { get; set; }
+        public GameObject Player { get; set; }
         private BoundsComponent Bounds { get; set; }
         private Terrain Terrain;
         public bool IsMenuActive { get; set; }
@@ -95,7 +95,6 @@ namespace TGC.MonoGame.TP
             //Cambio textura de cursor
             Mouse.SetCursor(MouseCursor.FromTexture2D(Content.Load<Texture2D>("Textures/Menu/cursor"), 0, 0));
 
-            Menu = new MenuComponent(this);
             HUD = new HUDComponent(PlayerDefaults.TankName, PlayerDefaults.Health, PlayerDefaults.CoolDown);
             Terrain = new Terrain(Content, GraphicsDevice, "Textures/heightmaps/hills-heightmap", "Textures/heightmaps/hills", 20.0f, 8.0f);
             MouseCamera = new MouseCamera(GraphicsDevice);
@@ -112,6 +111,7 @@ namespace TGC.MonoGame.TP
                 PlayerDefaults.Scale,
                 PlayerDefaults.Health            
             );
+            Menu = new MenuComponent(this, Player.Health);
 
             Objects = new List<GameObject>() { Player };
 
@@ -150,9 +150,7 @@ namespace TGC.MonoGame.TP
 
             if(!IsMenuActive)
             {
-                MediaPlayer.Volume = .1f;
-
-                //MediaPlayer.Stop();
+                if(MediaPlayer.Volume != 0) MediaPlayer.Volume = .1f;
                 Instance.Play();
             }
           
