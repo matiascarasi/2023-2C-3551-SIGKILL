@@ -13,20 +13,28 @@ namespace TGC.MonoGame.TP.Components.Graphics
     {
         protected Matrix TurretTransform { get; set; }
         protected Matrix CannonTransform { get; set; }
-        
+      
         public float CannonRotation = 0f;
-
         public float TurretRotation = 0f;
+        protected float CannonHeight;
+        protected float CannonLength;
+
+        private const float MIN_TURRET_ANGLE = -0.05f;
+        private const float MAX_TURRET_ANGLE = 0.25f;
 
         public TankGraphicsComponent(string model, string defaultEffect, string defaultTexture, Dictionary<string, string> effects, Dictionary<string, string> textures) : base(model, defaultEffect, defaultTexture, effects, textures)
         { }
-        public Vector3 GetCannonDirection(GameObject gameObject)
+        abstract public Vector3 GetCannonDirection(GameObject gameObject);
+        public Vector3 GetCannonEnd(GameObject gameObject)
         {
-            var direction = gameObject.Model.Bones["Turret"].Transform.Forward;
-            direction.Y = gameObject.Model.Bones["Cannon"].Transform.Forward.Y;
-            direction.Normalize();
-            return direction;
+            return gameObject.Position + Vector3.Up * CannonHeight + GetCannonDirection(gameObject) * CannonLength;
         }
+
+        public float FixCannonAngle(float angle)
+        {
+            return MathF.Min(MathF.Max(angle, MIN_TURRET_ANGLE), MAX_TURRET_ANGLE);
+        }
+
 
     }
 }

@@ -8,7 +8,7 @@ using TGC.MonoGame.TP.Actors;
 
 namespace TGC.MonoGame.TP.Components.Graphics
 {
-    class GraphicsComponent : IComponent
+    public class GraphicsComponent
     {
         private readonly string ModelPath;
         private readonly Dictionary<string, string> EffectPaths;
@@ -35,6 +35,9 @@ namespace TGC.MonoGame.TP.Components.Graphics
         public virtual void LoadContent(GameObject Object, ContentManager Content)
         {
             Object.Model = Content.Load<Model>(ModelPath);
+            Object.Bones = new Matrix[Object.Model.Bones.Count];
+            Object.Model.CopyAbsoluteBoneTransformsTo(Object.Bones);
+
             Effects = EffectPaths.ToDictionary(kv => kv.Key, kv => Content.Load<Effect>(kv.Value));
             Textures = TexturePaths.ToDictionary(kv => kv.Key, kv => Content.Load<Texture>(kv.Value));
 
@@ -77,13 +80,10 @@ namespace TGC.MonoGame.TP.Components.Graphics
         {
 
             var scaleMatrix = Matrix.CreateScale(Object.Scale);
-            var rotationMatrix = Matrix.CreateFromQuaternion(Quaternion.CreateFromAxisAngle(Object.RotationDirection, MathHelper.ToRadians(Object.RotationAngle)));
+            var rotationMatrix = Matrix.CreateFromQuaternion(Quaternion.CreateFromAxisAngle(Object.RotationDirection, Object.GetRotationAngleInRadians()));
             var translationMatrix = Matrix.CreateTranslation(Object.Position);
 
             var world = scaleMatrix * rotationMatrix * translationMatrix;
-
-            Matrix[] matrices = new Matrix[Object.Model.Bones.Count];
-            Object.Model.CopyAbsoluteBoneTransformsTo(matrices);
             Object.World = world;
 
             Effect effect;
@@ -93,7 +93,7 @@ namespace TGC.MonoGame.TP.Components.Graphics
                 effect.Parameters["Texture"].SetValue(Textures[mesh.Name]);
                 effect.Parameters["View"].SetValue(view);
                 effect.Parameters["Projection"].SetValue(projection);
-                world = matrices[mesh.ParentBone.Index] * Object.World;
+                world = Object.Bones[mesh.ParentBone.Index] * Object.World;
                 effect.Parameters["World"].SetValue(world);
                 mesh.Draw();
             }

@@ -12,6 +12,7 @@ using TGC.MonoGame.TP.Actors;
 using TGC.MonoGame.TP.Bounds;
 using TGC.MonoGame.TP.Collisions;
 using TGC.MonoGame.TP.Components;
+using TGC.MonoGame.TP.Components.AI;
 using TGC.MonoGame.TP.Components.Collisions;
 using TGC.MonoGame.TP.Components.Graphics;
 using TGC.MonoGame.TP.Components.Inputs;
@@ -53,7 +54,6 @@ namespace TGC.MonoGame.TP
         }
         public Gizmos.Gizmos Gizmos { get; }
         private GraphicsDeviceManager Graphics { get; }
-
         private MenuComponent Menu { get; set; }
         private HUDComponent HUD { get; set; }
         private SpriteBatch SpriteBatch { get; set; }
@@ -64,15 +64,17 @@ namespace TGC.MonoGame.TP
 
         public const string ContentFolderEffects = "Effects/";
         private MouseCamera MouseCamera { get; set; }
-
         private Song MainSong { get; set; }
         private SoundEffectInstance Instance { get; set; }
         private SoundEffect SoundEffect { get; set; }
         private List<GameObject> Objects { get; set; }
-
         private Forest Forest { get; set; }
+        private GameObject Player { get; set; }
+        private List<GameObject> TeamPanzer { get; set; }
+        private List<GameObject> TeamT90 { get; set; }
+        private List<GameObject> Collisionables { get; set; }
 
-
+        private const int TEAMS_SIZE = 5;
 
         protected override void Initialize()
         {
@@ -100,23 +102,56 @@ namespace TGC.MonoGame.TP
             MouseCamera = new MouseCamera(GraphicsDevice);
             Bounds = new BoundsComponent(Content, Terrain);
 
-            TankGraphicsComponent playerGraphics = new PanzerGraphicsComponent();
-
             Player = new GameObject(
-                new List<IComponent> { playerGraphics, new TankInputComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, PlayerDefaults.CoolDown, MouseCamera, Terrain, HUD, playerGraphics) },
+                new List<IComponent>() { new TankInputComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, PlayerDefaults.CoolDown, MouseCamera, Terrain, HUD ) },
+                new PanzerGraphicsComponent(),
                 new PanzerCollisionComponent(),
                 new Vector3(0f, Terrain.Height(0f, 0f), 0f),
-                PlayerDefaults.YAxisRotation,
+                PlayerDefaults.RotationAngle,
                 Vector3.Up,
                 PlayerDefaults.Scale,
-                PlayerDefaults.Health            
+                PlayerDefaults.Health
             );
             Menu = new MenuComponent(this, Player.Health);
 
             Objects = new List<GameObject>() { Player };
+            Collisionables = new List<GameObject>();
 
-            Forest = new Forest(ForestDefaults.Center, ForestDefaults.Radius, ForestDefaults.Density);
+            TeamPanzer = new List<GameObject>();
+            TeamT90 = new List<GameObject>();
 
+            for(var i = 0; i <= TEAMS_SIZE; i++)
+            {
+                var panzer = new GameObject(
+                    new PanzerGraphicsComponent(),
+                    new PanzerCollisionComponent(),
+                    new Vector3(2000f, Terrain.Height(2000f, 2000f + 1000f * i), 2000f + 1000f * i),
+                    PlayerDefaults.RotationAngle,
+                    PlayerDefaults.Scale,
+                    PlayerDefaults.Health
+                );
+
+                var t90 = new GameObject(
+                    new T90GraphicsComponent(),
+                    new T90CollisionComponent(),
+                    new Vector3(-2000f, Terrain.Height(-2000f, -2000f + 1000f * i), -2000f + 1000f * i),
+                    PlayerDefaults.RotationAngle,
+                    PlayerDefaults.Scale,
+                    PlayerDefaults.Health
+                );
+
+                panzer.AddComponent(new AITankComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, PlayerDefaults.CoolDown, 5000, t90, Collisionables, Terrain));
+                t90.AddComponent(new AITankComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, PlayerDefaults.CoolDown, 5000, panzer, Collisionables, Terrain));
+
+                TeamPanzer.Add(panzer);
+                TeamT90.Add(t90);
+
+                Collisionables.Add(panzer);
+                Collisionables.Add(t90);
+
+            }
+
+            Forest = new Forest(ForestDefaults.Center, ForestDefaults.Radius,  0f);
 
             base.Initialize();
         }
@@ -129,9 +164,12 @@ namespace TGC.MonoGame.TP
             HUD.LoadContent(Content);   
             Terrain.LoadContent(Content, GraphicsDevice);
             Bounds.LoadContent(Content);
-            Player.LoadContent(Content);
             Forest.LoadContent(Content, Terrain, Objects);
             Gizmos.LoadContent(GraphicsDevice, Content);
+            Player.LoadContent(Content);
+
+            foreach (var t90 in TeamT90) t90.LoadContent(Content);
+            foreach (var panzer in TeamPanzer) panzer.LoadContent(Content);
 
             base.LoadContent();
         }
@@ -161,10 +199,12 @@ namespace TGC.MonoGame.TP
             {
                 obj.Update(gameTime);
             }
+
             Bounds.Update(gameTime);
             Gizmos.UpdateViewProjection(MouseCamera.View, MouseCamera.Projection);
 
-            //DetectCollisions();
+            foreach (var t90 in TeamT90) t90.Update(gameTime);
+            foreach (var panzer in TeamPanzer) panzer.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -178,6 +218,8 @@ namespace TGC.MonoGame.TP
             {
                 obj.Draw(gameTime, MouseCamera.View, MouseCamera.Projection);
             }
+            foreach (var t90 in TeamT90) t90.Draw(gameTime, MouseCamera.View, MouseCamera.Projection);
+            foreach (var panzer in TeamPanzer) panzer.Draw(gameTime, MouseCamera.View, MouseCamera.Projection);
             Gizmos.Draw();
             if (IsMenuActive) Menu.Draw(SpriteBatch); else HUD.Draw(SpriteBatch);
 

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using TGC.MonoGame.TP.Actors;
+using System;
 
 namespace TGC.MonoGame.TP.Controllers
 {
@@ -46,11 +47,13 @@ namespace TGC.MonoGame.TP.Controllers
 
         public void Stop()
         {
-            Speed = 1f;
+            Speed = 0f;
+            Acceleration = 0f;
         }
 
-        public void Move(GameObject gameObject, float deltaTime)
+        public void Update(GameObject gameObject, GameTime gameTime)
         {
+            var deltaTime = Convert.ToSingle(gameTime.ElapsedGameTime.TotalSeconds);
             Speed += Acceleration * deltaTime;
             gameObject.Velocity = gameObject.World.Forward * Speed;
         }

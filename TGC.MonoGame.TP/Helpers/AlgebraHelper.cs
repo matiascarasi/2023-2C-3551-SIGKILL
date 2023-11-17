@@ -19,5 +19,14 @@ namespace TGC.MonoGame.TP.Helpers
 
             return new Vector2(xPosition, yPosition);
         } 
+
+        static public float GetAngleBetweenTwoVectors(Vector3 v1, Vector3 v2)
+        {
+            var crossDirection = Vector3.Cross(v1, v2);
+            var dotDirection = Vector3.Dot(v1, v2);
+
+            var angleSideFactor = Vector3.Dot(Vector3.Up, crossDirection) > 0f ? 1 : -1;
+            return MathHelper.ToDegrees(MathF.Atan2(crossDirection.Length(), dotDirection)) * angleSideFactor;
+        }
     }
 }

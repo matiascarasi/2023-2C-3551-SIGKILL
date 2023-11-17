@@ -5,12 +5,12 @@ using System;
 using System.Collections.Generic;
 using TGC.MonoGame.TP.Actors;
 using TGC.MonoGame.TP.Components.Graphics;
+using TGC.MonoGame.TP.Helpers;
 
 namespace TGC.MonoGame.TP.Controllers
 {
     class ShootingController
     {
-
         private int _currentBulletIdx = 0;
         private readonly int _maxBulletsAmount;
         private readonly LinkedList<int> ActiveBullets;
@@ -43,7 +43,7 @@ namespace TGC.MonoGame.TP.Controllers
             foreach (var bullet in Bullets) bullet.LoadContent(Content);
         }
 
-        public void Update(GameTime gameTime)
+        public void Update(GameObject gameObject, GameTime gameTime)
         {
             float deltaTime = Convert.ToSingle(gameTime.ElapsedGameTime.TotalSeconds);
 
@@ -63,6 +63,9 @@ namespace TGC.MonoGame.TP.Controllers
             {
                 // START COOLDOWN
                 CooldownTimer = 0;
+                
+                // STOP SHOOTING SOUND
+                ShootingSoundEffect.Stop();
 
                 // ADD BULLET TO QUEUE
                 if (ActiveBullets.Count == _maxBulletsAmount) ActiveBullets.RemoveLast();
@@ -72,11 +75,7 @@ namespace TGC.MonoGame.TP.Controllers
                 var right = Vector3.Cross(direction, Vector3.Up);
                 var upDirection = Vector3.Cross(right, direction);
 
-                var crossDirection = Vector3.Cross(Vector3.Forward, direction);
-                var dotDirection = Vector3.Dot(Vector3.Forward, direction);
-
-                var angleSideFactor = Vector3.Dot(Vector3.Up, crossDirection) > 0f ? 1 : -1;
-                var rotationAngle = MathHelper.ToDegrees(MathF.Atan2(crossDirection.Length(), dotDirection)) * angleSideFactor;
+                var rotationAngle = AlgebraHelper.GetAngleBetweenTwoVectors(Vector3.Forward, direction);
                 
                 // SET BULLET CONFIG
                 var bullet = Bullets[_currentBulletIdx];

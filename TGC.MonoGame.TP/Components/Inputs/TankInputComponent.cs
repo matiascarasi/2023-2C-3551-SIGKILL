@@ -17,17 +17,16 @@ namespace TGC.MonoGame.TP.Components.Inputs
 {
     class TankInputComponent : IComponent
     {
-        const float MAX_TURRET_ANGLE = -0.25f;
         const int MAX_BULLETS_AMOUNT = 3;
+        const float BULLET_SPEED = 8000f;
         private MovementController MovementController { get; set; }
         private ShootingController ShootingController { get; set; }
         private MouseState PrevMouseState { get; set; }
         private MouseCamera MouseCamera { get; }
         private Terrain Terrain { get; }
-        private TankGraphicsComponent GraphicsComponent { get; }
         private HUDComponent HUDComponent { get; }
 
-        public TankInputComponent(float driveSpeed, float rotationSpeed, float shootingCooldown, MouseCamera mouseCamera, Terrain terrain, HUDComponent hudComponent, TankGraphicsComponent graphicsComponent)
+        public TankInputComponent(float driveSpeed, float rotationSpeed, float shootingCooldown, MouseCamera mouseCamera, Terrain terrain, HUDComponent hudComponent)
         {
             MovementController = new MovementController(driveSpeed, rotationSpeed);
             ShootingController = new ShootingController(shootingCooldown, MAX_BULLETS_AMOUNT);
@@ -35,14 +34,18 @@ namespace TGC.MonoGame.TP.Components.Inputs
 
             MouseCamera = mouseCamera;
             Terrain = terrain;
-            GraphicsComponent = graphicsComponent;
             HUDComponent = hudComponent;
         }
 
-        public void Update(GameObject Player, GameTime gameTime)
+        public void Update(GameObject Player, GameTime gameTime, GraphicsComponent graphicsComponent)
         {
 
-            ShootingController.Update(gameTime);
+            if (!(graphicsComponent is TankGraphicsComponent)) return;
+
+            var tankGraphics = graphicsComponent as TankGraphicsComponent;
+
+            ShootingController.Update(Player, gameTime);
+            MovementController.Update(Player, gameTime);
 
             var keyboardState = Keyboard.GetState();
             var deltaTime = Convert.ToSingle(gameTime.ElapsedGameTime.TotalSeconds);
@@ -53,16 +56,15 @@ namespace TGC.MonoGame.TP.Components.Inputs
             Player.Position = new Vector3(X, height, Z);
 
             //DETECCION DE MOVIMIENTO DEL MOUSE
-            GraphicsComponent.CannonRotation = MathF.Max(MouseCamera.UpDownRotation, MAX_TURRET_ANGLE);
-            GraphicsComponent.TurretRotation = MouseCamera.LeftRightRotation;
+            tankGraphics.CannonRotation = tankGraphics.FixCannonAngle(MouseCamera.UpDownRotation);
+            tankGraphics.TurretRotation = MouseCamera.LeftRightRotation;
 
             //DETECCION DE CLICK
             if (Mouse.GetState().LeftButton == ButtonState.Pressed && PrevMouseState.LeftButton == ButtonState.Released)
             {
-                var direction = MouseCamera.FollowedPosition - MouseCamera.OffsetPosition;
-                if (MouseCamera.UpDownRotation < MAX_TURRET_ANGLE) direction.Y = 0f;
-                direction.Normalize();
-                ShootingController.Shoot(Player.Position, direction, 8000f);
+                var direction = tankGraphics.GetCannonDirection(Player);
+                var position = tankGraphics.GetCannonEnd(Player);
+                ShootingController.Shoot(position, direction, BULLET_SPEED);
             }
             HUDComponent.UpdatePlayerCooldown(ShootingController.CooldownTimer);
 
@@ -91,7 +93,6 @@ namespace TGC.MonoGame.TP.Components.Inputs
                 MovementController.TurnRight(Player, deltaTime);
             }
 
-            MovementController.Move(Player, deltaTime);
         }
 
         public void LoadContent(GameObject gameObject, ContentManager content)

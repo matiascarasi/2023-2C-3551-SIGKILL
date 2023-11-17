@@ -9,20 +9,19 @@ namespace TGC.MonoGame.TP.Components.Collisions
 {
     public class CollisionComponent
     {
-        private OrientedBoundingBox OrientedBoundingBox;
+        protected OrientedBoundingBox OrientedBoundingBox;
         private Matrix OrientedBoundingBoxWorld;
         public virtual void LoadContent(GameObject gameObject)
         {
             var objectBox = BoundingVolumesExtensions.CreateAABBFrom(gameObject.Model);
             var boundingBox = BoundingVolumesExtensions.Scale(objectBox, gameObject.Scale);
-            SetBoundingBox(gameObject, boundingBox);
+            OrientedBoundingBox = OrientedBoundingBox.FromAABB(boundingBox);
+            SetBoundingBox(gameObject);
         }
 
         public void Update(GameObject gameObject)
         {
-            OrientedBoundingBox.Center = gameObject.Position;
-            OrientedBoundingBox.Orientation = Matrix.CreateRotationY(MathHelper.ToRadians(gameObject.RotationAngle));
-            OrientedBoundingBoxWorld = CreateObjectWorld(gameObject.Position, gameObject.RotationAngle);
+            SetBoundingBox(gameObject);
         }
 
         public void Draw(Gizmos.Gizmos gizmos)
@@ -34,20 +33,28 @@ namespace TGC.MonoGame.TP.Components.Collisions
         {
             return OrientedBoundingBox.Intersects(other.OrientedBoundingBox);
         }
-
-        protected void SetBoundingBox(GameObject gameObject, BoundingBox boundingBox)
+        public bool CollidesWith(OrientedBoundingBox other)
         {
-            OrientedBoundingBox = OrientedBoundingBox.FromAABB(boundingBox);
-            OrientedBoundingBox.Center = BoundingVolumesExtensions.GetCenter(boundingBox) + gameObject.Position;
-            OrientedBoundingBox.Orientation = Matrix.CreateRotationY(gameObject.RotationAngle);
-            OrientedBoundingBoxWorld = CreateObjectWorld(gameObject.Position, gameObject.RotationAngle);
+            return OrientedBoundingBox.Intersects(other);
         }
 
-        private Matrix CreateObjectWorld(Vector3 position, float rotation)
+        public OrientedBoundingBox DisplacedOBB(Vector3 center)
+        {
+            return new OrientedBoundingBox(center, OrientedBoundingBox.Extents);
+        }
+
+        protected void SetBoundingBox(GameObject gameObject)
+        {
+            OrientedBoundingBox.Center = gameObject.Position;
+            OrientedBoundingBox.Orientation = gameObject.GetRotationMatrix();
+            OrientedBoundingBoxWorld = CreateObjectWorld(gameObject);
+        }
+
+        private Matrix CreateObjectWorld(GameObject gameObject)
         {
             return Matrix.CreateScale(OrientedBoundingBox.Extents * 2f) 
-                    * Matrix.CreateRotationY(MathHelper.ToRadians(rotation)) 
-                        * Matrix.CreateTranslation(position + new Vector3(0f, OrientedBoundingBox.Extents.Y, 0f));
+                    * gameObject.GetRotationMatrix()
+                        * Matrix.CreateTranslation(gameObject.Position + new Vector3(0f, OrientedBoundingBox.Extents.Y, 0f));
         }
         
     }
