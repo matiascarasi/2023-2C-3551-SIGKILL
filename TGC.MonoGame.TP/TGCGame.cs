@@ -104,7 +104,7 @@ namespace TGC.MonoGame.TP
 
             Player = new GameObject(
                 new List<IComponent>() { new TankInputComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, PlayerDefaults.CoolDown, MouseCamera, Terrain, HUD ) },
-                new PanzerGraphicsComponent(),
+                new PanzerGraphicsComponent(Terrain),
                 new PanzerCollisionComponent(),
                 new Vector3(0f, Terrain.Height(0f, 0f), 0f),
                 PlayerDefaults.RotationAngle,
@@ -122,7 +122,7 @@ namespace TGC.MonoGame.TP
             for(var i = 0; i <= TEAMS_SIZE; i++)
             {
                 var panzer = new GameObject(
-                    new PanzerGraphicsComponent(),
+                    new PanzerGraphicsComponent(Terrain),
                     new PanzerCollisionComponent(),
                     new Vector3(2000f, Terrain.Height(2000f, 2000f + 1000f * i), 2000f + 1000f * i),
                     PlayerDefaults.RotationAngle,
@@ -131,7 +131,7 @@ namespace TGC.MonoGame.TP
                 );
 
                 var t90 = new GameObject(
-                    new T90GraphicsComponent(),
+                    new T90GraphicsComponent(Terrain),
                     new T90CollisionComponent(),
                     new Vector3(-2000f, Terrain.Height(-2000f, -2000f + 1000f * i), -2000f + 1000f * i),
                     PlayerDefaults.RotationAngle,
@@ -139,18 +139,18 @@ namespace TGC.MonoGame.TP
                     PlayerDefaults.Health
                 );
 
-                panzer.AddComponent(new AITankComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, PlayerDefaults.CoolDown, 5000, t90, Collisionables, Terrain));
-                t90.AddComponent(new AITankComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, PlayerDefaults.CoolDown, 5000, panzer, Collisionables, Terrain));
-
                 TeamPanzer.Add(panzer);
                 TeamT90.Add(t90);
 
                 Collisionables.Add(panzer);
                 Collisionables.Add(t90);
 
+                panzer.AddComponent(new AITankComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, PlayerDefaults.CoolDown, 5000, TeamT90, t90, Collisionables, Terrain));
+                t90.AddComponent(new AITankComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, PlayerDefaults.CoolDown, 5000, TeamPanzer, panzer, Collisionables, Terrain));
+
             }
 
-            Forest = new Forest(ForestDefaults.Center, ForestDefaults.Radius,  0f);
+            Forest = new Forest(ForestDefaults.Center, ForestDefaults.Radius,  ForestDefaults.Density);
 
             base.Initialize();
         }
@@ -163,9 +163,9 @@ namespace TGC.MonoGame.TP
             HUD.LoadContent(Content);   
             Terrain.LoadContent(Content, GraphicsDevice);
             Bounds.LoadContent(Content);
+            Player.LoadContent(Content);
             Forest.LoadContent(Content, Terrain, Objects);
             Gizmos.LoadContent(GraphicsDevice, Content);
-            Player.LoadContent(Content);
 
             foreach (var t90 in TeamT90) t90.LoadContent(Content);
             foreach (var panzer in TeamPanzer) panzer.LoadContent(Content);
@@ -196,10 +196,7 @@ namespace TGC.MonoGame.TP
             Menu.Update();
             MouseCamera.Update(gameTime, Player.World, IsMenuActive);
 
-            foreach (var obj in Objects)
-            {
-                obj.Update(gameTime);
-            }
+            foreach (var obj in Objects) obj.Update(gameTime);
 
             Bounds.Update(gameTime);
             Gizmos.UpdateViewProjection(MouseCamera.View, MouseCamera.Projection);
@@ -215,10 +212,7 @@ namespace TGC.MonoGame.TP
             GraphicsDevice.Clear(Color.Black);
             Terrain.Draw(GraphicsDevice, MouseCamera.View, MouseCamera.Projection);
             Bounds.Draw(gameTime, MouseCamera.View, MouseCamera.Projection);
-            foreach(var obj in Objects)
-            {
-                obj.Draw(gameTime, MouseCamera.View, MouseCamera.Projection);
-            }
+            foreach(var obj in Objects) obj.Draw(gameTime, MouseCamera.View, MouseCamera.Projection);
             foreach (var t90 in TeamT90) t90.Draw(gameTime, MouseCamera.View, MouseCamera.Projection);
             foreach (var panzer in TeamPanzer) panzer.Draw(gameTime, MouseCamera.View, MouseCamera.Projection);
             Gizmos.Draw();

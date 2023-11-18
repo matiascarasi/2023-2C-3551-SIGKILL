@@ -7,11 +7,14 @@
 	#define PS_SHADERMODEL ps_4_0_level_9_1
 #endif
 
+uniform float Velocity;
 uniform float4x4 World;
 uniform float4x4 View;
 uniform float4x4 Projection;
 
 uniform texture Texture;
+
+float ScaleVelocity = 0.003;
 
 sampler2D textureSampler = sampler_state
 {
@@ -20,6 +23,15 @@ sampler2D textureSampler = sampler_state
     MinFilter = Linear;
     AddressU = Wrap;
     AddressV = Wrap;
+};
+
+sampler2D heightMapSampler = sampler_state
+{
+    Texture = (HeightMap);
+    MagFilter = Linear;
+    MinFilter = Linear;
+    AddressU = Border;
+    AddressV = Border;
 };
 
 struct VertexShaderInput
@@ -38,8 +50,10 @@ VertexShaderOutput MainVS(in VertexShaderInput input)
 {
 	VertexShaderOutput output = (VertexShaderOutput)0;
     float4 worldPosition = mul(input.Position, World);
-    float4 viewPosition = mul(worldPosition, View);	
+    float4 viewPosition = mul(worldPosition, View);
+
     output.Position = mul(viewPosition, Projection);
+	input.TextureCoordinate.y += Velocity * ScaleVelocity;
 	output.TextureCoordinate = input.TextureCoordinate;
 
     return output;

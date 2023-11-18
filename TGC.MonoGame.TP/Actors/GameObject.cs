@@ -83,7 +83,7 @@ namespace TGC.MonoGame.TP.Actors
 
             foreach (var component in Components)
             {
-                component.Update(this, gameTime, GraphicsComponent);
+                component.Update(this, gameTime);
             }
 
             Position += Velocity * deltaTime;
@@ -114,6 +114,11 @@ namespace TGC.MonoGame.TP.Actors
         public bool CollidesWith(GameObject other)
         {
             return CollisionComponent.CollidesWith(other.CollisionComponent);
+        }
+
+        public void OnCollide(GameObject other)
+        {
+            CollisionComponent.OnCollide(this, other);
         }
 
         public float GetRotationAngleInRadians()

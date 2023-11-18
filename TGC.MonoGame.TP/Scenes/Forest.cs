@@ -33,28 +33,28 @@ namespace TGC.MonoGame.TP.Scenes
             Random Random = new(Guid.NewGuid().GetHashCode());
 
             // LOAD SMALL TREES
-            for (var i = 0; i < smallTreesAmount; i++)
-            {
-                var position = AlgebraHelper.GetRandomPointInCircle(Center, _radius, Random);
-                var rotation = Convert.ToSingle(AlgebraHelper.FULL_ROTATION * Random.NextDouble());
-                var scale = Convert.ToSingle(Math.Max(SMALL_TREES_MIN_SCALE, Random.NextDouble()));
+            //for (var i = 0; i < smallTreesAmount; i++)
+            //{
+            //    var position = AlgebraHelper.GetRandomPointInCircle(Center, _radius, Random);
+            //    var rotation = Convert.ToSingle(AlgebraHelper.FULL_ROTATION * Random.NextDouble());
+            //    var scale = Convert.ToSingle(Math.Max(SMALL_TREES_MIN_SCALE, Random.NextDouble()));
 
-                var tree = new GameObject(
-                    new TreeGraphicsComponent(),
-                    new Vector3(position.X, Terrain.Height(position.X, position.Y), position.Y),
-                    rotation,
-                    scale,
-                    0.1f
-                );
+            //    var tree = new GameObject(
+            //        new TreeGraphicsComponent(),
+            //        new Vector3(position.X, Terrain.Height(position.X, position.Y), position.Y),
+            //        rotation,
+            //        scale,
+            //        0.1f
+            //    );
 
-                tree.LoadContent(Content);
+            //    tree.LoadContent(Content);
 
-                if (Objects.Any(obj => obj.CollidesWith(tree)))
-                    continue;
+            //    if (Objects.Any(obj => obj.CollidesWith(tree)))
+            //        continue;
 
-                Objects.Add(tree);
+            //    Objects.Add(tree);
 
-            }
+            //}
 
             // TODO: LOAD FERNS
             for (var i = 0; i < rocksAmount; i++)

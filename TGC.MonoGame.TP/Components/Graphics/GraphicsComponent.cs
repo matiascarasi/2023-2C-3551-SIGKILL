@@ -15,7 +15,7 @@ namespace TGC.MonoGame.TP.Components.Graphics
         private readonly Dictionary<string, string> TexturePaths;
         private readonly string DefaultEffectPath;
         private readonly string DefaultTexturePath;
-        private Dictionary<string, Effect> Effects;
+        protected Dictionary<string, Effect> Effects;
         private Dictionary<string, Texture> Textures;
 
         public GraphicsComponent(string model, string defaultEffect, string defaultTexture)
@@ -31,7 +31,7 @@ namespace TGC.MonoGame.TP.Components.Graphics
             EffectPaths = effects;
             TexturePaths = textures;
         }
-
+        protected virtual void SetCustomEffectParameters(Effect effect, GameObject gameObject, string meshName) { }
         public virtual void LoadContent(GameObject Object, ContentManager Content)
         {
             Object.Model = Content.Load<Model>(ModelPath);
@@ -90,6 +90,12 @@ namespace TGC.MonoGame.TP.Components.Graphics
             foreach (var mesh in Object.Model.Meshes)
             {
                 effect = Effects[mesh.Name];
+
+                if(Effects.ContainsKey(mesh.Name))
+                {
+                    SetCustomEffectParameters(effect, Object, mesh.Name);
+                }
+
                 effect.Parameters["Texture"].SetValue(Textures[mesh.Name]);
                 effect.Parameters["View"].SetValue(view);
                 effect.Parameters["Projection"].SetValue(projection);

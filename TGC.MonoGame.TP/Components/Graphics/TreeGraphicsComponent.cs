@@ -4,9 +4,9 @@
     class TreeGraphicsComponent : GraphicsComponent
     {
         public TreeGraphicsComponent() : base(
-                "Models/TankWars/Miscellaneous/Dumpster/dumpster_fbx",
+                "Models/TankWars/Miscellaneous/Trees/Gledista_Triacanthos_FBX/Gledista_Triacanthos",
                 "Effects/BasicTexture",
-                "Models/TankWars/Miscellaneous/Dumpster/dumpsters_Dumpster_BaseColor"
+                "Models/TankWars/Miscellaneous/Trees/Gledista_Triacanthos_FBX/maps/gleditsia triacanthos bark a1"
             )
         { }
     }
