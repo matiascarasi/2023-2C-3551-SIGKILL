@@ -10,19 +10,16 @@
 uniform float4x4 World;
 uniform float4x4 View;
 uniform float4x4 Projection;
+
 uniform texture Texture;
-
-float Velocity;
-float Time;
-
 
 sampler2D textureSampler = sampler_state
 {
     Texture = (Texture);
     MagFilter = Linear;
     MinFilter = Linear;
-    AddressU = Wrap;
-    AddressV = Wrap;
+    AddressU = Mirror;
+    AddressV = Mirror;
 };
 
 struct VertexShaderInput
@@ -42,10 +39,7 @@ VertexShaderOutput MainVS(in VertexShaderInput input)
 	VertexShaderOutput output = (VertexShaderOutput)0;
     float4 worldPosition = mul(input.Position, World);
     float4 viewPosition = mul(worldPosition, View);	
-
     output.Position = mul(viewPosition, Projection);
-	
-    input.TextureCoordinate.y += Velocity * 0.002f;
 	output.TextureCoordinate = input.TextureCoordinate;
 
     return output;
@@ -53,7 +47,12 @@ VertexShaderOutput MainVS(in VertexShaderInput input)
 
 float4 MainPS(VertexShaderOutput input) : COLOR
 {
-    return tex2D(textureSampler, input.TextureCoordinate);
+
+	float4 textureColor = tex2D(textureSampler, input.TextureCoordinate);
+
+    if (textureColor.a < 0.9f) clip(-1);
+	
+    return textureColor;
 }
 
 technique BasicTexture

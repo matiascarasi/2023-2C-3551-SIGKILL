@@ -68,10 +68,12 @@ namespace TGC.MonoGame.TP.Components.Graphics
                 }
             }
 
+                    System.Diagnostics.Debug.WriteLine(ModelPath);
             foreach (var mesh in Object.Model.Meshes)
             {
                 foreach (var meshPart in mesh.MeshParts)
                 {
+                    if (ModelPath.Contains("Models/TankWars/Miscellaneous/Tree")) System.Diagnostics.Debug.WriteLine(mesh.Name);
                     meshPart.Effect = Effects[mesh.Name];
                 }
             }
@@ -90,6 +92,10 @@ namespace TGC.MonoGame.TP.Components.Graphics
             foreach (var mesh in Object.Model.Meshes)
             {
                 effect = Effects[mesh.Name];
+                effect.Parameters["Velocity"]?.SetValue(Object.Velocity.Length());
+                effect.Parameters["Time"]?.SetValue(Convert.ToSingle(gameTime.ElapsedGameTime.TotalSeconds));
+
+                
                 effect.Parameters["Texture"].SetValue(Textures[mesh.Name]);
                 effect.Parameters["View"].SetValue(view);
                 effect.Parameters["Projection"].SetValue(projection);

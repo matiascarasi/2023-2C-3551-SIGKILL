@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata;
+using System.Xml.Linq;
 using Microsoft.VisualBasic.CompilerServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -57,7 +58,6 @@ namespace TGC.MonoGame.TP
         private MenuComponent Menu { get; set; }
         private HUDComponent HUD { get; set; }
         private SpriteBatch SpriteBatch { get; set; }
-        public GameObject Player { get; set; }
         private BoundsComponent Bounds { get; set; }
         private Terrain Terrain;
         public bool IsMenuActive { get; set; }
@@ -69,7 +69,7 @@ namespace TGC.MonoGame.TP
         private SoundEffect SoundEffect { get; set; }
         private List<GameObject> Objects { get; set; }
         private Forest Forest { get; set; }
-        private GameObject Player { get; set; }
+        public GameObject Player { get; set; }
         private List<GameObject> TeamPanzer { get; set; }
         private List<GameObject> TeamT90 { get; set; }
         private List<GameObject> Collisionables { get; set; }
@@ -146,12 +146,13 @@ namespace TGC.MonoGame.TP
                 TeamPanzer.Add(panzer);
                 TeamT90.Add(t90);
 
+                
                 Collisionables.Add(panzer);
                 Collisionables.Add(t90);
 
             }
-
-            Forest = new Forest(ForestDefaults.Center, ForestDefaults.Radius,  0f);
+            
+            Forest = new Forest(ForestDefaults.Center, ForestDefaults.Radius, ForestDefaults.Density);
 
             base.Initialize();
         }
@@ -164,12 +165,13 @@ namespace TGC.MonoGame.TP
             HUD.LoadContent(Content);   
             Terrain.LoadContent(Content, GraphicsDevice);
             Bounds.LoadContent(Content);
+            Player.LoadContent(Content);
             Forest.LoadContent(Content, Terrain, Objects);
             Gizmos.LoadContent(GraphicsDevice, Content);
-            Player.LoadContent(Content);
 
             foreach (var t90 in TeamT90) t90.LoadContent(Content);
             foreach (var panzer in TeamPanzer) panzer.LoadContent(Content);
+           
 
             base.LoadContent();
         }
