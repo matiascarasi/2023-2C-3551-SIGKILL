@@ -47,7 +47,7 @@ namespace TGC.MonoGame.TP
         {
             var aspectRatio = GraphicsDevice.Viewport.AspectRatio;
             screenCenterCoordinates = new Vector2((GraphicsDevice.Viewport.Width / 2), (GraphicsDevice.Viewport.Height / 2));
-            Projection = Matrix.CreatePerspectiveFieldOfView(MathF.PI / 3.5f, aspectRatio, 0.1f, 100000f);
+            Projection = Matrix.CreatePerspectiveFieldOfView(MathF.PI / 3.5f, aspectRatio, 0.1f, 500000f);
         }
 
         public void Update(GameTime gameTime, Matrix playerWorld, bool IsMenuActive)

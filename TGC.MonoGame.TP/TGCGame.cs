@@ -60,8 +60,9 @@ namespace TGC.MonoGame.TP
         private SpriteBatch SpriteBatch { get; set; }
         private BoundsComponent Bounds { get; set; }
         private Terrain Terrain;
+        private SkyBox SkyBox;
         public bool IsMenuActive { get; set; }
-
+        
         public const string ContentFolderEffects = "Effects/";
         private MouseCamera MouseCamera { get; set; }
         private Song MainSong { get; set; }
@@ -99,6 +100,7 @@ namespace TGC.MonoGame.TP
 
             HUD = new HUDComponent(PlayerDefaults.TankName, PlayerDefaults.Health, PlayerDefaults.CoolDown);
             Terrain = new Terrain(Content, GraphicsDevice, "Textures/heightmaps/hills-heightmap", "Textures/heightmaps/hills", 20.0f, 8.0f);
+          
             MouseCamera = new MouseCamera(GraphicsDevice);
             Bounds = new BoundsComponent(Content, Terrain);
 
@@ -151,7 +153,7 @@ namespace TGC.MonoGame.TP
                 Collisionables.Add(t90);
 
             }
-            
+            SkyBox = new SkyBox("Models/skybox/cube", "Textures/skyboxes/skybox/skybox", 50000f);
             Forest = new Forest(ForestDefaults.Center, ForestDefaults.Radius, ForestDefaults.Density);
 
             base.Initialize();
@@ -160,6 +162,7 @@ namespace TGC.MonoGame.TP
 
         protected override void LoadContent()
         {
+
             SpriteBatch = new SpriteBatch(GraphicsDevice);
             Menu.LoadContent(Content, GraphicsDevice);
             HUD.LoadContent(Content);   
@@ -171,7 +174,8 @@ namespace TGC.MonoGame.TP
 
             foreach (var t90 in TeamT90) t90.LoadContent(Content);
             foreach (var panzer in TeamPanzer) panzer.LoadContent(Content);
-           
+
+            SkyBox.LoadContent(Content);
 
             base.LoadContent();
         }
@@ -197,6 +201,7 @@ namespace TGC.MonoGame.TP
             Menu.Update();
             MouseCamera.Update(gameTime, Player.World, IsMenuActive);
 
+
             foreach (var obj in Objects)
             {
                 obj.Update(gameTime);
@@ -214,6 +219,14 @@ namespace TGC.MonoGame.TP
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.Black);
+            RasterizerState originalRasterizerState = GraphicsDevice.RasterizerState;
+            RasterizerState rasterizerState = new RasterizerState();
+            rasterizerState.CullMode = CullMode.None;
+            GraphicsDevice.RasterizerState = rasterizerState;
+
+            SkyBox.Draw(MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition);
+            GraphicsDevice.RasterizerState = originalRasterizerState;
+
             Terrain.Draw(GraphicsDevice, MouseCamera.View, MouseCamera.Projection);
             Bounds.Draw(gameTime, MouseCamera.View, MouseCamera.Projection);
             foreach(var obj in Objects)
@@ -223,6 +236,7 @@ namespace TGC.MonoGame.TP
             foreach (var t90 in TeamT90) t90.Draw(gameTime, MouseCamera.View, MouseCamera.Projection);
             foreach (var panzer in TeamPanzer) panzer.Draw(gameTime, MouseCamera.View, MouseCamera.Projection);
             Gizmos.Draw();
+
             if (IsMenuActive) Menu.Draw(SpriteBatch); else HUD.Draw(SpriteBatch);
 
         }
