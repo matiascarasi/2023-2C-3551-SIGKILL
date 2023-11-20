@@ -81,7 +81,7 @@ struct VertexShaderOutput
 
 VertexShaderOutput MainVS(in VertexShaderInput input)
 {
-	VertexShaderOutput output = (VertexShaderOutput)0;
+	VertexShaderOutput output;
 
     output.Position = mul(input.Position, WorldViewProjection);
     output.WorldPosition = mul(input.Position, World);

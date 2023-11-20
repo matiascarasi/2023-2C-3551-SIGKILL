@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Reflection.Metadata;
 using System.Xml.Linq;
+using BepuPhysics.Collidables;
+using BepuPhysics.Constraints;
 using Microsoft.VisualBasic.CompilerServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -11,6 +14,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using TGC.MonoGame.TP.Actors;
 using TGC.MonoGame.TP.Bounds;
+using TGC.MonoGame.TP.Cameras;
 using TGC.MonoGame.TP.Collisions;
 using TGC.MonoGame.TP.Components;
 using TGC.MonoGame.TP.Components.AI;
@@ -74,6 +78,9 @@ namespace TGC.MonoGame.TP
         private List<GameObject> TeamPanzer { get; set; }
         private List<GameObject> TeamT90 { get; set; }
         private List<GameObject> Collisionables { get; set; }
+        private BoundingFrustum BoundingFrustum { get; set; }
+
+
 
         private const int TEAMS_SIZE = 5;
 
@@ -155,6 +162,7 @@ namespace TGC.MonoGame.TP
             }
             SkyBox = new SkyBox("Models/skybox/cube", "Textures/skyboxes/skybox/skybox", 50000f);
             Forest = new Forest(ForestDefaults.Center, ForestDefaults.Radius, ForestDefaults.Density);
+            BoundingFrustum = new BoundingFrustum(MouseCamera.View * MouseCamera.Projection);
 
             base.Initialize();
         }
@@ -201,6 +209,7 @@ namespace TGC.MonoGame.TP
             Menu.Update();
             MouseCamera.Update(gameTime, Player.World, IsMenuActive);
 
+            BoundingFrustum.Matrix = MouseCamera.View * MouseCamera.Projection;
 
             foreach (var obj in Objects)
             {
@@ -228,17 +237,21 @@ namespace TGC.MonoGame.TP
             GraphicsDevice.RasterizerState = originalRasterizerState;
 
             Terrain.Draw(GraphicsDevice, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition);
-            Bounds.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition);
-            foreach(var obj in Objects)
+            Bounds.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition, BoundingFrustum);
+            
+            foreach (var obj in Objects)
             {
-                obj.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition);
+                if (BoundingFrustum.Intersects(obj.CollisionComponent.BoxWorldSpace))
+                {
+                    obj.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition);
+                }
             }
             foreach (var t90 in TeamT90) t90.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition);
             foreach (var panzer in TeamPanzer) panzer.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition);
+           
             Gizmos.Draw();
 
             if (IsMenuActive) Menu.Draw(SpriteBatch); else HUD.Draw(SpriteBatch);
-
         }
         protected override void UnloadContent()
         {
@@ -247,6 +260,7 @@ namespace TGC.MonoGame.TP
 
             base.UnloadContent();
         }
+
 
         private void DetectCollisions()
         {

@@ -88,6 +88,7 @@ namespace TGC.MonoGame.TP.Actors
 
             Position += Velocity * deltaTime;
 
+
             GraphicsComponent.Update(this, gameTime);
             CollisionComponent.Update(this);
         }

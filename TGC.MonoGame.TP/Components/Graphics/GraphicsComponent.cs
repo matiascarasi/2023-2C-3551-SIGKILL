@@ -175,11 +175,6 @@ namespace TGC.MonoGame.TP.Components.Graphics
                 }
         }
 
-        public void setParams()
-        {
-
-        }
-
         public virtual void Update(GameObject gameObject, GameTime gameTime)
         {
         }
