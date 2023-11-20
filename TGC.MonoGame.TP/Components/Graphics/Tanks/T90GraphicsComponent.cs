@@ -9,11 +9,15 @@ namespace TGC.MonoGame.TP.Components.Graphics
     {
         public T90GraphicsComponent() : base(
                 "Models/TankWars/T90/T90",
-                "Effects/BasicTexture",
+                "Effects/BlinnPhong",
+                "Models/TankWars/T90/textures_mod/normal",
                 "Models/TankWars/T90/textures_mod/hullC",
                 new Dictionary<string, string> { { "Treadmill1", "Effects/WrapTexture" }, { "Treadmill2", "Effects/WrapTexture" } },
-                new Dictionary<string, string> { { "Treadmill1", "Models/TankWars/T90/textures_mod/treadmills" }, 
-                    { "Treadmill2", "Models/TankWars/T90/textures_mod/treadmills" } }
+                new Dictionary<string, string> { { "Treadmill1", "Models/TankWars/T90/textures_mod/treadmills_normal" }, 
+                    { "Treadmill2", "Models/TankWars/T90/textures_mod/treadmills_normal" } },
+                new Dictionary<string, string> { { "Treadmill1", "Models/TankWars/T90/textures_mod/treadmills" },
+                    { "Treadmill2", "Models/TankWars/T90/textures_mod/treadmills" } },
+                "NormalMapping"
             )
         {
             CannonLength = 620f;

@@ -57,9 +57,9 @@ namespace TGC.MonoGame.TP.Components.AI
 
         }
 
-        public void Draw(GameObject gameObject, GameTime gameTime, Matrix view, Matrix projection)
+        public void Draw(GameObject gameObject, GameTime gameTime, Matrix view, Matrix projection, Vector3 cameraPosition)
         {
-            ShootingController.Draw(gameTime, view, projection);
+            ShootingController.Draw(gameTime, view, projection, cameraPosition);
         }
 
         public void LoadContent(GameObject gameObject, ContentManager content)

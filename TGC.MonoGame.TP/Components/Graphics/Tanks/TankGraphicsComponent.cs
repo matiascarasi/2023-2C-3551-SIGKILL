@@ -22,7 +22,17 @@ namespace TGC.MonoGame.TP.Components.Graphics
         private const float MIN_TURRET_ANGLE = -0.05f;
         private const float MAX_TURRET_ANGLE = 0.25f;
 
-        public TankGraphicsComponent(string model, string defaultEffect, string defaultTexture, Dictionary<string, string> effects, Dictionary<string, string> textures) : base(model, defaultEffect, defaultTexture, effects, textures)
+        public TankGraphicsComponent(
+            string model, 
+            string defaultEffect, 
+            string defaultNormal,
+            string defaultTexture, 
+            Dictionary<string, string> effects, 
+            Dictionary<string, string> normals,
+            Dictionary<string, string> textures,
+            string blinnPhongType)
+            : 
+            base(model, defaultEffect, defaultNormal, defaultTexture, effects, normals, textures, blinnPhongType)
         { }
         abstract public Vector3 GetCannonDirection(GameObject gameObject);
         public Vector3 GetCannonEnd(GameObject gameObject)

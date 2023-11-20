@@ -5,7 +5,7 @@
     {
         public FenceGraphicsComponent() : base(
                 "Models/TankWars/Miscellaneous/Fence/chainLinkFence_low",
-                "Effects/BasicTexture",
+                "Effects/Fences",
                 "Models/TankWars/Miscellaneous/Fence/chainLinkFence_low_mat_BaseColor"
             )
         { }

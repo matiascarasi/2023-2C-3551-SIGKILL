@@ -64,7 +64,7 @@ namespace TGC.MonoGame.TP
         public bool IsMenuActive { get; set; }
         
         public const string ContentFolderEffects = "Effects/";
-        private MouseCamera MouseCamera { get; set; }
+        public MouseCamera MouseCamera { get; set; }
         private Song MainSong { get; set; }
         private SoundEffectInstance Instance { get; set; }
         private SoundEffect SoundEffect { get; set; }
@@ -227,14 +227,14 @@ namespace TGC.MonoGame.TP
             SkyBox.Draw(MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition);
             GraphicsDevice.RasterizerState = originalRasterizerState;
 
-            Terrain.Draw(GraphicsDevice, MouseCamera.View, MouseCamera.Projection);
-            Bounds.Draw(gameTime, MouseCamera.View, MouseCamera.Projection);
+            Terrain.Draw(GraphicsDevice, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition);
+            Bounds.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition);
             foreach(var obj in Objects)
             {
-                obj.Draw(gameTime, MouseCamera.View, MouseCamera.Projection);
+                obj.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition);
             }
-            foreach (var t90 in TeamT90) t90.Draw(gameTime, MouseCamera.View, MouseCamera.Projection);
-            foreach (var panzer in TeamPanzer) panzer.Draw(gameTime, MouseCamera.View, MouseCamera.Projection);
+            foreach (var t90 in TeamT90) t90.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition);
+            foreach (var panzer in TeamPanzer) panzer.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition);
             Gizmos.Draw();
 
             if (IsMenuActive) Menu.Draw(SpriteBatch); else HUD.Draw(SpriteBatch);
