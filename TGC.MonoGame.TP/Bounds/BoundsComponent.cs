@@ -137,24 +137,18 @@ namespace TGC.MonoGame.TP.Bounds
                 fence.Update(gameTime);
             }
         }
-        public void Draw(GameTime gameTime, Matrix view, Matrix projection, Vector3 cameraPosition, BoundingFrustum boundingFrustum)
+        public void Draw(GameTime gameTime, Matrix view, Matrix projection, Vector3 cameraPosition)
         {
             foreach (GameObject fence in Fences)
             {
-                //if (boundingFrustum.Intersects(fence.CollisionComponent.BoxWorldSpace))
-                //{
-                    fence.Draw(gameTime, view, projection, cameraPosition);
-                //}
+                fence.Draw(gameTime, view, projection, cameraPosition);
             }
         }
-        public void Draw(GameTime gameTime, Matrix view, Matrix projection, Vector3 cameraPosition, BoundingFrustum boundingFrustum, Gizmos.Gizmos gizmos)
+        public void Draw(GameTime gameTime, Matrix view, Matrix projection, Vector3 cameraPosition, Gizmos.Gizmos gizmos)
         {
             foreach (GameObject fence in Fences)
             {
-                if (boundingFrustum.Intersects(fence.CollisionComponent.BoxWorldSpace))
-                {
-                    fence.Draw(gameTime, view, projection, cameraPosition, gizmos);
-                }
+                fence.Draw(gameTime, view, projection, cameraPosition, gizmos);
             }
         }
     }

@@ -1,10 +1,7 @@
 using System;
 using System.Linq;
-using BepuPhysics.Collidables;
-using System.Transactions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
 using TGC.MonoGame.TP.Actors;
 using TGC.MonoGame.TP.Collisions;
 
@@ -14,11 +11,9 @@ namespace TGC.MonoGame.TP.Components.Collisions
     {
         protected OrientedBoundingBox OrientedBoundingBox;
         private Matrix OrientedBoundingBoxWorld;
-        private BoundingBox objectBox;
-        public BoundingBox BoxWorldSpace;
         public virtual void LoadContent(GameObject gameObject)
         {
-            objectBox = BoundingVolumesExtensions.CreateAABBFrom(gameObject.Model);
+            var objectBox = BoundingVolumesExtensions.CreateAABBFrom(gameObject.Model);
             var boundingBox = BoundingVolumesExtensions.Scale(objectBox, gameObject.Scale);
             OrientedBoundingBox = OrientedBoundingBox.FromAABB(boundingBox);
             SetBoundingBox(gameObject);
@@ -50,8 +45,6 @@ namespace TGC.MonoGame.TP.Components.Collisions
 
         protected void SetBoundingBox(GameObject gameObject)
         {
-            BoxWorldSpace.Min = objectBox.Min + gameObject.World.Translation;
-            BoxWorldSpace.Max = objectBox.Max + gameObject.World.Translation;
             OrientedBoundingBox.Center = gameObject.Position;
             OrientedBoundingBox.Orientation = gameObject.GetRotationMatrix();
             OrientedBoundingBoxWorld = CreateObjectWorld(gameObject);
@@ -63,7 +56,6 @@ namespace TGC.MonoGame.TP.Components.Collisions
                     * gameObject.GetRotationMatrix()
                         * Matrix.CreateTranslation(gameObject.Position + new Vector3(0f, OrientedBoundingBox.Extents.Y, 0f));
         }
-
-
+        
     }
 }

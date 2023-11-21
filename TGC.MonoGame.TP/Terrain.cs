@@ -39,14 +39,9 @@ namespace TGC.MonoGame.TP
         public void LoadContent(ContentManager contentManager, GraphicsDevice graphicsDevice)
         {
             Texture = contentManager.Load<Texture2D>(TexturePath);
-
-
             Effect = contentManager.Load<Effect>(ContentFolderEffects + "Terrain");
 
             Effect.CurrentTechnique = Effect.Techniques["Default"];
-
-            Effect.Parameters["ModelTexture"].SetValue(Texture);
-
             Effect.Parameters["lightPosition"]?.SetValue(new Vector3(0f, 1000f, 500f));
 
             Effect.Parameters["ambientColor"]?.SetValue(new Vector3(.897f, .897f, .897f));
