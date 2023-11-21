@@ -11,7 +11,6 @@ uniform float Velocity;
 uniform float4x4 World;
 uniform float4x4 View;
 uniform float4x4 Projection;
-
 uniform texture Texture;
 
 float ScaleVelocity = 0.003;

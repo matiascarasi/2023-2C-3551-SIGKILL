@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata;
+using System.Xml.Linq;
 using Microsoft.VisualBasic.CompilerServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -68,7 +69,7 @@ namespace TGC.MonoGame.TP
         private SoundEffect SoundEffect { get; set; }
         private List<GameObject> Objects { get; set; }
         private Forest Forest { get; set; }
-        private GameObject Player { get; set; }
+        public GameObject Player { get; set; }
         private List<GameObject> TeamPanzer { get; set; }
         private List<GameObject> TeamT90 { get; set; }
         private List<GameObject> Collisionables { get; set; }
@@ -96,7 +97,6 @@ namespace TGC.MonoGame.TP
             //Cambio textura de cursor
             Mouse.SetCursor(MouseCursor.FromTexture2D(Content.Load<Texture2D>("Textures/Menu/cursor"), 0, 0));
 
-            Menu = new MenuComponent(this);
             HUD = new HUDComponent(PlayerDefaults.TankName, PlayerDefaults.Health, PlayerDefaults.CoolDown);
             Terrain = new Terrain(Content, GraphicsDevice, "Textures/heightmaps/hills-heightmap", "Textures/heightmaps/hills", 20.0f, 8.0f);
             MouseCamera = new MouseCamera(GraphicsDevice);
@@ -112,6 +112,7 @@ namespace TGC.MonoGame.TP
                 PlayerDefaults.Scale,
                 PlayerDefaults.Health
             );
+            Menu = new MenuComponent(this, Player.Health);
 
             Objects = new List<GameObject>() { Player };
             Collisionables = new List<GameObject>();
@@ -142,6 +143,7 @@ namespace TGC.MonoGame.TP
                 TeamPanzer.Add(panzer);
                 TeamT90.Add(t90);
 
+                
                 Collisionables.Add(panzer);
                 Collisionables.Add(t90);
 
@@ -149,8 +151,8 @@ namespace TGC.MonoGame.TP
                 t90.AddComponent(new AITankComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, PlayerDefaults.CoolDown, 5000, TeamPanzer, panzer, Collisionables, Terrain));
 
             }
-
-            Forest = new Forest(ForestDefaults.Center, ForestDefaults.Radius,  ForestDefaults.Density);
+            
+            Forest = new Forest(ForestDefaults.Center, ForestDefaults.Radius, ForestDefaults.Density);
 
             base.Initialize();
         }
@@ -169,6 +171,7 @@ namespace TGC.MonoGame.TP
 
             foreach (var t90 in TeamT90) t90.LoadContent(Content);
             foreach (var panzer in TeamPanzer) panzer.LoadContent(Content);
+           
 
             base.LoadContent();
         }
@@ -187,9 +190,7 @@ namespace TGC.MonoGame.TP
 
             if(!IsMenuActive)
             {
-                MediaPlayer.Volume = .1f;
-
-                //MediaPlayer.Stop();
+                if(MediaPlayer.Volume != 0) MediaPlayer.Volume = .1f;
                 Instance.Play();
             }
           

@@ -68,10 +68,12 @@ namespace TGC.MonoGame.TP.Components.Graphics
                 }
             }
 
+                    System.Diagnostics.Debug.WriteLine(ModelPath);
             foreach (var mesh in Object.Model.Meshes)
             {
                 foreach (var meshPart in mesh.MeshParts)
                 {
+                    if (ModelPath.Contains("Models/TankWars/Miscellaneous/Tree")) System.Diagnostics.Debug.WriteLine(mesh.Name);
                     meshPart.Effect = Effects[mesh.Name];
                 }
             }

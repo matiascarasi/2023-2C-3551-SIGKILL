@@ -14,7 +14,7 @@ namespace TGC.MonoGame.TP.Scenes
     class Forest : IScene
     {
 
-        private const double SMALL_TREES_MIN_SCALE = 1.5;
+        private const double SMALL_TREES_MIN_SCALE = 1;
         private Vector2 Center;
         private readonly double _radius;
         private readonly int smallTreesAmount;
@@ -23,7 +23,7 @@ namespace TGC.MonoGame.TP.Scenes
         {
             Center = center;
             _radius = radius;
-            smallTreesAmount = (int) (Math.PI * Math.Pow(_radius, 2) * 0.000001 * density);
+            smallTreesAmount = (int) (Math.PI * Math.Pow(_radius, 2) * 0.000005 * density);
             rocksAmount = (int)(Math.PI * Math.Pow(_radius, 2) * 0.00000075 * density);
 
         }
