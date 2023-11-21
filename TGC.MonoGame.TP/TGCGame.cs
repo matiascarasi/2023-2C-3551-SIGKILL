@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Reflection.Metadata;
 using System.Xml.Linq;
+using BepuPhysics.Collidables;
+using BepuPhysics.Constraints;
 using Microsoft.VisualBasic.CompilerServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -11,6 +14,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using TGC.MonoGame.TP.Actors;
 using TGC.MonoGame.TP.Bounds;
+using TGC.MonoGame.TP.Cameras;
 using TGC.MonoGame.TP.Collisions;
 using TGC.MonoGame.TP.Components;
 using TGC.MonoGame.TP.Components.AI;
@@ -60,10 +64,11 @@ namespace TGC.MonoGame.TP
         private SpriteBatch SpriteBatch { get; set; }
         private BoundsComponent Bounds { get; set; }
         private Terrain Terrain;
+        private SkyBox SkyBox;
         public bool IsMenuActive { get; set; }
-
+        
         public const string ContentFolderEffects = "Effects/";
-        private MouseCamera MouseCamera { get; set; }
+        public MouseCamera MouseCamera { get; set; }
         private Song MainSong { get; set; }
         private SoundEffectInstance Instance { get; set; }
         private SoundEffect SoundEffect { get; set; }
@@ -73,6 +78,9 @@ namespace TGC.MonoGame.TP
         private List<GameObject> TeamPanzer { get; set; }
         private List<GameObject> TeamT90 { get; set; }
         private List<GameObject> Collisionables { get; set; }
+        private BoundingFrustum BoundingFrustum { get; set; }
+
+
 
         private const int TEAMS_SIZE = 5;
 
@@ -99,12 +107,13 @@ namespace TGC.MonoGame.TP
 
             HUD = new HUDComponent(PlayerDefaults.TankName, PlayerDefaults.Health, PlayerDefaults.CoolDown);
             Terrain = new Terrain(Content, GraphicsDevice, "Textures/heightmaps/hills-heightmap", "Textures/heightmaps/hills", 20.0f, 8.0f);
+          
             MouseCamera = new MouseCamera(GraphicsDevice);
             Bounds = new BoundsComponent(Content, Terrain);
 
             Player = new GameObject(
                 new List<IComponent>() { new TankInputComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, PlayerDefaults.CoolDown, MouseCamera, Terrain, HUD ) },
-                new PanzerGraphicsComponent(Terrain),
+                new PanzerGraphicsComponent(),
                 new PanzerCollisionComponent(),
                 new Vector3(0f, Terrain.Height(0f, 0f), 0f),
                 PlayerDefaults.RotationAngle,
@@ -123,7 +132,7 @@ namespace TGC.MonoGame.TP
             for(var i = 0; i <= TEAMS_SIZE; i++)
             {
                 var panzer = new GameObject(
-                    new PanzerGraphicsComponent(Terrain),
+                    new PanzerGraphicsComponent(),
                     new PanzerCollisionComponent(),
                     new Vector3(2000f, Terrain.Height(2000f, 2000f + 1000f * i), 2000f + 1000f * i),
                     PlayerDefaults.RotationAngle,
@@ -132,7 +141,7 @@ namespace TGC.MonoGame.TP
                 );
 
                 var t90 = new GameObject(
-                    new T90GraphicsComponent(Terrain),
+                    new T90GraphicsComponent(),
                     new T90CollisionComponent(),
                     new Vector3(-2000f, Terrain.Height(-2000f, -2000f + 1000f * i), -2000f + 1000f * i),
                     PlayerDefaults.RotationAngle,
@@ -151,8 +160,9 @@ namespace TGC.MonoGame.TP
                 t90.AddComponent(new AITankComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, PlayerDefaults.CoolDown, 5000, TeamPanzer, panzer, Collisionables, Terrain));
 
             }
-            
+            SkyBox = new SkyBox("Models/skybox/cube", "Textures/skyboxes/skybox/skybox", 50000f);
             Forest = new Forest(ForestDefaults.Center, ForestDefaults.Radius, ForestDefaults.Density);
+            BoundingFrustum = new BoundingFrustum(MouseCamera.View * MouseCamera.Projection);
 
             base.Initialize();
         }
@@ -160,6 +170,7 @@ namespace TGC.MonoGame.TP
 
         protected override void LoadContent()
         {
+
             SpriteBatch = new SpriteBatch(GraphicsDevice);
             Menu.LoadContent(Content, GraphicsDevice);
             HUD.LoadContent(Content);   
@@ -171,7 +182,8 @@ namespace TGC.MonoGame.TP
 
             foreach (var t90 in TeamT90) t90.LoadContent(Content);
             foreach (var panzer in TeamPanzer) panzer.LoadContent(Content);
-           
+
+            SkyBox.LoadContent(Content);
 
             base.LoadContent();
         }
@@ -197,7 +209,12 @@ namespace TGC.MonoGame.TP
             Menu.Update();
             MouseCamera.Update(gameTime, Player.World, IsMenuActive);
 
-            foreach (var obj in Objects) obj.Update(gameTime);
+            BoundingFrustum.Matrix = MouseCamera.View * MouseCamera.Projection;
+
+            foreach (var obj in Objects)
+            {
+                obj.Update(gameTime);
+            }
 
             Bounds.Update(gameTime);
             Gizmos.UpdateViewProjection(MouseCamera.View, MouseCamera.Projection);
@@ -211,14 +228,30 @@ namespace TGC.MonoGame.TP
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.Black);
-            Terrain.Draw(GraphicsDevice, MouseCamera.View, MouseCamera.Projection);
-            Bounds.Draw(gameTime, MouseCamera.View, MouseCamera.Projection);
-            foreach(var obj in Objects) obj.Draw(gameTime, MouseCamera.View, MouseCamera.Projection);
-            foreach (var t90 in TeamT90) t90.Draw(gameTime, MouseCamera.View, MouseCamera.Projection);
-            foreach (var panzer in TeamPanzer) panzer.Draw(gameTime, MouseCamera.View, MouseCamera.Projection);
-            Gizmos.Draw();
-            if (IsMenuActive) Menu.Draw(SpriteBatch); else HUD.Draw(SpriteBatch);
+            RasterizerState originalRasterizerState = GraphicsDevice.RasterizerState;
+            RasterizerState rasterizerState = new RasterizerState();
+            rasterizerState.CullMode = CullMode.None;
+            GraphicsDevice.RasterizerState = rasterizerState;
 
+            SkyBox.Draw(MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition);
+            GraphicsDevice.RasterizerState = originalRasterizerState;
+
+            Terrain.Draw(GraphicsDevice, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition);
+            Bounds.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition, BoundingFrustum);
+            
+            foreach (var obj in Objects)
+            {
+                if (BoundingFrustum.Intersects(obj.CollisionComponent.BoxWorldSpace))
+                {
+                    obj.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition);
+                }
+            }
+            foreach (var t90 in TeamT90) t90.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition);
+            foreach (var panzer in TeamPanzer) panzer.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition);
+           
+            Gizmos.Draw();
+
+            if (IsMenuActive) Menu.Draw(SpriteBatch); else HUD.Draw(SpriteBatch);
         }
         protected override void UnloadContent()
         {
@@ -227,6 +260,7 @@ namespace TGC.MonoGame.TP
 
             base.UnloadContent();
         }
+
 
         private void DetectCollisions()
         {

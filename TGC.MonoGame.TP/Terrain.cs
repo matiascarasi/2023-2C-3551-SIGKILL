@@ -1,7 +1,10 @@
 ﻿using System;
+using BepuPhysics.Collidables;
+using BepuPhysics.Constraints;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using TGC.MonoGame.TP.Defaults;
 
 namespace TGC.MonoGame.TP
 {
@@ -36,18 +39,41 @@ namespace TGC.MonoGame.TP
         public void LoadContent(ContentManager contentManager, GraphicsDevice graphicsDevice)
         {
             Texture = contentManager.Load<Texture2D>(TexturePath);
-            Effect = contentManager.Load<Effect>(ContentFolderEffects + "BasicTexture");
+
+
+            Effect = contentManager.Load<Effect>(ContentFolderEffects + "Terrain");
+
+            Effect.CurrentTechnique = Effect.Techniques["Default"];
+
+            Effect.Parameters["ModelTexture"].SetValue(Texture);
+
+            Effect.Parameters["lightPosition"]?.SetValue(new Vector3(0f, 1000f, 500f));
+
+            Effect.Parameters["ambientColor"]?.SetValue(new Vector3(.897f, .897f, .897f));
+            Effect.Parameters["diffuseColor"]?.SetValue(new Vector3(.517f, .534f, .338f));
+            Effect.Parameters["specularColor"]?.SetValue(new Vector3(1f, 1f, 1f));
+
+            Effect.Parameters["KAmbient"]?.SetValue(.8f);
+            Effect.Parameters["KDiffuse"]?.SetValue(.7f);
+            Effect.Parameters["KSpecular"]?.SetValue(.5f);
+            Effect.Parameters["shininess"]?.SetValue(2f);
         }
 
-        public void Draw(GraphicsDevice graphicsDevice, Matrix view, Matrix projection)
+        public void Draw(GraphicsDevice graphicsDevice, Matrix view, Matrix projection, Vector3 cameraPosition)
         {
             graphicsDevice.DepthStencilState = DepthStencilState.Default;
             graphicsDevice.SetVertexBuffer(VertexBuffer);
             graphicsDevice.Indices = IndexBuffer;
+
+            var viewProjection = view * projection;
+
+
+            Effect.Parameters["eyePosition"].SetValue(cameraPosition);
+            Effect.Parameters["ModelTexture"].SetValue(Texture);
             Effect.Parameters["World"].SetValue(Matrix.Identity);
-            Effect.Parameters["View"].SetValue(view);
-            Effect.Parameters["Projection"].SetValue(projection);
-            Effect.Parameters["Texture"].SetValue(Texture);
+            Effect.Parameters["InverseTransposeWorld"].SetValue(Matrix.Invert(Matrix.Transpose(Matrix.Identity)));
+            Effect.Parameters["WorldViewProjection"].SetValue(Matrix.Identity * viewProjection);
+            Effect.Parameters["Tiling"].SetValue(Vector2.One);
 
             foreach (var pass in Effect.CurrentTechnique.Passes)
             {

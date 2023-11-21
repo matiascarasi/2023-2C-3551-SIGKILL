@@ -49,9 +49,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 	
     float4 textureColor = tex2D(textureSampler, input.TextureCoordinate);
 	
-    if (textureColor.a < 0.9)
-        discard;
-	
+    if (textureColor.a < 0.1f) clip(-1);
     return textureColor;
 }
 

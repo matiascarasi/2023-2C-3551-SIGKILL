@@ -112,9 +112,8 @@ float4 MainPS(VertexShaderOutput input) : COLOR
     
     // Final calculation
     float4 finalColor = float4(saturate(ambientColor * KAmbient + diffuseLight) * texelColor.rgb + specularLight, texelColor.a);
+     if (finalColor.w < 0.1f) discard;
      
-    if (finalColor.w < 0.9f) discard;
-    
     return finalColor;
 
 }
@@ -152,9 +151,6 @@ float4 NormalMapPS(VertexShaderOutput input) : COLOR
     
     // Final calculation
     float4 finalColor = float4(saturate(ambientColor * KAmbient + diffuseLight) * texelColor.rgb + specularLight, texelColor.a);
-    
-    if (finalColor.w > 0.8f) discard;
-    
     return finalColor;
 
 }

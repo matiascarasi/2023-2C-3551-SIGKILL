@@ -52,9 +52,9 @@ namespace TGC.MonoGame.TP.Controllers
             foreach (var i in ActiveBullets) Bullets[i].Update(gameTime);
         }
 
-        public void Draw(GameTime gameTime, Matrix view, Matrix projection)
+        public void Draw(GameTime gameTime, Matrix view, Matrix projection, Vector3 cameraPosition)
         {
-            foreach (var i in ActiveBullets) Bullets[i].Draw(gameTime, view, projection);
+            foreach (var i in ActiveBullets) Bullets[i].Draw(gameTime, view, projection, cameraPosition);
         }
 
         public void Shoot(Vector3 position, Vector3 direction, float speed)

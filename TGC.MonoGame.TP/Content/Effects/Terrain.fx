@@ -77,11 +77,11 @@ struct VertexShaderOutput
     float2 TextureCoordinates : TEXCOORD0;
     float4 WorldPosition : TEXCOORD1;
     float4 Normal : TEXCOORD2;    
-};
+}; 
 
 VertexShaderOutput MainVS(in VertexShaderInput input)
 {
-	VertexShaderOutput output = (VertexShaderOutput)0;
+	VertexShaderOutput output;
 
     output.Position = mul(input.Position, WorldViewProjection);
     output.WorldPosition = mul(input.Position, World);
@@ -113,8 +113,6 @@ float4 MainPS(VertexShaderOutput input) : COLOR
     // Final calculation
     float4 finalColor = float4(saturate(ambientColor * KAmbient + diffuseLight) * texelColor.rgb + specularLight, texelColor.a);
      
-    if (finalColor.w < 0.9f) discard;
-    
     return finalColor;
 
 }
@@ -152,85 +150,16 @@ float4 NormalMapPS(VertexShaderOutput input) : COLOR
     
     // Final calculation
     float4 finalColor = float4(saturate(ambientColor * KAmbient + diffuseLight) * texelColor.rgb + specularLight, texelColor.a);
-    
-    if (finalColor.w > 0.8f) discard;
-    
     return finalColor;
 
 }
 
-
-struct GouraudVertexShaderInput
-{
-    float4 Position : POSITION0;
-    float4 Normal : NORMAL;
-    float2 TextureCoordinates : TEXCOORD0;
-};
-
-struct GouraudVertexShaderOutput
-{
-    float4 Position : SV_POSITION;
-    float2 TextureCoordinates : TEXCOORD0;
-    float3 Diffuse : TEXCOORD1;
-    float3 Specular : TEXCOORD2;
-};
-
-GouraudVertexShaderOutput GouraudVS(in GouraudVertexShaderInput input)
-{
-    GouraudVertexShaderOutput output = (GouraudVertexShaderOutput) 0;
-
-    output.Position = mul(input.Position, WorldViewProjection);
-    
-    
-    float3 worldPosition = mul(input.Position, World);
-    float3 lightDirection = normalize(lightPosition - worldPosition.xyz);
-    float3 viewDirection = normalize(eyePosition - worldPosition.xyz);
-    float3 halfVector = normalize(lightDirection + viewDirection);
-    float3 normal = normalize(mul(input.Normal, InverseTransposeWorld).xyz);
-    
-	// Calculate the diffuse light
-    float NdotL = saturate(dot(normal, lightDirection));
-    float3 diffuseLight = KDiffuse * diffuseColor * NdotL;
-    
-	// Calculate the specular light
-    float NdotH = dot(normal, halfVector);
-    float3 specularLight = KSpecular * specularColor * pow(saturate(NdotH), shininess);
-    
-
-    output.Diffuse = saturate(diffuseLight + ambientColor * KAmbient);
-    output.Specular = specularLight;
-    
-    output.TextureCoordinates = input.TextureCoordinates;
-	
-    return output;
-}
-
-float4 GouraudPS(GouraudVertexShaderOutput input) : COLOR
-{
-	// Get the texture texel
-    float4 texelColor = tex2D(textureSampler, input.TextureCoordinates);
-    
-    // Final calculation
-    float4 finalColor = float4(input.Diffuse * texelColor.rgb + input.Specular, texelColor.a);
-     
-    return finalColor;
-
-}
 technique Default
 {
     pass Pass0
     {
         VertexShader = compile VS_SHADERMODEL MainVS();
         PixelShader = compile PS_SHADERMODEL MainPS();
-    }
-};
-
-technique Gouraud
-{
-    pass Pass0
-    {
-        VertexShader = compile VS_SHADERMODEL GouraudVS();
-        PixelShader = compile PS_SHADERMODEL GouraudPS();
     }
 };
 

@@ -100,9 +100,9 @@ namespace TGC.MonoGame.TP.Components.Inputs
             ShootingController.LoadContent(content);
         }
 
-        public void Draw(GameObject gameObject, GameTime gameTime, Matrix view, Matrix projection)
+        public void Draw(GameObject gameObject, GameTime gameTime, Matrix view, Matrix projection, Vector3 cameraPosition)
         {
-            ShootingController.Draw(gameTime, view, projection);
+            ShootingController.Draw(gameTime, view, projection, cameraPosition);
         }
     }
 

@@ -7,13 +7,15 @@ namespace TGC.MonoGame.TP.Components.Graphics
 {
     class PanzerGraphicsComponent : TankGraphicsComponent
     {
-        public PanzerGraphicsComponent(Terrain terrain) : base(
+        public PanzerGraphicsComponent() : base(
                 "Models/TankWars/Panzer/Panzer",
-                "Effects/BasicTexture",
-                "Models/TankWars/Panzer/PzVl_Tiger_I_0",
+                "Effects/BlinnPhong",
+                "Models/TankWars/Panzer/PzVI_Tiger_I_NM",
+                "Models/TankWars/Panzer/PzVl_Tiger_I",
                 new Dictionary<string, string> { { "Treadmill1", "Effects/WrapTexture" }, { "Treadmill2", "Effects/WrapTexture" } },
-                new Dictionary<string, string> { { "Treadmill1", "Models/TankWars/Panzer/PzVI_Tiger_I_track_0" }, { "Treadmill2", "Models/TankWars/Panzer/PzVI_Tiger_I_track_0" } },
-                terrain
+                new Dictionary<string, string> { { "Treadmill1", "Models/TankWars/Panzer/PzVI_Tiger_I_track_NM" }, { "Treadmill2", "Models/TankWars/Panzer/PzVI_Tiger_I_track_NM" } },
+                new Dictionary<string, string> { { "Treadmill1", "Models/TankWars/Panzer/PzVI_Tiger_I_track" }, { "Treadmill2", "Models/TankWars/Panzer/PzVI_Tiger_I_track" } },
+                "NormalMapping"
             )
         {
             CannonLength = 650f;

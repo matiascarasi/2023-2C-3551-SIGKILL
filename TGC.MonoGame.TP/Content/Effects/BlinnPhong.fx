@@ -81,7 +81,7 @@ struct VertexShaderOutput
 
 VertexShaderOutput MainVS(in VertexShaderInput input)
 {
-	VertexShaderOutput output = (VertexShaderOutput)0;
+	VertexShaderOutput output;
 
     output.Position = mul(input.Position, WorldViewProjection);
     output.WorldPosition = mul(input.Position, World);
@@ -113,8 +113,6 @@ float4 MainPS(VertexShaderOutput input) : COLOR
     // Final calculation
     float4 finalColor = float4(saturate(ambientColor * KAmbient + diffuseLight) * texelColor.rgb + specularLight, texelColor.a);
      
-    if (finalColor.w < 0.9f) discard;
-    
     return finalColor;
 
 }
@@ -152,9 +150,6 @@ float4 NormalMapPS(VertexShaderOutput input) : COLOR
     
     // Final calculation
     float4 finalColor = float4(saturate(ambientColor * KAmbient + diffuseLight) * texelColor.rgb + specularLight, texelColor.a);
-    
-    if (finalColor.w > 0.8f) discard;
-    
     return finalColor;
 
 }

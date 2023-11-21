@@ -15,8 +15,6 @@ namespace TGC.MonoGame.TP.Components.Graphics
         protected Matrix TurretTransform { get; set; }
         protected Matrix CannonTransform { get; set; }
         protected Matrix[] WheelsTransforms { get; set; }
-        protected Terrain Terrain { get; set; }
-
         public float CannonRotation = 0f;
         public float TurretRotation = 0f;
         protected float CannonHeight;
@@ -26,10 +24,18 @@ namespace TGC.MonoGame.TP.Components.Graphics
         private const float MIN_TURRET_ANGLE = -0.05f;
         private const float MAX_TURRET_ANGLE = 0.25f;
 
-        public TankGraphicsComponent(string model, string defaultEffect, string defaultTexture, Dictionary<string, string> effects, Dictionary<string, string> textures, Terrain terrain) : base(model, defaultEffect, defaultTexture, effects, textures)
-        {
-            Terrain = terrain;
-        }
+        public TankGraphicsComponent(
+            string model, 
+            string defaultEffect, 
+            string defaultNormal,
+            string defaultTexture, 
+            Dictionary<string, string> effects, 
+            Dictionary<string, string> normals,
+            Dictionary<string, string> textures,
+            string blinnPhongType)
+            : 
+            base(model, defaultEffect, defaultNormal, defaultTexture, effects, normals, textures, blinnPhongType)
+        { }
         abstract public Vector3 GetCannonDirection(GameObject gameObject);
         abstract protected void RotateTurretAndCannon(GameObject gameObject);
         abstract protected void RotateWheels(GameObject gameObject);

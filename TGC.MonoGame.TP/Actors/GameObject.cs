@@ -88,26 +88,27 @@ namespace TGC.MonoGame.TP.Actors
 
             Position += Velocity * deltaTime;
 
+
             GraphicsComponent.Update(this, gameTime);
             CollisionComponent.Update(this);
         }
 
-        public void Draw(GameTime gameTime, Matrix view, Matrix projection)
+        public void Draw(GameTime gameTime, Matrix view, Matrix projection, Vector3 cameraPosition)
         {
             foreach (var component in Components)
             {
-                component.Draw(this, gameTime, view, projection);
+                component.Draw(this, gameTime, view, projection, cameraPosition);
             }
-            GraphicsComponent.Draw(this, gameTime, view, projection);
+            GraphicsComponent.Draw(this, gameTime, view, projection, cameraPosition);
         }
 
-        public void Draw(GameTime gameTime, Matrix view, Matrix projection, Gizmos.Gizmos gizmos)
+        public void Draw(GameTime gameTime, Matrix view, Matrix projection, Vector3 cameraPosition, Gizmos.Gizmos gizmos)
         {
             foreach (var component in Components)
             {
-                component.Draw(this, gameTime, view, projection);
+                component.Draw(this, gameTime, view, projection, cameraPosition);
             }
-            GraphicsComponent.Draw(this, gameTime, view, projection);
+            GraphicsComponent.Draw(this, gameTime, view, projection, cameraPosition);
             CollisionComponent.Draw(gizmos);
         }
 
@@ -118,7 +119,7 @@ namespace TGC.MonoGame.TP.Actors
 
         public void OnCollide(GameObject other)
         {
-            CollisionComponent.OnCollide(this, other);
+            //CollisionComponent.OnCollide(this, other);
         }
 
         public float GetRotationAngleInRadians()

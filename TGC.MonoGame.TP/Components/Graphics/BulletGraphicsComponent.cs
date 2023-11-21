@@ -5,7 +5,7 @@
     {
         public BulletGraphicsComponent() : base(
                 "Models/TankWars/Miscellaneous/Bullet/bullet",
-                "Effects/BasicTexture",
+                "Effects/BlinnPhong",
                 "Models/TankWars/Miscellaneous/Bullet/main_texture"
             )
         { }

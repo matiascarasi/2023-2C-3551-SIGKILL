@@ -5,7 +5,7 @@
     {
         public BushGraphicsComponent() : base(
                 "Models/TankWars/Miscellaneous/Bush/600Verts-bush-upl-repacked-medText",
-                "Effects/BasicTexture",
+                "Effects/Leaves",
                 "Models/TankWars/Miscellaneous/Bush/kkk_diffuseOriginal"
             )
         { }
