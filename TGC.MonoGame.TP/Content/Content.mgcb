@@ -55,6 +55,12 @@
 /processorParam:DebugMode=Auto
 /build:Effects/Fences.fx
 
+#begin Effects/FullScreenQuad.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Effects/FullScreenQuad.fx
+
 #begin Effects/Gizmos.fx
 /importer:EffectImporter
 /processor:EffectProcessor

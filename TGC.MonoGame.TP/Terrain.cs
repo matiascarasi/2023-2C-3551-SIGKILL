@@ -21,7 +21,7 @@ namespace TGC.MonoGame.TP
         public Texture2D currentHeightmap;
         public const string ContentFolderEffects = "Effects/";
         public float[,] heightmap;
-
+        private Vector2 ViewPortSize;
         private readonly float scaleXZ;
         private readonly float scaleY;
 
@@ -32,6 +32,7 @@ namespace TGC.MonoGame.TP
             scaleXZ = _scaleXZ;
             scaleY = _scaleY;
             currentHeightmap = contentManager.Load<Texture2D>(HeightmapPath);
+            ViewPortSize = new Vector2(graphicsDevice.Viewport.Width, graphicsDevice.Viewport.Height);
 
             CreateHeightmapMesh(graphicsDevice);
         }
@@ -59,7 +60,7 @@ namespace TGC.MonoGame.TP
             Effect.Parameters["shininess"]?.SetValue(2f);
         }
 
-        public void Draw(GraphicsDevice graphicsDevice, Matrix view, Matrix projection, Vector3 cameraPosition)
+        public void Draw(GraphicsDevice graphicsDevice, Matrix view, Matrix projection, Vector3 cameraPosition, string effectTechnique)
         {
             graphicsDevice.DepthStencilState = DepthStencilState.Default;
             graphicsDevice.SetVertexBuffer(VertexBuffer);
@@ -67,6 +68,8 @@ namespace TGC.MonoGame.TP
 
             var viewProjection = view * projection;
 
+
+            Effect.CurrentTechnique = Effect.Techniques[effectTechnique];
 
             Effect.Parameters["eyePosition"].SetValue(cameraPosition);
             Effect.Parameters["ModelTexture"].SetValue(Texture);

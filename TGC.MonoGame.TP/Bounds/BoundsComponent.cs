@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BepuPhysics.Constraints;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -18,10 +19,15 @@ namespace TGC.MonoGame.TP.Bounds
     {
         private List<GameObject> Fences { get; set; }
         private Terrain terrain;
+        private Texture Texture { get; set; }
+        private Model FenceModel { get; set; }
+        private Effect Effect { get; set; }
         public BoundsComponent(ContentManager contentManager, Terrain terrain) {
 
             this.terrain = terrain;
-            var FenceModel = contentManager.Load<Model>("Models/TankWars/Miscellaneous/Fence/chainLinkFence_low");
+            FenceModel = contentManager.Load<Model>("Models/TankWars/Miscellaneous/Fence/chainLinkFence_low");
+            Texture = contentManager.Load<Texture>("Models/TankWars/Miscellaneous/Fence/chainLinkFence_low_mat_BaseColor");
+            Effect = contentManager.Load<Effect>("Effects/Fences");
             var objectBox = BoundingVolumesExtensions.CreateAABBFrom(FenceModel);
             System.Diagnostics.Debug.WriteLine("EXTENTSMax: " + objectBox.Max);
             System.Diagnostics.Debug.WriteLine("EXTENTSMin: " + objectBox.Min);
@@ -137,14 +143,40 @@ namespace TGC.MonoGame.TP.Bounds
                 fence.Update(gameTime);
             }
         }
-        public void Draw(GameTime gameTime, Matrix view, Matrix projection, Vector3 cameraPosition, BoundingFrustum boundingFrustum)
+        public void Draw(GameTime gameTime, Matrix view, Matrix projection, Vector3 cameraPosition, BoundingFrustum boundingFrustum, string effectTechnique)
         {
             foreach (GameObject fence in Fences)
             {
                 //if (boundingFrustum.Intersects(fence.CollisionComponent.BoxWorldSpace))
                 //{
-                    fence.Draw(gameTime, view, projection, cameraPosition);
+                //fence.Draw(gameTime, view, projection, cameraPosition);
                 //}
+
+                var scaleMatrix = Matrix.CreateScale(fence.Scale);
+                var rotationMatrix = Matrix.CreateFromQuaternion(Quaternion.CreateFromAxisAngle(fence.RotationDirection, fence.GetRotationAngleInRadians()));
+                var translationMatrix = Matrix.CreateTranslation(fence.Position);
+
+                var world = scaleMatrix * rotationMatrix * translationMatrix;
+                fence.World = world;
+
+                var viewProjection = view * projection;
+
+
+
+                foreach (var mesh in fence.Model.Meshes)
+                {
+                    world = fence.Bones[mesh.ParentBone.Index] * fence.World;
+
+
+                    Effect.Parameters["eyePosition"].SetValue(cameraPosition);
+                    Effect.Parameters["ModelTexture"].SetValue(Texture);
+                    Effect.Parameters["World"].SetValue(world);
+                    Effect.Parameters["InverseTransposeWorld"].SetValue(Matrix.Invert(Matrix.Transpose(world)));
+                    Effect.Parameters["WorldViewProjection"].SetValue(world * viewProjection);
+                    Effect.Parameters["Tiling"].SetValue(Vector2.One);
+                    mesh.Draw();
+                }
+
             }
         }
         public void Draw(GameTime gameTime, Matrix view, Matrix projection, Vector3 cameraPosition, BoundingFrustum boundingFrustum, Gizmos.Gizmos gizmos)

@@ -23,6 +23,7 @@ using TGC.MonoGame.TP.Components.Graphics;
 using TGC.MonoGame.TP.Components.Inputs;
 using TGC.MonoGame.TP.Controllers;
 using TGC.MonoGame.TP.Defaults;
+using TGC.MonoGame.TP.Helpers;
 using TGC.MonoGame.TP.HUD;
 using TGC.MonoGame.TP.Menu;
 using TGC.MonoGame.TP.Scenes;
@@ -80,6 +81,11 @@ namespace TGC.MonoGame.TP
         private List<GameObject> Collisionables { get; set; }
         private BoundingFrustum BoundingFrustum { get; set; }
 
+        private RenderTarget2D HorizontalRenderTarget;
+
+        private RenderTarget2D MainRenderTarget;
+        private FullScreenQuad FullScreenQuad;
+        private Effect FullScreenQuadEffect;
 
 
         private const int TEAMS_SIZE = 5;
@@ -171,9 +177,25 @@ namespace TGC.MonoGame.TP
         protected override void LoadContent()
         {
 
+            FullScreenQuadEffect = Content.Load<Effect>(ContentFolderEffects + "FullScreenQuad");
+            FullScreenQuadEffect.Parameters["screenSize"]
+               .SetValue(new Vector2(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height));
+
             SpriteBatch = new SpriteBatch(GraphicsDevice);
             Menu.LoadContent(Content, GraphicsDevice);
-            HUD.LoadContent(Content);   
+            HUD.LoadContent(Content);
+
+            FullScreenQuad = new FullScreenQuad(GraphicsDevice);
+
+            MainRenderTarget = new RenderTarget2D(GraphicsDevice, GraphicsDevice.Viewport.Width,
+                GraphicsDevice.Viewport.Height, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8, 0,
+                RenderTargetUsage.DiscardContents);
+            HorizontalRenderTarget = new RenderTarget2D(GraphicsDevice, GraphicsDevice.Viewport.Width,
+                GraphicsDevice.Viewport.Height, false, SurfaceFormat.Color, DepthFormat.None, 0,
+                RenderTargetUsage.DiscardContents);
+
+
+
             Terrain.LoadContent(Content, GraphicsDevice);
             Bounds.LoadContent(Content);
             Player.LoadContent(Content);
@@ -227,31 +249,8 @@ namespace TGC.MonoGame.TP
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.Black);
-            RasterizerState originalRasterizerState = GraphicsDevice.RasterizerState;
-            RasterizerState rasterizerState = new RasterizerState();
-            rasterizerState.CullMode = CullMode.None;
-            GraphicsDevice.RasterizerState = rasterizerState;
-
-            SkyBox.Draw(MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition);
-            GraphicsDevice.RasterizerState = originalRasterizerState;
-
-            Terrain.Draw(GraphicsDevice, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition);
-            Bounds.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition, BoundingFrustum);
-            
-            foreach (var obj in Objects)
-            {
-                if (BoundingFrustum.Intersects(obj.CollisionComponent.BoxWorldSpace))
-                {
-                    obj.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition);
-                }
-            }
-            foreach (var t90 in TeamT90) t90.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition);
-            foreach (var panzer in TeamPanzer) panzer.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition);
-           
-            Gizmos.Draw();
-
-            if (IsMenuActive) Menu.Draw(SpriteBatch); else HUD.Draw(SpriteBatch);
+            if (IsMenuActive) DrawWithScreenBlur(gameTime);
+            else DrawDefault(gameTime);
         }
         protected override void UnloadContent()
         {
@@ -261,6 +260,105 @@ namespace TGC.MonoGame.TP
             base.UnloadContent();
         }
 
+        protected void DrawDefault(GameTime gameTime)
+        {
+            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            GraphicsDevice.BlendState = BlendState.Opaque;
+
+
+            RasterizerState originalRasterizerState = GraphicsDevice.RasterizerState;
+            RasterizerState rasterizerState = new RasterizerState();
+            rasterizerState.CullMode = CullMode.None;
+            GraphicsDevice.RasterizerState = rasterizerState;
+
+            SkyBox.Draw(MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition);
+            GraphicsDevice.RasterizerState = originalRasterizerState;
+
+
+            Terrain.Draw(GraphicsDevice, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition, "Default");
+
+            Bounds.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition, BoundingFrustum, "Default");
+
+            foreach (var obj in Objects)
+            {
+                if (BoundingFrustum.Intersects(obj.CollisionComponent.BoxWorldSpace))
+                {
+                    obj.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition);
+                }
+            }
+            foreach (var t90 in TeamT90) t90.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition);
+            foreach (var panzer in TeamPanzer) panzer.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition);
+
+            Gizmos.Draw();
+
+            if (IsMenuActive) Menu.Draw(SpriteBatch); else HUD.Draw(SpriteBatch);
+        }
+        protected void DrawWithScreenBlur(GameTime gameTime)
+        {
+            #region Main Render Target
+            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            GraphicsDevice.BlendState = BlendState.Opaque;
+
+            GraphicsDevice.SetRenderTarget(MainRenderTarget);
+            GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.CornflowerBlue, 1f, 0);
+
+            RasterizerState originalRasterizerState = GraphicsDevice.RasterizerState;
+            RasterizerState rasterizerState = new RasterizerState();
+            rasterizerState.CullMode = CullMode.None;
+            GraphicsDevice.RasterizerState = rasterizerState;
+
+            SkyBox.Draw(MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition);
+            GraphicsDevice.RasterizerState = originalRasterizerState;
+
+            // Set the main render target as our render target
+
+
+            Terrain.Draw(GraphicsDevice, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition, "Default");
+
+            Bounds.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition, BoundingFrustum, "Default");
+
+            foreach (var obj in Objects)
+            {
+                if (BoundingFrustum.Intersects(obj.CollisionComponent.BoxWorldSpace))
+                {
+                    obj.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition);
+                }
+            }
+            foreach (var t90 in TeamT90) t90.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition);
+            foreach (var panzer in TeamPanzer) panzer.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition);
+
+            Gizmos.Draw();
+
+            #endregion
+
+            #region BlurHorizontal
+
+            GraphicsDevice.DepthStencilState = DepthStencilState.None;
+
+            GraphicsDevice.SetRenderTarget(HorizontalRenderTarget);
+            GraphicsDevice.Clear(Color.Black);
+
+
+            FullScreenQuadEffect.CurrentTechnique = FullScreenQuadEffect.Techniques["BlurHorizontalTechnique"];
+            FullScreenQuadEffect.Parameters["ModelTexture"].SetValue(MainRenderTarget);
+            FullScreenQuad.Draw(FullScreenQuadEffect);
+
+
+            #endregion
+
+            #region BlurVerticalTechnique
+            GraphicsDevice.SetRenderTarget(null);
+            GraphicsDevice.Clear(Color.Black);
+
+            FullScreenQuadEffect.CurrentTechnique = FullScreenQuadEffect.Techniques["BlurVerticalTechnique"];
+            FullScreenQuadEffect.Parameters["ModelTexture"].SetValue(HorizontalRenderTarget);
+            FullScreenQuad.Draw(FullScreenQuadEffect);
+            if (IsMenuActive) Menu.Draw(SpriteBatch); else HUD.Draw(SpriteBatch);
+            #endregion
+
+        }
 
         private void DetectCollisions()
         {
