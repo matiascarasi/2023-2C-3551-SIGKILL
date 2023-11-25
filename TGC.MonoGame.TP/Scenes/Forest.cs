@@ -28,7 +28,7 @@ namespace TGC.MonoGame.TP.Scenes
 
         }
 
-        public void LoadContent(ContentManager Content, Terrain Terrain, List<GameObject> Objects)
+        public void LoadContent(ContentManager Content, HeightMap HeightMap, List<GameObject> Objects)
         {
             Random Random = new(Guid.NewGuid().GetHashCode());
 
@@ -41,7 +41,7 @@ namespace TGC.MonoGame.TP.Scenes
 
                 var tree = new GameObject(
                     new TreeGraphicsComponent(),
-                    new Vector3(position.X, Terrain.Height(position.X, position.Y), position.Y),
+                    new Vector3(position.X, HeightMap.Height(position.X, position.Y), position.Y),
                     rotation,
                     scale,
                     0.1f
@@ -65,7 +65,7 @@ namespace TGC.MonoGame.TP.Scenes
 
                 var rock = new GameObject(
                     new BushGraphicsComponent(),
-                    new Vector3(position.X, Terrain.Height(position.X, position.Y), position.Y),
+                    new Vector3(position.X, HeightMap.Height(position.X, position.Y), position.Y),
                     rotation,
                     scale,
                     0.1f

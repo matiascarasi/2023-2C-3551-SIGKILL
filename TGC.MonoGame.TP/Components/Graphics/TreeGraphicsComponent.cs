@@ -9,11 +9,11 @@ namespace TGC.MonoGame.TP.Components.Graphics
                 "Models/TankWars/Miscellaneous/Trees/Chestnut_Good",
                 "Effects/Leaves",
                 "",
-                "Models/TankWars/Miscellaneous/Trees/tileable_tree_bark_texture_by_ftourini-d3l69hz",
+                "Models/TankWars/Miscellaneous/Trees/bark-texture",
                 new Dictionary<string, string> { { "tree", "Effects/Leaves" }, { "leaves", "Effects/Leaves" } },
-                new Dictionary<string, string> { { "tree", "Models/TankWars/Miscellaneous/Trees/tileable_tree_bark_texture_by_ftourini-d3l69hz" },
+                new Dictionary<string, string> { { "tree", "Models/TankWars/Miscellaneous/Trees/bark-texture" },
                     { "leaves","Models/TankWars/Miscellaneous/Trees/TexturesCom_Branches0018_1_alphamasked_S" } },
-                new Dictionary<string, string> { { "tree", "Models/TankWars/Miscellaneous/Trees/tileable_tree_bark_texture_by_ftourini-d3l69hz" },
+                new Dictionary<string, string> { { "tree", "Models/TankWars/Miscellaneous/Trees/bark-texture" },
                     { "leaves","Models/TankWars/Miscellaneous/Trees/TexturesCom_Branches0018_1_alphamasked_S" } },  
                 "Default"
             )

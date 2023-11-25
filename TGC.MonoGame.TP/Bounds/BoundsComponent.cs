@@ -18,27 +18,21 @@ namespace TGC.MonoGame.TP.Bounds
     internal class BoundsComponent
     {
         private List<GameObject> Fences { get; set; }
-        private Terrain terrain;
+        private HeightMap HeightMap;
         private Texture Texture { get; set; }
         private Model FenceModel { get; set; }
         private Effect Effect { get; set; }
-        public BoundsComponent(ContentManager contentManager, Terrain terrain) {
+        public BoundsComponent(ContentManager contentManager, HeightMap heightMap) {
 
-            this.terrain = terrain;
+            HeightMap = heightMap;
             FenceModel = contentManager.Load<Model>("Models/TankWars/Miscellaneous/Fence/chainLinkFence_low");
             Texture = contentManager.Load<Texture>("Models/TankWars/Miscellaneous/Fence/chainLinkFence_low_mat_BaseColor");
             Effect = contentManager.Load<Effect>("Effects/Fences");
+
             var objectBox = BoundingVolumesExtensions.CreateAABBFrom(FenceModel);
-            System.Diagnostics.Debug.WriteLine("EXTENTSMax: " + objectBox.Max);
-            System.Diagnostics.Debug.WriteLine("EXTENTSMin: " + objectBox.Min);
-
             var extents = objectBox.Max - objectBox.Min;
-            var heightMapExtents = new Vector2(terrain.currentHeightmap.Width, terrain.currentHeightmap.Height);
-            System.Diagnostics.Debug.WriteLine("EXTENTS: " + extents);
 
-            System.Diagnostics.Debug.WriteLine("HEIGHT MAP EXTENTS: " + heightMapExtents);
-
-            var quantity =  heightMapExtents.X / (extents.X / 2) ;
+            var quantity = HeightMap.GetScaleXZ() * 2 / (extents.X / 2) ;
             var scale = 5f;
             var sizes = 4;
             System.Diagnostics.Debug.WriteLine("Q: " + quantity);
@@ -49,21 +43,21 @@ namespace TGC.MonoGame.TP.Bounds
             for (int i = 0; i < sizes; i++)
             {
                 var rotation = 0f;
-                var zPosition = 20000f;
+                var zPosition = 20f * HeightMap.GetScaleXZ();
                 
                 if (i % 2 != 0)
                 {
-                    zPosition = -20000f;
+                    zPosition = -20f * HeightMap.GetScaleXZ(); ;
                 }
 
                 for (int j = 0; j < quantity * 2; j++)
                 {
 
-                    var xPosition = extents.X * 1.8f + (extents.X * scale * j) - 20000f;
+                    var xPosition = extents.X * 1.8f + (extents.X * scale * j) - 20f * HeightMap.GetScaleXZ(); ;
                     
                     var fence = new GameObject(
                         new FenceGraphicsComponent(),
-                        new Vector3(xPosition, terrain.Height(0f, 0f), zPosition),
+                        new Vector3(xPosition, HeightMap.Height(0f, 0f), zPosition),
                         rotation,
                         scale,
                         1f
@@ -74,7 +68,7 @@ namespace TGC.MonoGame.TP.Bounds
                         rotation = 90f;
                         fence = new GameObject(
                             new FenceGraphicsComponent(),
-                            new Vector3(zPosition, terrain.Height(0f, 0f), xPosition),
+                            new Vector3(zPosition, HeightMap.Height(0f, 0f), xPosition),
                             rotation,
                             scale,
                             1f
@@ -87,21 +81,21 @@ namespace TGC.MonoGame.TP.Bounds
             for (int i = 0; i < sizes; i++)
             {
                 var rotation = 90f;
-                var xPosition = 20000f;
+                var xPosition = 20f * HeightMap.GetScaleXZ(); ;
 
                 if (i % 2 != 0)
                 {
-                    xPosition = -20000f;
+                    xPosition = -20f * HeightMap.GetScaleXZ(); ;
                 }
 
                 for (int j = 0; j < quantity * 2; j++)
                 {
 
-                    var zPosition = extents.X * 1.8f + (extents.X * scale * j) - 20000f;
+                    var zPosition = extents.X * 1.8f + (extents.X * scale * j) - 20f * HeightMap.GetScaleXZ(); ;
 
                     var fence = new GameObject(
                         new FenceGraphicsComponent(),
-                        new Vector3(xPosition, terrain.Height(0f, 0f), zPosition),
+                        new Vector3(xPosition, HeightMap.Height(0f, 0f), zPosition),
                         rotation,
                         scale,
                         1f
@@ -112,7 +106,7 @@ namespace TGC.MonoGame.TP.Bounds
                         rotation = 0f;
                             fence = new GameObject(
                             new FenceGraphicsComponent(),
-                            new Vector3(zPosition, terrain.Height(0f, 0f), xPosition),
+                            new Vector3(zPosition, HeightMap.Height(0f, 0f), xPosition),
                             rotation,
                             scale,
                             1f
@@ -139,7 +133,7 @@ namespace TGC.MonoGame.TP.Bounds
         {
             foreach (GameObject fence in Fences)
             {
-                fence.Position = new Vector3(fence.Position.X, terrain.Height(fence.Position.X, fence.Position.Z) - 600f, fence.Position.Z);
+                fence.Position = new Vector3(fence.Position.X, HeightMap.Height(fence.Position.X, fence.Position.Z) - 600f, fence.Position.Z);
                 fence.Update(gameTime);
             }
         }

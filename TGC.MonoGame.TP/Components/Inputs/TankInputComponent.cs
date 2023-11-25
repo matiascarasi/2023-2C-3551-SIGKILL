@@ -23,17 +23,17 @@ namespace TGC.MonoGame.TP.Components.Inputs
         private ShootingController ShootingController { get; set; }
         private MouseState PrevMouseState { get; set; }
         private MouseCamera MouseCamera { get; }
-        private Terrain Terrain { get; }
+        private HeightMap HeightMap { get; }
         private HUDComponent HUDComponent { get; }
 
-        public TankInputComponent(float driveSpeed, float rotationSpeed, float shootingCooldown, MouseCamera mouseCamera, Terrain terrain, HUDComponent hudComponent)
+        public TankInputComponent(float driveSpeed, float rotationSpeed, float shootingCooldown, MouseCamera mouseCamera, HeightMap heightMap, HUDComponent hudComponent)
         {
             MovementController = new MovementController(driveSpeed, rotationSpeed);
             ShootingController = new ShootingController(shootingCooldown, MAX_BULLETS_AMOUNT);
             PrevMouseState = Mouse.GetState();
 
             MouseCamera = mouseCamera;
-            Terrain = terrain;
+            HeightMap = heightMap;
             HUDComponent = hudComponent;
         }
 
@@ -52,7 +52,7 @@ namespace TGC.MonoGame.TP.Components.Inputs
 
             var X = Player.Position.X;
             var Z = Player.Position.Z; 
-            var height = Terrain.Height(X, Z);
+            var height = HeightMap.Height(X, Z);
             Player.Position = new Vector3(X, height, Z);
 
             //DETECCION DE MOVIMIENTO DEL MOUSE

@@ -19,13 +19,13 @@ namespace TGC.MonoGame.TP.Components.AI
         private MovementController MovementController { get; }
         private ShootingController ShootingController { get; }
         private PathFindingController PathFindingController { get; } 
-        private Terrain Terrain { get; }
-        public AITankComponent(float driveSpeed, float rotationSpeed, float cooldown, float minDistance, List<GameObject> targets, GameObject initialTarget, List<GameObject> objects, Terrain terrain)
+        private HeightMap HeightMap { get; }
+        public AITankComponent(float driveSpeed, float rotationSpeed, float cooldown, float minDistance, List<GameObject> targets, GameObject initialTarget, List<GameObject> objects, HeightMap heightMap)
         {
             MovementController = new MovementController(driveSpeed, rotationSpeed);
             ShootingController = new ShootingController(cooldown, MAX_BULLETS_AMOUNT);
             PathFindingController = new PathFindingController(targets, initialTarget, minDistance, objects, MovementController);
-            Terrain = terrain;
+            HeightMap = heightMap;
         }
         public void Update(GameObject gameObject, GameTime gameTime)
         {
@@ -36,7 +36,7 @@ namespace TGC.MonoGame.TP.Components.AI
 
             var X = gameObject.Position.X;
             var Z = gameObject.Position.Z;
-            var height = Terrain.Height(X, Z);
+            var height = HeightMap.Height(X, Z);
             gameObject.Position = new Vector3(X, height, Z);
 
             ShootingController.Update(gameObject, gameTime);
@@ -45,7 +45,7 @@ namespace TGC.MonoGame.TP.Components.AI
 
             var direction = PathFindingController.GetDirection();
             var forward = new Vector3(direction.X, 0f, direction.Z);
-            var terrainRatioXZ = Terrain.GetScaleY() / Terrain.GetScaleXZ();
+            var terrainRatioXZ = HeightMap.GetScaleY() / HeightMap.GetScaleXZ();
 
             var turretAngle = MathHelper.ToRadians(AlgebraHelper.GetAngleBetweenTwoVectors(gameObject.World.Forward, forward));
             var cannonAngle = MathF.Atan2(direction.Y, forward.Length() * terrainRatioXZ);

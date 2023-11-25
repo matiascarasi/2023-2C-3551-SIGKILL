@@ -82,7 +82,7 @@ namespace TGC.MonoGame.TP
         private RenderTarget2D MainRenderTarget;
         private FullScreenQuad FullScreenQuad;
         private Effect FullScreenQuadEffect;
-
+        private HeightMap HeightMap;
 
         private const int TEAMS_SIZE = 5;
 
@@ -109,15 +109,16 @@ namespace TGC.MonoGame.TP
 
             HUD = new HUDComponent(PlayerDefaults.TankName, PlayerDefaults.Health, PlayerDefaults.CoolDown);
             Terrain = new Terrain(Content, GraphicsDevice, "Textures/heightmaps/hills-heightmap", "Textures/heightmaps/hills", 20.0f, 8.0f);
-          
+            HeightMap = new HeightMap(Content, GraphicsDevice, "Textures/heightmaps/heightmap", "Textures/heightmaps/colormap",
+                "Textures/heightmaps/greenGrass", "Textures/heightmaps/ground", 2000, 3);
             MouseCamera = new MouseCamera(GraphicsDevice);
-            Bounds = new BoundsComponent(Content, Terrain);
+            Bounds = new BoundsComponent(Content, HeightMap);
 
             Player = new GameObject(
-                new List<IComponent>() { new TankInputComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, PlayerDefaults.CoolDown, MouseCamera, Terrain, HUD ) },
+                new List<IComponent>() { new TankInputComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, PlayerDefaults.CoolDown, MouseCamera, HeightMap, HUD ) },
                 new PanzerGraphicsComponent(),
                 new PanzerCollisionComponent(),
-                new Vector3(0f, Terrain.Height(0f, 0f), 0f),
+                new Vector3(0f, HeightMap.Height(0f, 0f), 0f),
                 PlayerDefaults.RotationAngle,
                 Vector3.Up,
                 PlayerDefaults.Scale,
@@ -136,7 +137,7 @@ namespace TGC.MonoGame.TP
                 var panzer = new GameObject(
                     new PanzerGraphicsComponent(),
                     new PanzerCollisionComponent(),
-                    new Vector3(2000f, Terrain.Height(2000f, 2000f + 1000f * i), 2000f + 1000f * i),
+                    new Vector3(2000f, HeightMap.Height(2000f, 2000f + 1000f * i), 2000f + 1000f * i),
                     PlayerDefaults.RotationAngle,
                     PlayerDefaults.Scale,
                     PlayerDefaults.Health
@@ -145,7 +146,7 @@ namespace TGC.MonoGame.TP
                 var t90 = new GameObject(
                     new T90GraphicsComponent(),
                     new T90CollisionComponent(),
-                    new Vector3(-2000f, Terrain.Height(-2000f, -2000f + 1000f * i), -2000f + 1000f * i),
+                    new Vector3(-2000f, HeightMap.Height(-2000f, -2000f + 1000f * i), -2000f + 1000f * i),
                     PlayerDefaults.RotationAngle,
                     PlayerDefaults.Scale,
                     PlayerDefaults.Health
@@ -158,8 +159,8 @@ namespace TGC.MonoGame.TP
                 Collisionables.Add(panzer);
                 Collisionables.Add(t90);
 
-                panzer.AddComponent(new AITankComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, PlayerDefaults.CoolDown, 5000, TeamT90, t90, Collisionables, Terrain));
-                t90.AddComponent(new AITankComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, PlayerDefaults.CoolDown, 5000, TeamPanzer, panzer, Collisionables, Terrain));
+                panzer.AddComponent(new AITankComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, PlayerDefaults.CoolDown, 5000, TeamT90, t90, Collisionables, HeightMap));
+                t90.AddComponent(new AITankComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, PlayerDefaults.CoolDown, 5000, TeamPanzer, panzer, Collisionables, HeightMap));
 
             }
             SkyBox = new SkyBox("Models/skybox/cube", "Textures/skyboxes/skybox/skybox", 50000f);
@@ -191,11 +192,11 @@ namespace TGC.MonoGame.TP
                 RenderTargetUsage.DiscardContents);
 
 
-
+            HeightMap.LoadContent(Content, GraphicsDevice);
             Terrain.LoadContent(Content, GraphicsDevice);
             Bounds.LoadContent(Content);
             Player.LoadContent(Content);
-            Forest.LoadContent(Content, Terrain, Objects);
+            Forest.LoadContent(Content, HeightMap, Objects);
             Gizmos.LoadContent(GraphicsDevice, Content);
 
             foreach (var t90 in TeamT90) t90.LoadContent(Content);
@@ -270,11 +271,11 @@ namespace TGC.MonoGame.TP
             GraphicsDevice.RasterizerState = rasterizerState;
 
             SkyBox.Draw(MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition);
+            HeightMap.Draw(GraphicsDevice, Matrix.Identity, MouseCamera.View, MouseCamera.Projection);
             GraphicsDevice.RasterizerState = originalRasterizerState;
 
 
-            Terrain.Draw(GraphicsDevice, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition, "Default");
-
+            //Terrain.Draw(GraphicsDevice, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition, "Default");
             Bounds.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition);
 
             foreach (var obj in Objects)
@@ -305,15 +306,15 @@ namespace TGC.MonoGame.TP
             RasterizerState rasterizerState = new RasterizerState();
             rasterizerState.CullMode = CullMode.None;
             GraphicsDevice.RasterizerState = rasterizerState;
-
             SkyBox.Draw(MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition);
+            HeightMap.Draw(GraphicsDevice, Matrix.Identity, MouseCamera.View, MouseCamera.Projection);
             GraphicsDevice.RasterizerState = originalRasterizerState;
 
             // Set the main render target as our render target
 
 
-            Terrain.Draw(GraphicsDevice, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition, "Default");
-
+            //Terrain.Draw(GraphicsDevice, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition, "Default");
+            HeightMap.Draw(GraphicsDevice, Matrix.Identity, MouseCamera.View, MouseCamera.Projection);
             Bounds.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition);
 
             foreach (var obj in Objects)
