@@ -164,6 +164,7 @@ namespace TGC.MonoGame.TP
             }
             SkyBox = new SkyBox("Models/skybox/cube", "Textures/skyboxes/skybox/skybox", 50000f);
             Forest = new Forest(ForestDefaults.Center, ForestDefaults.Radius, ForestDefaults.Density);
+            BoundingFrustum = new BoundingFrustum(MouseCamera.View * MouseCamera.Projection);
 
             base.Initialize();
         }
@@ -232,6 +233,8 @@ namespace TGC.MonoGame.TP
                 obj.Update(gameTime);
             }
 
+            BoundingFrustum.Matrix = MouseCamera.View * MouseCamera.Projection;
+
             Bounds.Update(gameTime);
             Gizmos.UpdateViewProjection(MouseCamera.View, MouseCamera.Projection);
 
@@ -272,7 +275,7 @@ namespace TGC.MonoGame.TP
 
             Terrain.Draw(GraphicsDevice, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition, "Default");
 
-            Bounds.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition, BoundingFrustum);
+            Bounds.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition);
 
             foreach (var obj in Objects)
             {
@@ -311,7 +314,7 @@ namespace TGC.MonoGame.TP
 
             Terrain.Draw(GraphicsDevice, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition, "Default");
 
-            Bounds.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition, BoundingFrustum);
+            Bounds.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition);
 
             foreach (var obj in Objects)
             {
