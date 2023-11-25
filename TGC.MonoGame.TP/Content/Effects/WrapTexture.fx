@@ -22,7 +22,6 @@ float3 lightPosition;
 float3 eyePosition; // Camera position
 float2 Tiling;
 float Velocity;
-float Time;
 
 texture ModelTexture;
 sampler2D textureSampler = sampler_state

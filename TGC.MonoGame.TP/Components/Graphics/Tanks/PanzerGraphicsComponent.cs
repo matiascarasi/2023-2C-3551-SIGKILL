@@ -20,26 +20,26 @@ namespace TGC.MonoGame.TP.Components.Graphics
         {
             CannonLength = 650f;
             CannonHeight = 200f;
+            WheelsAmount = 20;
+        }
+        protected override void RotateTurretAndCannon(GameObject gameObject)
+        {
+            var turretRotation = Matrix.CreateRotationY(TurretRotation);
+            gameObject.Bones[gameObject.Model.Bones["Cannon"].Index] = Matrix.CreateRotationX(-CannonRotation) * CannonTransform * turretRotation;
+            gameObject.Bones[gameObject.Model.Bones["Turret"].Index] = turretRotation * TurretTransform;
+        }
+        protected override void RotateWheels(GameObject gameObject)
+        {
+            var velocity = gameObject.Velocity.Length();
+
+            for (var i = 0; i < WheelsAmount; i++) 
+                gameObject.Bones[gameObject.Model.Bones["Wheel"+(i+1)].Index] = Matrix.CreateRotationX(-MathHelper.ToRadians(velocity)) * WheelsTransforms[i];
         }
 
         public override Vector3 GetCannonDirection(GameObject gameObject)
         {
             var cannonMatrix = gameObject.Bones[gameObject.Model.Bones["Cannon"].Index] * gameObject.GetRotationMatrix();
             return -Vector3.Normalize(cannonMatrix.Forward);
-        }
-
-        public override void LoadContent(GameObject gameObject, ContentManager Content)
-        {
-            base.LoadContent(gameObject, Content);
-            CannonTransform = gameObject.Bones[gameObject.Model.Bones["Cannon"].Index];
-            TurretTransform = gameObject.Bones[gameObject.Model.Bones["Turret"].Index];
-        }
-
-        public override void Update(GameObject gameObject, GameTime gameTime)
-        {
-            var turretRotation = Matrix.CreateRotationY(TurretRotation);
-            gameObject.Bones[gameObject.Model.Bones["Cannon"].Index] =  Matrix.CreateRotationX(-CannonRotation) * CannonTransform * turretRotation;
-            gameObject.Bones[gameObject.Model.Bones["Turret"].Index] = turretRotation * TurretTransform;
         }
     }
 }

@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Reflection.Metadata;
 using System.Xml.Linq;
-using BepuPhysics.Collidables;
-using BepuPhysics.Constraints;
 using Microsoft.VisualBasic.CompilerServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -14,7 +11,6 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using TGC.MonoGame.TP.Actors;
 using TGC.MonoGame.TP.Bounds;
-using TGC.MonoGame.TP.Cameras;
 using TGC.MonoGame.TP.Collisions;
 using TGC.MonoGame.TP.Components;
 using TGC.MonoGame.TP.Components.AI;
@@ -155,9 +151,6 @@ namespace TGC.MonoGame.TP
                     PlayerDefaults.Health
                 );
 
-                panzer.AddComponent(new AITankComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, PlayerDefaults.CoolDown, 5000, t90, Collisionables, Terrain));
-                t90.AddComponent(new AITankComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, PlayerDefaults.CoolDown, 5000, panzer, Collisionables, Terrain));
-
                 TeamPanzer.Add(panzer);
                 TeamT90.Add(t90);
 
@@ -165,10 +158,12 @@ namespace TGC.MonoGame.TP
                 Collisionables.Add(panzer);
                 Collisionables.Add(t90);
 
+                panzer.AddComponent(new AITankComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, PlayerDefaults.CoolDown, 5000, TeamT90, t90, Collisionables, Terrain));
+                t90.AddComponent(new AITankComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, PlayerDefaults.CoolDown, 5000, TeamPanzer, panzer, Collisionables, Terrain));
+
             }
             SkyBox = new SkyBox("Models/skybox/cube", "Textures/skyboxes/skybox/skybox", 50000f);
             Forest = new Forest(ForestDefaults.Center, ForestDefaults.Radius, ForestDefaults.Density);
-            BoundingFrustum = new BoundingFrustum(MouseCamera.View * MouseCamera.Projection);
 
             base.Initialize();
         }
@@ -231,7 +226,6 @@ namespace TGC.MonoGame.TP
             Menu.Update();
             MouseCamera.Update(gameTime, Player.World, IsMenuActive);
 
-            BoundingFrustum.Matrix = MouseCamera.View * MouseCamera.Projection;
 
             foreach (var obj in Objects)
             {
@@ -278,7 +272,7 @@ namespace TGC.MonoGame.TP
 
             Terrain.Draw(GraphicsDevice, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition, "Default");
 
-            Bounds.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition, BoundingFrustum, "Default");
+            Bounds.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition, BoundingFrustum);
 
             foreach (var obj in Objects)
             {
@@ -317,7 +311,7 @@ namespace TGC.MonoGame.TP
 
             Terrain.Draw(GraphicsDevice, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition, "Default");
 
-            Bounds.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition, BoundingFrustum, "Default");
+            Bounds.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition, BoundingFrustum);
 
             foreach (var obj in Objects)
             {

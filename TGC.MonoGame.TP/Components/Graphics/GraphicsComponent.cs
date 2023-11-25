@@ -17,7 +17,7 @@ namespace TGC.MonoGame.TP.Components.Graphics
         private readonly Dictionary<string, string> TexturePaths;
         private readonly string DefaultEffectPath;
         private readonly string DefaultTexturePath;
-        private Dictionary<string, Effect> Effects;
+        protected Dictionary<string, Effect> Effects;
         private Dictionary<string, Texture> Textures;
 
         private readonly string DefaultNormalPath;
@@ -52,7 +52,7 @@ namespace TGC.MonoGame.TP.Components.Graphics
             DefaultNormalPath = defaultNormal;
             BlinnPhongType = blinnPhongType;
         }
-
+        protected virtual void SetCustomEffectParameters(Effect effect, GameObject gameObject, string meshName) { }
         public virtual void LoadContent(GameObject Object, ContentManager Content)
         {
             Object.Model = Content.Load<Model>(ModelPath);
@@ -137,18 +137,20 @@ namespace TGC.MonoGame.TP.Components.Graphics
             var world = scaleMatrix * rotationMatrix * translationMatrix;
             Object.World = world;
 
-            var viewProjection = view * projection;
-
-
             Effect effect;
-                       
+            var viewProjection = view * projection;
             
                 foreach (var mesh in Object.Model.Meshes)
                 {
+                    effect = Effects[mesh.Name];
+
+                    if(Effects.ContainsKey(mesh.Name))
+                    {
+                        SetCustomEffectParameters(effect, Object, mesh.Name);
+                    }
                     if (BlinnPhongType == "NormalMapping")
                     {
                         world = Object.Bones[mesh.ParentBone.Index] * Object.World;
-                        effect = Effects[mesh.Name];
 
                         effect.Parameters["Velocity"]?.SetValue(Object.Velocity.Length());
                         effect.Parameters["Time"]?.SetValue(Convert.ToSingle(gameTime.ElapsedGameTime.TotalSeconds));
@@ -163,7 +165,7 @@ namespace TGC.MonoGame.TP.Components.Graphics
                     else
                     {
                         world = Object.Bones[mesh.ParentBone.Index] * Object.World;
-                        effect = Effects[mesh.Name];
+
                         effect.Parameters["eyePosition"].SetValue(cameraPosition);
                         effect.Parameters["ModelTexture"].SetValue(Textures[mesh.Name]);
                         effect.Parameters["World"].SetValue(world);
@@ -173,6 +175,11 @@ namespace TGC.MonoGame.TP.Components.Graphics
                 }
                     mesh.Draw();
                 }
+        }
+
+        public void setParams()
+        {
+
         }
 
         public virtual void Update(GameObject gameObject, GameTime gameTime)

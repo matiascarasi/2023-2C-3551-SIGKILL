@@ -143,50 +143,18 @@ namespace TGC.MonoGame.TP.Bounds
                 fence.Update(gameTime);
             }
         }
-        public void Draw(GameTime gameTime, Matrix view, Matrix projection, Vector3 cameraPosition, BoundingFrustum boundingFrustum, string effectTechnique)
+        public void Draw(GameTime gameTime, Matrix view, Matrix projection, Vector3 cameraPosition)
         {
             foreach (GameObject fence in Fences)
             {
-                //if (boundingFrustum.Intersects(fence.CollisionComponent.BoxWorldSpace))
-                //{
-                //fence.Draw(gameTime, view, projection, cameraPosition);
-                //}
-
-                var scaleMatrix = Matrix.CreateScale(fence.Scale);
-                var rotationMatrix = Matrix.CreateFromQuaternion(Quaternion.CreateFromAxisAngle(fence.RotationDirection, fence.GetRotationAngleInRadians()));
-                var translationMatrix = Matrix.CreateTranslation(fence.Position);
-
-                var world = scaleMatrix * rotationMatrix * translationMatrix;
-                fence.World = world;
-
-                var viewProjection = view * projection;
-
-
-
-                foreach (var mesh in fence.Model.Meshes)
-                {
-                    world = fence.Bones[mesh.ParentBone.Index] * fence.World;
-
-
-                    Effect.Parameters["eyePosition"].SetValue(cameraPosition);
-                    Effect.Parameters["ModelTexture"].SetValue(Texture);
-                    Effect.Parameters["World"].SetValue(world);
-                    Effect.Parameters["InverseTransposeWorld"].SetValue(Matrix.Invert(Matrix.Transpose(world)));
-                    Effect.Parameters["WorldViewProjection"].SetValue(world * viewProjection);
-                    Effect.Parameters["Tiling"].SetValue(Vector2.One);
-                    mesh.Draw();
-                }
-
+                fence.Draw(gameTime, view, projection, cameraPosition);
             }
         }
-        public void Draw(GameTime gameTime, Matrix view, Matrix projection, Vector3 cameraPosition, BoundingFrustum boundingFrustum, Gizmos.Gizmos gizmos)
+        public void Draw(GameTime gameTime, Matrix view, Matrix projection, Vector3 cameraPosition, Gizmos.Gizmos gizmos)
         {
             foreach (GameObject fence in Fences)
             {
-                if (boundingFrustum.Intersects(fence.CollisionComponent.BoxWorldSpace))
-                {
-                    fence.Draw(gameTime, view, projection, cameraPosition, gizmos);
-                }
+                fence.Draw(gameTime, view, projection, cameraPosition, gizmos);
             }
         }
     }

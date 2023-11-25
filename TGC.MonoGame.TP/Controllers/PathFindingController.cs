@@ -17,24 +17,30 @@ namespace TGC.MonoGame.TP.Controllers
         private float _rotationAngle = 0f;
         private readonly float _minDistance;
         private Vector3 Direction { get; set; }
-        private GameObject Target { get; }
+        private LinkedList<GameObject> Targets { get; }
+        private LinkedListNode<GameObject> Target { get; set; }
         private List<GameObject> Objects { get; }
         private MovementController MovementController { get; }
-        public PathFindingController(GameObject target, float minDistance, List<GameObject> objects, MovementController movementController)
+        public PathFindingController(List<GameObject> targets, GameObject initialTarget, float minDistance, List<GameObject> objects, MovementController movementController)
         {
-            Target = target;
+            Targets = new LinkedList<GameObject>(targets);
+            Target = Targets.Find(initialTarget);
             _minDistance = minDistance;
             Objects = objects;
             MovementController = movementController;
             Direction = Vector3.Zero;
         }
-
         public void Update(GameObject gameObject, GameTime gameTime)
         {
+            if (Target.Value == null)
+            {
+                Target = Target.Next;
+                return;
+            }
 
-            if (Target == null) return;
+            var target = Target.Value;
 
-            Direction = Target.Position - gameObject.Position;
+            Direction = target.Position - gameObject.Position;
             var deltaTime = Convert.ToSingle(gameTime.ElapsedGameTime.TotalSeconds);
 
             _rotationAngle = AlgebraHelper.GetAngleBetweenTwoVectors(gameObject.World.Forward, Direction);

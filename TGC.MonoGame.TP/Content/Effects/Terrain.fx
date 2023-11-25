@@ -86,11 +86,11 @@ struct VertexShaderOutput
     float2 TextureCoordinates : TEXCOORD0;
     float4 WorldPosition : TEXCOORD1;
     float4 Normal : TEXCOORD2;    
-}; 
+};
 
 VertexShaderOutput MainVS(in VertexShaderInput input)
 {
-	VertexShaderOutput output;
+	VertexShaderOutput output = (VertexShaderOutput)0;
 
     output.Position = mul(input.Position, WorldViewProjection);
     output.WorldPosition = mul(input.Position, World);
@@ -191,6 +191,15 @@ technique Default
     {
         VertexShader = compile VS_SHADERMODEL MainVS();
         PixelShader = compile PS_SHADERMODEL MainPS();
+    }
+};
+
+technique Gouraud
+{
+    pass Pass0
+    {
+        VertexShader = compile VS_SHADERMODEL GouraudVS();
+        PixelShader = compile PS_SHADERMODEL GouraudPS();
     }
 };
 

@@ -37,12 +37,12 @@ namespace TGC.MonoGame.TP.Components.Inputs
             HUDComponent = hudComponent;
         }
 
-        public void Update(GameObject Player, GameTime gameTime, GraphicsComponent graphicsComponent)
+        public void Update(GameObject Player, GameTime gameTime)
         {
 
-            if (!(graphicsComponent is TankGraphicsComponent)) return;
+            if (!(Player.GraphicsComponent is TankGraphicsComponent)) return;
 
-            var tankGraphics = graphicsComponent as TankGraphicsComponent;
+            var tankGraphics = Player.GraphicsComponent as TankGraphicsComponent;
 
             ShootingController.Update(Player, gameTime);
             MovementController.Update(Player, gameTime);
@@ -56,7 +56,7 @@ namespace TGC.MonoGame.TP.Components.Inputs
             Player.Position = new Vector3(X, height, Z);
 
             //DETECCION DE MOVIMIENTO DEL MOUSE
-            tankGraphics.CannonRotation = tankGraphics.FixCannonAngle(MouseCamera.UpDownRotation);
+            tankGraphics.CannonRotation = TankGraphicsComponent.FixCannonAngle(MouseCamera.UpDownRotation);
             tankGraphics.TurretRotation = MouseCamera.LeftRightRotation;
 
             //DETECCION DE CLICK

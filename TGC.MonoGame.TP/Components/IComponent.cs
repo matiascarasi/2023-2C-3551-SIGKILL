@@ -8,7 +8,7 @@ namespace TGC.MonoGame.TP.Components
     public interface IComponent
     {
         public void LoadContent(GameObject gameObject, ContentManager content);
-        public void Update(GameObject gameObject, GameTime gameTime, GraphicsComponent graphicsComponent);
+        public void Update(GameObject gameObject, GameTime gameTime);
         public void Draw(GameObject gameObject, GameTime gameTime, Matrix view, Matrix projection, Vector3 cameraPosition);
     }
 }
