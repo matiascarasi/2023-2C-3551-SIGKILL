@@ -194,15 +194,6 @@ technique Default
     }
 };
 
-technique Gouraud
-{
-    pass Pass0
-    {
-        VertexShader = compile VS_SHADERMODEL GouraudVS();
-        PixelShader = compile PS_SHADERMODEL GouraudPS();
-    }
-};
-
 
 technique NormalMapping
 {
