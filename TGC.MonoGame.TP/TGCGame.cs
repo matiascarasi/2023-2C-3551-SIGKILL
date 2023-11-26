@@ -102,7 +102,7 @@ namespace TGC.MonoGame.TP
             var panzerBox = new Box(500f, 250f, 1000f);
             var t90Box = new Box(500f, 250f, 1000f);
             var playerPosition = new Vector3(0f, Terrain.Height(0f, 0f), 0f);
-            var physicsComponent = new PhysicsComponent<Box>(
+            var physicsComponent = new DynamicPhysicsComponent<Box>(
                 PhysicsEngine,
                 "Panzer Box",
                 panzerBox,
@@ -128,7 +128,7 @@ namespace TGC.MonoGame.TP
             for (var i = 0; i <= TEAMS_SIZE; i++)
             {
                 var panzerPosition = new Vector3(2000f, Terrain.Height(2000f, 2000f + 1000f * i), 2000f + 1000f * i);
-                var panzerPhysicsComponent = new PhysicsComponent<Box>(
+                var panzerPhysicsComponent = new DynamicPhysicsComponent<Box>(
                     PhysicsEngine,
                     "Panzer Box",
                     panzerBox,
@@ -144,7 +144,7 @@ namespace TGC.MonoGame.TP
                 );
 
                 var t90Position = new Vector3(-2000f, Terrain.Height(-2000f, -2000f + 1000f * i), -2000f + 1000f * i);
-                var t90PhysicsComponent = new PhysicsComponent<Box>(
+                var t90PhysicsComponent = new DynamicPhysicsComponent<Box>(
                     PhysicsEngine,
                     "T90 Box",
                     t90Box,
@@ -170,7 +170,7 @@ namespace TGC.MonoGame.TP
 
             }
 
-            Forest = new Forest(ForestDefaults.Center, ForestDefaults.Radius, 0f, PhysicsEngine);
+            Forest = new Forest(ForestDefaults.Center, ForestDefaults.Radius, 0.05f, PhysicsEngine);
 
             base.Initialize();
         }

@@ -17,7 +17,7 @@ namespace TGC.MonoGame.TP.Components.AI
         private ShootingController ShootingController { get; }
         private PathFindingController PathFindingController { get; } 
         private Terrain Terrain { get; }
-        public AITankComponent(float driveSpeed, float rotationSpeed, float cooldown, float minDistance, GameObject target, List<GameObject> objects, Terrain terrain, IPhysicsComponent physicsComponent)
+        public AITankComponent(float driveSpeed, float rotationSpeed, float cooldown, float minDistance, GameObject target, List<GameObject> objects, Terrain terrain, IDynamicPhysicsComponent physicsComponent)
         {
             ShootingController = new ShootingController(cooldown, MAX_BULLETS_AMOUNT);
             PathFindingController = new PathFindingController(target, minDistance, objects, physicsComponent);

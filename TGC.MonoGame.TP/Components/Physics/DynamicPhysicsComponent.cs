@@ -6,7 +6,7 @@ using TGC.MonoGame.TP.Physics;
 
 namespace TGC.MonoGame.TP.Components.Physics
 {
-    public class PhysicsComponent<TShape> : IPhysicsComponent where TShape : unmanaged, IConvexShape, IShape
+    public class DynamicPhysicsComponent<TShape> : IDynamicPhysicsComponent where TShape : unmanaged, IConvexShape, IShape
     {
         private readonly PhysicsEngine PhysicsEngine;
         private readonly TShape Shape;
@@ -14,12 +14,12 @@ namespace TGC.MonoGame.TP.Components.Physics
         public Quaternion Orientation { get => PhysicsEngine.GetBodyReference(BodyHandle).Pose.Orientation; }
         private readonly BodyHandle BodyHandle;
 
-        public PhysicsComponent(PhysicsEngine physicsEngine, string shapeName, TShape shape, Vector3 initialPosition, Quaternion initialOrientation)
+        public DynamicPhysicsComponent(PhysicsEngine physicsEngine, string shapeName, TShape shape, Vector3 initialPosition, Quaternion initialOrientation)
         {
             Shape = shape;
             PhysicsEngine = physicsEngine;
             PhysicsEngine.AddShape(shapeName, shape);
-            BodyHandle = PhysicsEngine.AddBody(BodyTypes.Dynamic, shapeName, initialPosition.ToNumerics(), initialOrientation.ToNumerics());
+            BodyHandle = PhysicsEngine.AddBody(shapeName, initialPosition.ToNumerics(), initialOrientation.ToNumerics());
         }
 
         public void Draw(ShapeDrawer shapeDrawer)

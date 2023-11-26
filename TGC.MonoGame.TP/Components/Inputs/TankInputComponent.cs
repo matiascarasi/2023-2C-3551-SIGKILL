@@ -14,14 +14,14 @@ namespace TGC.MonoGame.TP.Components.Inputs
     {
         const int MAX_BULLETS_AMOUNT = 3;
         const float BULLET_SPEED = 8000f;
-        private IPhysicsComponent PhysicsComponent { get; set; }
+        private IDynamicPhysicsComponent PhysicsComponent { get; set; }
         private ShootingController ShootingController { get; set; }
         private MouseState PrevMouseState { get; set; }
         private MouseCamera MouseCamera { get; }
         private Terrain Terrain { get; }
         private HUDComponent HUDComponent { get; }
 
-        public TankInputComponent(float driveSpeed, float rotationSpeed, float shootingCooldown, MouseCamera mouseCamera, Terrain terrain, HUDComponent hudComponent, IPhysicsComponent physicsComponent)
+        public TankInputComponent(float driveSpeed, float rotationSpeed, float shootingCooldown, MouseCamera mouseCamera, Terrain terrain, HUDComponent hudComponent, IDynamicPhysicsComponent physicsComponent)
         {
             PhysicsComponent = physicsComponent;
             ShootingController = new ShootingController(shootingCooldown, MAX_BULLETS_AMOUNT);

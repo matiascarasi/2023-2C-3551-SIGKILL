@@ -43,7 +43,7 @@ namespace TGC.MonoGame.TP.Scenes
                 var treeBox = new Box(50f, 200f, 50f);
                 var tree = new GameObject(
                     new TreeGraphicsComponent(),
-                    new PhysicsComponent<Box>(
+                    new StaticPhysicsComponent<Box>(
                         PhysicsEngine,
                         "Tree Box",
                         treeBox,
@@ -71,7 +71,7 @@ namespace TGC.MonoGame.TP.Scenes
                 var rockBox = new Box(250f, 50f, 250f);
                 var rock = new GameObject(
                     new BushGraphicsComponent(),
-                    new PhysicsComponent<Box>(
+                    new StaticPhysicsComponent<Box>(
                         PhysicsEngine,
                         "Rock Box",
                         rockBox,

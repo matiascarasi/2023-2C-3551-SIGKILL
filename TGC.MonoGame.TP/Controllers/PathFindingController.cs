@@ -17,8 +17,8 @@ namespace TGC.MonoGame.TP.Controllers
         private Vector3 Direction { get; set; }
         private GameObject Target { get; }
         private List<GameObject> Objects { get; }
-        private IPhysicsComponent PhysicsComponent { get; }
-        public PathFindingController(GameObject target, float minDistance, List<GameObject> objects, IPhysicsComponent physicsComponent)
+        private IDynamicPhysicsComponent PhysicsComponent { get; }
+        public PathFindingController(GameObject target, float minDistance, List<GameObject> objects, IDynamicPhysicsComponent physicsComponent)
         {
             Target = target;
             _minDistance = minDistance;

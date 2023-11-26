@@ -10,21 +10,21 @@ namespace TGC.MonoGame.TP.Physics
 {
     public class PhysicsEngine
     {
-        public Simulation Simulation { get; protected set; }
+        private Simulation _simulation;
 
-        public BufferPool BufferPool { get; private set; }
+        private BufferPool _bufferPool;
 
-        public SimpleThreadDispatcher ThreadDispatcher { get; private set; }
+        private SimpleThreadDispatcher _threadDispatcher;
 
-        private readonly Dictionary<string, IConvexShape> Shapes = new();
-        private readonly Dictionary<string, TypedIndex> ShapeIndices = new();
+        private readonly Dictionary<string, IConvexShape> _shapes = new();
+        private readonly Dictionary<string, TypedIndex> _shapeIndices = new();
         public void Initialize()
         {
-            BufferPool = new BufferPool();
+            _bufferPool = new BufferPool();
             var targetThreadCount = Math.Max(1,
                 Environment.ProcessorCount > 4 ? Environment.ProcessorCount - 2 : Environment.ProcessorCount - 1);
-            ThreadDispatcher = new SimpleThreadDispatcher(targetThreadCount);
-            Simulation = Simulation.Create(BufferPool, new NarrowPhaseCallbacks(new SpringSettings(30, 1)),
+            _threadDispatcher = new SimpleThreadDispatcher(targetThreadCount);
+            _simulation = Simulation.Create(_bufferPool, new NarrowPhaseCallbacks(new SpringSettings(30, 1)),
                 new PoseIntegratorCallbacks(new System.Numerics.Vector3(0, 0, 0)), new SolveDescription(8, 1));
         }
 
@@ -33,45 +33,47 @@ namespace TGC.MonoGame.TP.Physics
             var elapsedTime = Convert.ToSingle(gameTime.ElapsedGameTime.TotalSeconds);
             if (elapsedTime > 0)
             {
-                Simulation.Timestep(elapsedTime, ThreadDispatcher);
+                _simulation.Timestep(elapsedTime, _threadDispatcher);
             }
         }
 
         public void AddShape<TShape>(string shapeName, TShape shape) where TShape : unmanaged, IConvexShape, IShape
         {
-            var newShape = Shapes.TryAdd(shapeName, shape);
+            var newShape = _shapes.TryAdd(shapeName, shape);
             if (newShape)
             {
-                var index = Simulation.Shapes.Add(shape);
-                ShapeIndices.Add(shapeName, index);
+                var index = _simulation.Shapes.Add(shape);
+                _shapeIndices.Add(shapeName, index);
             }
         }
 
-        public BodyHandle AddBody(BodyTypes type, string shapeName, System.Numerics.Vector3 initialPosition, System.Numerics.Quaternion initialOrientation)
+        public BodyHandle AddBody(string shapeName, System.Numerics.Vector3 initialPosition, System.Numerics.Quaternion initialOrientation)
         {
-            var shapeIndex = ShapeIndices[shapeName];
-            switch (type)
-            {
-                case BodyTypes.Dynamic:
-                    return Simulation.Bodies.Add(BodyDescription.CreateDynamic(
-                        new RigidPose(initialPosition, initialOrientation),
-                        Shapes[shapeName].ComputeInertia(300f),
-                        new CollidableDescription(shapeIndex, 0.1f),
-                        new BodyActivityDescription(0.01f)));
-                // case BodyTypes.Dynamic:
-                //     return Simulation.Bodies.Add(BodyDescription.CreateKinematic(
-                //         initialPosition,
-                //         new BodyVelocity(),
-                //         new CollidableDescription(shapeIndex, 0.1f),
-                //         new BodyActivityDescription(0.01f)));
-                default:
-                    throw new ArgumentException("Unknown physics body type: " + type);
-            }
+            var shapeIndex = _shapeIndices[shapeName];
+            return _simulation.Bodies.Add(BodyDescription.CreateDynamic(
+                new RigidPose(initialPosition, initialOrientation),
+                _shapes[shapeName].ComputeInertia(300f),
+                new CollidableDescription(shapeIndex, 0.1f),
+                new BodyActivityDescription(0.01f)));
+        }
+
+        public StaticHandle AddStatic(string shapeName, System.Numerics.Vector3 initialPosition, System.Numerics.Quaternion initialOrientation)
+        {
+            var shapeIndex = _shapeIndices[shapeName];
+            return _simulation.Statics.Add(
+                new StaticDescription(new RigidPose(initialPosition, initialOrientation),
+                shapeIndex)
+            );
         }
 
         public BodyReference GetBodyReference(BodyHandle handle)
         {
-            return Simulation.Bodies.GetBodyReference(handle);
+            return _simulation.Bodies.GetBodyReference(handle);
+        }
+
+        public StaticReference GetStaticReference(StaticHandle handle)
+        {
+            return _simulation.Statics.GetStaticReference(handle);
         }
     }
 }
