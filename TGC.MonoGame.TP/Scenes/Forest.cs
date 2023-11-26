@@ -1,13 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using System;
-using System.Linq;
 using System.Collections.Generic;
-using TGC.MonoGame.TP.Components.Collisions;
 using TGC.MonoGame.TP.Components.Graphics;
-using TGC.MonoGame.TP.Components.Inputs;
 using TGC.MonoGame.TP.Helpers;
 using TGC.MonoGame.TP.Actors;
+using TGC.MonoGame.TP.Physics;
+using TGC.MonoGame.TP.Components.Physics;
+using BepuPhysics.Collidables;
 
 namespace TGC.MonoGame.TP.Scenes
 {
@@ -19,13 +19,14 @@ namespace TGC.MonoGame.TP.Scenes
         private readonly double _radius;
         private readonly int smallTreesAmount;
         private readonly int rocksAmount;
-        public Forest(Vector2 center, double radius, double density)
+        private PhysicsEngine PhysicsEngine { get; set; }
+        public Forest(Vector2 center, double radius, double density, PhysicsEngine physicsEngine)
         {
             Center = center;
             _radius = radius;
-            smallTreesAmount = (int) (Math.PI * Math.Pow(_radius, 2) * 0.000001 * density);
+            smallTreesAmount = (int)(Math.PI * Math.Pow(_radius, 2) * 0.000001 * density);
             rocksAmount = (int)(Math.PI * Math.Pow(_radius, 2) * 0.00000075 * density);
-
+            PhysicsEngine = physicsEngine;
         }
 
         public void LoadContent(ContentManager Content, Terrain Terrain, List<GameObject> Objects)
@@ -35,22 +36,26 @@ namespace TGC.MonoGame.TP.Scenes
             // LOAD SMALL TREES
             for (var i = 0; i < smallTreesAmount; i++)
             {
-                var position = AlgebraHelper.GetRandomPointInCircle(Center, _radius, Random);
+                var xzPosition = AlgebraHelper.GetRandomPointInCircle(Center, _radius, Random);
                 var rotation = Convert.ToSingle(AlgebraHelper.FULL_ROTATION * Random.NextDouble());
                 var scale = Convert.ToSingle(Math.Max(SMALL_TREES_MIN_SCALE, Random.NextDouble()));
-
+                var position = new Vector3(xzPosition.X, Terrain.Height(xzPosition.X, xzPosition.Y), xzPosition.Y);
+                var treeBox = new Box(50f, 200f, 50f);
                 var tree = new GameObject(
                     new TreeGraphicsComponent(),
-                    new Vector3(position.X, Terrain.Height(position.X, position.Y), position.Y),
+                    new PhysicsComponent<Box>(
+                        PhysicsEngine,
+                        "Tree Box",
+                        treeBox,
+                        position,
+                        Quaternion.CreateFromAxisAngle(Vector3.Up, rotation)),
+                    position,
                     rotation,
                     scale,
                     0.1f
                 );
 
                 tree.LoadContent(Content);
-
-                if (Objects.Any(obj => obj.CollidesWith(tree)))
-                    continue;
 
                 Objects.Add(tree);
 
@@ -59,22 +64,26 @@ namespace TGC.MonoGame.TP.Scenes
             // TODO: LOAD FERNS
             for (var i = 0; i < rocksAmount; i++)
             {
-                var position = AlgebraHelper.GetRandomPointInCircle(Center, _radius, Random);
+                var xzPosition = AlgebraHelper.GetRandomPointInCircle(Center, _radius, Random);
                 var rotation = Convert.ToSingle(AlgebraHelper.FULL_ROTATION * Random.NextDouble());
                 var scale = Convert.ToSingle(Math.Max(SMALL_TREES_MIN_SCALE, Random.NextDouble()));
-
+                var position = new Vector3(xzPosition.X, Terrain.Height(xzPosition.X, xzPosition.Y), xzPosition.Y);
+                var rockBox = new Box(250f, 50f, 250f);
                 var rock = new GameObject(
                     new BushGraphicsComponent(),
-                    new Vector3(position.X, Terrain.Height(position.X, position.Y), position.Y),
+                    new PhysicsComponent<Box>(
+                        PhysicsEngine,
+                        "Rock Box",
+                        rockBox,
+                        position,
+                        Quaternion.CreateFromAxisAngle(Vector3.Up, rotation)),
+                    position,
                     rotation,
                     scale,
                     0.1f
                 );
 
                 rock.LoadContent(Content);
-
-                if (Objects.Any(obj => obj.CollidesWith(rock)))
-                    continue;
 
                 Objects.Add(rock);
 

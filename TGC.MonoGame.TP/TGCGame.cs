@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata;
-using Microsoft.VisualBasic.CompilerServices;
+﻿using System.Collections.Generic;
+using BepuPhysics.Collidables;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
@@ -10,18 +7,16 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using TGC.MonoGame.TP.Actors;
 using TGC.MonoGame.TP.Bounds;
-using TGC.MonoGame.TP.Collisions;
 using TGC.MonoGame.TP.Components;
 using TGC.MonoGame.TP.Components.AI;
-using TGC.MonoGame.TP.Components.Collisions;
 using TGC.MonoGame.TP.Components.Graphics;
 using TGC.MonoGame.TP.Components.Inputs;
-using TGC.MonoGame.TP.Controllers;
+using TGC.MonoGame.TP.Components.Physics;
 using TGC.MonoGame.TP.Defaults;
 using TGC.MonoGame.TP.HUD;
 using TGC.MonoGame.TP.Menu;
+using TGC.MonoGame.TP.Physics;
 using TGC.MonoGame.TP.Scenes;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace TGC.MonoGame.TP
 {
@@ -50,9 +45,9 @@ namespace TGC.MonoGame.TP
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
 
-            Gizmos = new Gizmos.Gizmos();
+            GizmosRenderer = Gizmos.Gizmos.GetInstance();
         }
-        public Gizmos.Gizmos Gizmos { get; }
+        public Gizmos.Gizmos GizmosRenderer { get; }
         private GraphicsDeviceManager Graphics { get; }
         private MenuComponent Menu { get; set; }
         private HUDComponent HUD { get; set; }
@@ -72,7 +67,7 @@ namespace TGC.MonoGame.TP
         private List<GameObject> TeamPanzer { get; set; }
         private List<GameObject> TeamT90 { get; set; }
         private List<GameObject> Collisionables { get; set; }
-
+        private PhysicsEngine PhysicsEngine { get; set; }
         private const int TEAMS_SIZE = 5;
 
         protected override void Initialize()
@@ -92,7 +87,10 @@ namespace TGC.MonoGame.TP
             Instance = SoundEffect.CreateInstance();
 
             IsMenuActive = true;
-            
+
+            PhysicsEngine = new PhysicsEngine();
+            PhysicsEngine.Initialize();
+
             //Cambio textura de cursor
             Mouse.SetCursor(MouseCursor.FromTexture2D(Content.Load<Texture2D>("Textures/Menu/cursor"), 0, 0));
 
@@ -101,12 +99,20 @@ namespace TGC.MonoGame.TP
             Terrain = new Terrain(Content, GraphicsDevice, "Textures/heightmaps/hills-heightmap", "Textures/heightmaps/hills", 20.0f, 8.0f);
             MouseCamera = new MouseCamera(GraphicsDevice);
             Bounds = new BoundsComponent(Content, Terrain);
-
+            var panzerBox = new Box(500f, 250f, 1000f);
+            var t90Box = new Box(500f, 250f, 1000f);
+            var playerPosition = new Vector3(0f, Terrain.Height(0f, 0f), 0f);
+            var physicsComponent = new PhysicsComponent<Box>(
+                PhysicsEngine,
+                "Panzer Box",
+                panzerBox,
+                playerPosition,
+                Quaternion.CreateFromAxisAngle(Vector3.Up, PlayerDefaults.RotationAngle));
             Player = new GameObject(
-                new List<IComponent>() { new TankInputComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, PlayerDefaults.CoolDown, MouseCamera, Terrain, HUD ) },
+                new List<IComponent>() { new TankInputComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, PlayerDefaults.CoolDown, MouseCamera, Terrain, HUD, physicsComponent) },
                 new PanzerGraphicsComponent(),
-                new PanzerCollisionComponent(),
-                new Vector3(0f, Terrain.Height(0f, 0f), 0f),
+                physicsComponent,
+                playerPosition,
                 PlayerDefaults.RotationAngle,
                 Vector3.Up,
                 PlayerDefaults.Scale,
@@ -119,28 +125,42 @@ namespace TGC.MonoGame.TP
             TeamPanzer = new List<GameObject>();
             TeamT90 = new List<GameObject>();
 
-            for(var i = 0; i <= TEAMS_SIZE; i++)
+            for (var i = 0; i <= TEAMS_SIZE; i++)
             {
+                var panzerPosition = new Vector3(2000f, Terrain.Height(2000f, 2000f + 1000f * i), 2000f + 1000f * i);
+                var panzerPhysicsComponent = new PhysicsComponent<Box>(
+                    PhysicsEngine,
+                    "Panzer Box",
+                    panzerBox,
+                    panzerPosition,
+                    Quaternion.CreateFromAxisAngle(Vector3.Up, PlayerDefaults.RotationAngle));
                 var panzer = new GameObject(
                     new PanzerGraphicsComponent(),
-                    new PanzerCollisionComponent(),
-                    new Vector3(2000f, Terrain.Height(2000f, 2000f + 1000f * i), 2000f + 1000f * i),
+                    panzerPhysicsComponent,
+                    panzerPosition,
                     PlayerDefaults.RotationAngle,
                     PlayerDefaults.Scale,
                     PlayerDefaults.Health
                 );
 
+                var t90Position = new Vector3(-2000f, Terrain.Height(-2000f, -2000f + 1000f * i), -2000f + 1000f * i);
+                var t90PhysicsComponent = new PhysicsComponent<Box>(
+                    PhysicsEngine,
+                    "T90 Box",
+                    t90Box,
+                    t90Position,
+                    Quaternion.CreateFromAxisAngle(Vector3.Up, PlayerDefaults.RotationAngle));
                 var t90 = new GameObject(
                     new T90GraphicsComponent(),
-                    new T90CollisionComponent(),
-                    new Vector3(-2000f, Terrain.Height(-2000f, -2000f + 1000f * i), -2000f + 1000f * i),
+                    t90PhysicsComponent,
+                    t90Position,
                     PlayerDefaults.RotationAngle,
                     PlayerDefaults.Scale,
                     PlayerDefaults.Health
                 );
 
-                panzer.AddComponent(new AITankComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, PlayerDefaults.CoolDown, 5000, t90, Collisionables, Terrain));
-                t90.AddComponent(new AITankComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, PlayerDefaults.CoolDown, 5000, panzer, Collisionables, Terrain));
+                panzer.AddComponent(new AITankComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, PlayerDefaults.CoolDown, 5000, t90, Collisionables, Terrain, panzerPhysicsComponent));
+                t90.AddComponent(new AITankComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, PlayerDefaults.CoolDown, 5000, panzer, Collisionables, Terrain, t90PhysicsComponent));
 
                 TeamPanzer.Add(panzer);
                 TeamT90.Add(t90);
@@ -150,7 +170,7 @@ namespace TGC.MonoGame.TP
 
             }
 
-            Forest = new Forest(ForestDefaults.Center, ForestDefaults.Radius,  0f);
+            Forest = new Forest(ForestDefaults.Center, ForestDefaults.Radius, 0f, PhysicsEngine);
 
             base.Initialize();
         }
@@ -160,11 +180,11 @@ namespace TGC.MonoGame.TP
         {
             SpriteBatch = new SpriteBatch(GraphicsDevice);
             Menu.LoadContent(Content, GraphicsDevice);
-            HUD.LoadContent(Content);   
+            HUD.LoadContent(Content);
             Terrain.LoadContent(Content, GraphicsDevice);
             Bounds.LoadContent(Content);
             Forest.LoadContent(Content, Terrain, Objects);
-            Gizmos.LoadContent(GraphicsDevice, Content);
+            GizmosRenderer.LoadContent(GraphicsDevice, Content);
             Player.LoadContent(Content);
 
             foreach (var t90 in TeamT90) t90.LoadContent(Content);
@@ -176,7 +196,7 @@ namespace TGC.MonoGame.TP
 
         protected override void Update(GameTime gameTime)
         {
-            // Aca deberiamos poner toda la logica de actualizacion del juego.
+            PhysicsEngine.Update(gameTime);
 
             // Capturar Input teclado
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
@@ -185,14 +205,14 @@ namespace TGC.MonoGame.TP
                 Exit();
             }
 
-            if(!IsMenuActive)
+            if (!IsMenuActive)
             {
                 MediaPlayer.Volume = .1f;
 
                 //MediaPlayer.Stop();
                 Instance.Play();
             }
-          
+
             Menu.Update();
             MouseCamera.Update(gameTime, Player.World, IsMenuActive);
 
@@ -202,7 +222,7 @@ namespace TGC.MonoGame.TP
             }
 
             Bounds.Update(gameTime);
-            Gizmos.UpdateViewProjection(MouseCamera.View, MouseCamera.Projection);
+            GizmosRenderer.UpdateViewProjection(MouseCamera.View, MouseCamera.Projection);
 
             foreach (var t90 in TeamT90) t90.Update(gameTime);
             foreach (var panzer in TeamPanzer) panzer.Update(gameTime);
@@ -215,13 +235,14 @@ namespace TGC.MonoGame.TP
             GraphicsDevice.Clear(Color.Black);
             Terrain.Draw(GraphicsDevice, MouseCamera.View, MouseCamera.Projection);
             Bounds.Draw(gameTime, MouseCamera.View, MouseCamera.Projection);
-            foreach(var obj in Objects)
+            foreach (var obj in Objects)
             {
-                obj.Draw(gameTime, MouseCamera.View, MouseCamera.Projection);
+                obj.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, GizmosRenderer);
             }
-            foreach (var t90 in TeamT90) t90.Draw(gameTime, MouseCamera.View, MouseCamera.Projection);
-            foreach (var panzer in TeamPanzer) panzer.Draw(gameTime, MouseCamera.View, MouseCamera.Projection);
-            Gizmos.Draw();
+            foreach (var t90 in TeamT90) t90.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, GizmosRenderer);
+            foreach (var panzer in TeamPanzer) panzer.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, GizmosRenderer);
+            GizmosRenderer.SetColor(Color.Yellow);
+            GizmosRenderer.Draw();
             if (IsMenuActive) Menu.Draw(SpriteBatch); else HUD.Draw(SpriteBatch);
 
         }
@@ -231,24 +252,6 @@ namespace TGC.MonoGame.TP
             Terrain.UnloadContent();
 
             base.UnloadContent();
-        }
-
-        private void DetectCollisions()
-        {
-            var collision = false;
-            for (int i = 0; i < Objects.Count; i++)
-            {
-                if (Objects[i].CollidesWith(Player) && Objects[i] != Player )
-                {
-                    Objects.Remove(Objects[i]);
-                    collision = true;
-                    break;
-                }
-            }
-            var color = collision ? Color.Red : Color.Yellow;
-            
-            Gizmos.SetColor(color);
-            Gizmos.UpdateViewProjection(MouseCamera.View, MouseCamera.Projection);
         }
     }
 }

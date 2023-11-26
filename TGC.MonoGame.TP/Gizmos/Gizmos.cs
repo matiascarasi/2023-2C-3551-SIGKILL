@@ -54,6 +54,8 @@ namespace TGC.MonoGame.TP.Gizmos
 
         public bool Enabled { get; set; } = true;
 
+        private static Gizmos instance;
+
         /// <summary>
         ///     Loads all the content necessary for drawing Gizmos.
         /// </summary>
@@ -378,15 +380,14 @@ namespace TGC.MonoGame.TP.Gizmos
         /// <param name="pass">The pass from an effect to draw the geometry with.</param>
         private void DrawPolyLines(EffectPass pass)
         {
-            var count = 0;
             List<Vector3[]> positions;
-            WorldViewProjectionParameter.SetValue(Matrix.Identity);
+            WorldViewProjectionParameter.SetValue(ViewProjection);
             foreach (var polyLineInstance in PolyLinesToDraw)
             {
                 ColorParameter.SetValue(polyLineInstance.Key.ToVector3());
 
                 positions = polyLineInstance.Value;
-                count = positions.Count;
+                var count = positions.Count;
                 for (var index = 0; index < count; index++)
                 {
                     pass.Apply();
@@ -421,6 +422,12 @@ namespace TGC.MonoGame.TP.Gizmos
             Cylinder.Dispose();
             Effect.Dispose();
             Content.Dispose();
+        }
+
+        public static Gizmos GetInstance()
+        {
+            instance ??= new Gizmos();
+            return instance;
         }
     }
 }

@@ -2,11 +2,9 @@
 using Microsoft.Xna.Framework.Content;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TGC.MonoGame.TP.Actors;
 using TGC.MonoGame.TP.Components.Graphics;
+using TGC.MonoGame.TP.Components.Physics;
 using TGC.MonoGame.TP.Controllers;
 using TGC.MonoGame.TP.Helpers;
 
@@ -16,15 +14,13 @@ namespace TGC.MonoGame.TP.Components.AI
     {
         private const int MAX_BULLETS_AMOUNT = 5;
         const float BULLET_SPEED = 8000f;
-        private MovementController MovementController { get; }
         private ShootingController ShootingController { get; }
         private PathFindingController PathFindingController { get; } 
         private Terrain Terrain { get; }
-        public AITankComponent(float driveSpeed, float rotationSpeed, float cooldown, float minDistance, GameObject target, List<GameObject> objects, Terrain terrain)
+        public AITankComponent(float driveSpeed, float rotationSpeed, float cooldown, float minDistance, GameObject target, List<GameObject> objects, Terrain terrain, IPhysicsComponent physicsComponent)
         {
-            MovementController = new MovementController(driveSpeed, rotationSpeed);
             ShootingController = new ShootingController(cooldown, MAX_BULLETS_AMOUNT);
-            PathFindingController = new PathFindingController(target, minDistance, objects, MovementController);
+            PathFindingController = new PathFindingController(target, minDistance, objects, physicsComponent);
             Terrain = terrain;
         }
         public void Update(GameObject gameObject, GameTime gameTime, GraphicsComponent graphicsComponent)
@@ -41,7 +37,6 @@ namespace TGC.MonoGame.TP.Components.AI
 
             ShootingController.Update(gameObject, gameTime);
             PathFindingController.Update(gameObject, gameTime);
-            MovementController.Update(gameObject, gameTime);
 
             var direction = PathFindingController.GetDirection();
             var forward = new Vector3(direction.X, 0f, direction.Z);
@@ -66,7 +61,5 @@ namespace TGC.MonoGame.TP.Components.AI
         {
             ShootingController.LoadContent(content);
         }
-
-        
     }
 }

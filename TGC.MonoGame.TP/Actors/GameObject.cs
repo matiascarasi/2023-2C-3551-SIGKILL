@@ -3,44 +3,67 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using TGC.MonoGame.TP.Collisions;
 using TGC.MonoGame.TP.Components;
-using TGC.MonoGame.TP.Components.Collisions;
+using TGC.MonoGame.TP.Components.Physics;
 using TGC.MonoGame.TP.Components.Graphics;
-using TGC.MonoGame.TP.Components.Inputs;
 using TGC.MonoGame.TP.Gizmos;
-using TGC.MonoGame.TP.HUD;
 
 namespace TGC.MonoGame.TP.Actors
 {
     public class GameObject
     {
+        private Vector3 _position;
+        private float _rotationAngle;
+        private Vector3 _rotationDirection;
         public Matrix World { get; set; }
-        public Vector3 Position { get; set; }
-        public float RotationAngle { get; set; }
-        public Vector3 RotationDirection { get; set; }
+        public Vector3 Position
+        {
+            get => PhysicsComponent != null ? PhysicsComponent.Position : _position;
+            set
+            {
+                _position = value;
+            }
+        }
+        public float RotationAngle
+        {
+            get => PhysicsComponent != null ? PhysicsComponent.Orientation.W : _rotationAngle;
+            set
+            {
+                _rotationAngle = value;
+            }
+        }
+        public Vector3 RotationDirection
+        {
+            get => PhysicsComponent != null ? new(PhysicsComponent.Orientation.X, PhysicsComponent.Orientation.Y, PhysicsComponent.Orientation.Z) : _rotationDirection;
+            set
+            {
+                _rotationDirection = value;
+            }
+        }
+        public Quaternion Rotation { get => PhysicsComponent != null ? PhysicsComponent.Orientation : Quaternion.CreateFromAxisAngle(RotationDirection, GetRotationAngleInRadians()); }
         public float Scale { get; set; }
         public float Health { get; set; }
         public Vector3 Velocity { get; set; }
         public Model Model { get; set; }
         public Matrix[] Bones { get; set; }
         public List<IComponent> Components { get; }
-        public CollisionComponent CollisionComponent { get; }
-        public GraphicsComponent GraphicsComponent { get; } 
+        public IPhysicsComponent PhysicsComponent { get; }
+        public GraphicsComponent GraphicsComponent { get; }
+        private readonly ShapeDrawer ShapeDrawer = new ShapeDrawer();
 
-        public GameObject(List<IComponent> components, GraphicsComponent graphicsComponent, CollisionComponent collisionComponent, Vector3 position, float rotationAngle, Vector3 rotationDirection, float scale, float health)
+        public GameObject(List<IComponent> components, GraphicsComponent graphicsComponent, IPhysicsComponent physicsComponent, Vector3 position, float rotationAngle, Vector3 rotationDirection, float scale, float health)
         {
             Components = components;
-            CollisionComponent = collisionComponent;
+            PhysicsComponent = physicsComponent;
             GraphicsComponent = graphicsComponent;
 
             Initialize(position, rotationDirection, rotationAngle, scale, health, Vector3.Zero);
         }
 
-        public GameObject(GraphicsComponent graphicsComponent, CollisionComponent collisionComponent, Vector3 position, float rotationAngle, float scale, float health)
+        public GameObject(GraphicsComponent graphicsComponent, IPhysicsComponent physicsComponent, Vector3 position, float rotationAngle, float scale, float health)
         {
             Components = new List<IComponent>();
-            CollisionComponent = collisionComponent;
+            PhysicsComponent = physicsComponent;
             GraphicsComponent = graphicsComponent;
 
             Initialize(position, Vector3.Up, rotationAngle, scale, health, Vector3.Zero);
@@ -49,7 +72,6 @@ namespace TGC.MonoGame.TP.Actors
         public GameObject(GraphicsComponent graphicsComponent, Vector3 position, float rotationAngle, float scale, float health)
         {
             Components = new List<IComponent>();
-            CollisionComponent = new CollisionComponent();
             GraphicsComponent = graphicsComponent;
 
             Initialize(position, Vector3.Up, rotationAngle, scale, health, Vector3.Zero);
@@ -73,7 +95,6 @@ namespace TGC.MonoGame.TP.Actors
                 component.LoadContent(this, content);
             }
             GraphicsComponent.LoadContent(this, content);
-            CollisionComponent.LoadContent(this);
         }
 
         public void Update(GameTime gameTime)
@@ -89,7 +110,6 @@ namespace TGC.MonoGame.TP.Actors
             Position += Velocity * deltaTime;
 
             GraphicsComponent.Update(this, gameTime);
-            CollisionComponent.Update(this);
         }
 
         public void Draw(GameTime gameTime, Matrix view, Matrix projection)
@@ -108,12 +128,7 @@ namespace TGC.MonoGame.TP.Actors
                 component.Draw(this, gameTime, view, projection);
             }
             GraphicsComponent.Draw(this, gameTime, view, projection);
-            CollisionComponent.Draw(gizmos);
-        }
-
-        public bool CollidesWith(GameObject other)
-        {
-            return CollisionComponent.CollidesWith(other.CollisionComponent);
+            PhysicsComponent.Draw(ShapeDrawer);
         }
 
         public float GetRotationAngleInRadians()
@@ -123,7 +138,7 @@ namespace TGC.MonoGame.TP.Actors
 
         public Matrix GetRotationMatrix()
         {
-            return Matrix.CreateFromQuaternion(Quaternion.CreateFromAxisAngle(RotationDirection, GetRotationAngleInRadians()));
+            return Matrix.CreateFromQuaternion(Rotation);
         }
 
         public void AddComponent(IComponent Component)

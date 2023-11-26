@@ -1,16 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Input;
 using System;
-using System.Collections.Generic;
-using System.Reflection.Metadata;
 using TGC.MonoGame.TP.Actors;
-using TGC.MonoGame.TP.Components;
-using TGC.MonoGame.TP.Components.Collisions;
 using TGC.MonoGame.TP.Components.Graphics;
+using TGC.MonoGame.TP.Components.Physics;
 using TGC.MonoGame.TP.Controllers;
-using TGC.MonoGame.TP.Gizmos;
 using TGC.MonoGame.TP.HUD;
 
 namespace TGC.MonoGame.TP.Components.Inputs
@@ -19,16 +14,16 @@ namespace TGC.MonoGame.TP.Components.Inputs
     {
         const int MAX_BULLETS_AMOUNT = 3;
         const float BULLET_SPEED = 8000f;
-        private MovementController MovementController { get; set; }
+        private IPhysicsComponent PhysicsComponent { get; set; }
         private ShootingController ShootingController { get; set; }
         private MouseState PrevMouseState { get; set; }
         private MouseCamera MouseCamera { get; }
         private Terrain Terrain { get; }
         private HUDComponent HUDComponent { get; }
 
-        public TankInputComponent(float driveSpeed, float rotationSpeed, float shootingCooldown, MouseCamera mouseCamera, Terrain terrain, HUDComponent hudComponent)
+        public TankInputComponent(float driveSpeed, float rotationSpeed, float shootingCooldown, MouseCamera mouseCamera, Terrain terrain, HUDComponent hudComponent, IPhysicsComponent physicsComponent)
         {
-            MovementController = new MovementController(driveSpeed, rotationSpeed);
+            PhysicsComponent = physicsComponent;
             ShootingController = new ShootingController(shootingCooldown, MAX_BULLETS_AMOUNT);
             PrevMouseState = Mouse.GetState();
 
@@ -45,7 +40,6 @@ namespace TGC.MonoGame.TP.Components.Inputs
             var tankGraphics = graphicsComponent as TankGraphicsComponent;
 
             ShootingController.Update(Player, gameTime);
-            MovementController.Update(Player, gameTime);
 
             var keyboardState = Keyboard.GetState();
             var deltaTime = Convert.ToSingle(gameTime.ElapsedGameTime.TotalSeconds);
@@ -53,7 +47,6 @@ namespace TGC.MonoGame.TP.Components.Inputs
             var X = Player.Position.X;
             var Z = Player.Position.Z; 
             var height = Terrain.Height(X, Z);
-            Player.Position = new Vector3(X, height, Z);
 
             //DETECCION DE MOVIMIENTO DEL MOUSE
             tankGraphics.CannonRotation = tankGraphics.FixCannonAngle(MouseCamera.UpDownRotation);
@@ -73,24 +66,20 @@ namespace TGC.MonoGame.TP.Components.Inputs
 
             if (keyboardState.IsKeyDown(Keys.W))
             {
-                MovementController.Accelerate();
+                PhysicsComponent.Accelerate();
             }
             else if (keyboardState.IsKeyDown(Keys.S))
             {
-                MovementController.Decelerate();
-            }
-            else
-            {
-                MovementController.Settle();
+                PhysicsComponent.Decelerate();
             }
 
             if (keyboardState.IsKeyDown(Keys.A))
             {
-                MovementController.TurnLeft(Player, deltaTime);
+                PhysicsComponent.TurnLeft(deltaTime);
             }
             else if (keyboardState.IsKeyDown(Keys.D))
             {
-                MovementController.TurnRight(Player, deltaTime);
+                PhysicsComponent.TurnRight(deltaTime);
             }
 
         }
