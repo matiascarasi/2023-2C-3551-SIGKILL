@@ -49,24 +49,24 @@ namespace TGC.MonoGame.TP.Actors
         public List<IComponent> Components { get; }
         public IPhysicsComponent PhysicsComponent { get; }
         public GraphicsComponent GraphicsComponent { get; }
-        private readonly ShapeDrawer ShapeDrawer = new ShapeDrawer();
+        private readonly ShapeDrawer ShapeDrawer = new();
 
-        public GameObject(List<IComponent> components, GraphicsComponent graphicsComponent, IPhysicsComponent physicsComponent, Vector3 position, float rotationAngle, Vector3 rotationDirection, float scale, float health)
+        public GameObject(List<IComponent> components, GraphicsComponent graphicsComponent, IPhysicsComponent physicsComponent, float scale, float health)
         {
             Components = components;
             PhysicsComponent = physicsComponent;
             GraphicsComponent = graphicsComponent;
 
-            Initialize(position, rotationDirection, rotationAngle, scale, health, Vector3.Zero);
+            Initialize(scale, health, Vector3.Zero);
         }
 
-        public GameObject(GraphicsComponent graphicsComponent, IPhysicsComponent physicsComponent, Vector3 position, float rotationAngle, float scale, float health)
+        public GameObject(GraphicsComponent graphicsComponent, IPhysicsComponent physicsComponent, float scale, float health)
         {
             Components = new List<IComponent>();
             PhysicsComponent = physicsComponent;
             GraphicsComponent = graphicsComponent;
 
-            Initialize(position, Vector3.Up, rotationAngle, scale, health, Vector3.Zero);
+            Initialize(scale, health, Vector3.Zero);
         }
 
         public GameObject(GraphicsComponent graphicsComponent, Vector3 position, float rotationAngle, float scale, float health)
@@ -82,6 +82,11 @@ namespace TGC.MonoGame.TP.Actors
             Position = position;
             RotationAngle = rotationAngle;
             RotationDirection = rotationDirection;
+            Initialize(scale, health, velocity);
+        }
+
+        private void Initialize(float scale, float health, Vector3 velocity)
+        {
             Scale = scale;
             Health = health;
             Velocity = velocity;

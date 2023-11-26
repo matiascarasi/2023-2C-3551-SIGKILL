@@ -52,7 +52,7 @@ namespace TGC.MonoGame.TP.Physics
             var shapeIndex = _shapeIndices[shapeName];
             return _simulation.Bodies.Add(BodyDescription.CreateDynamic(
                 new RigidPose(initialPosition, initialOrientation),
-                _shapes[shapeName].ComputeInertia(300f),
+                _shapes[shapeName].ComputeInertia(200f),
                 new CollidableDescription(shapeIndex, 0.1f),
                 new BodyActivityDescription(0.01f)));
         }

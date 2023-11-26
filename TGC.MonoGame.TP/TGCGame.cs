@@ -98,7 +98,7 @@ namespace TGC.MonoGame.TP
             HUD = new HUDComponent(PlayerDefaults.TankName, PlayerDefaults.Health, PlayerDefaults.CoolDown);
             Terrain = new Terrain(Content, GraphicsDevice, "Textures/heightmaps/hills-heightmap", "Textures/heightmaps/hills", 20.0f, 8.0f);
             MouseCamera = new MouseCamera(GraphicsDevice);
-            Bounds = new BoundsComponent(Content, Terrain);
+            Bounds = new BoundsComponent(Content, Terrain, PhysicsEngine);
             var panzerBox = new Box(500f, 250f, 1000f);
             var t90Box = new Box(500f, 250f, 1000f);
             var playerPosition = new Vector3(0f, Terrain.Height(0f, 0f), 0f);
@@ -112,9 +112,6 @@ namespace TGC.MonoGame.TP
                 new List<IComponent>() { new TankInputComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, PlayerDefaults.CoolDown, MouseCamera, Terrain, HUD, physicsComponent) },
                 new PanzerGraphicsComponent(),
                 physicsComponent,
-                playerPosition,
-                PlayerDefaults.RotationAngle,
-                Vector3.Up,
                 PlayerDefaults.Scale,
                 PlayerDefaults.Health
             );
@@ -137,8 +134,6 @@ namespace TGC.MonoGame.TP
                 var panzer = new GameObject(
                     new PanzerGraphicsComponent(),
                     panzerPhysicsComponent,
-                    panzerPosition,
-                    PlayerDefaults.RotationAngle,
                     PlayerDefaults.Scale,
                     PlayerDefaults.Health
                 );
@@ -153,8 +148,6 @@ namespace TGC.MonoGame.TP
                 var t90 = new GameObject(
                     new T90GraphicsComponent(),
                     t90PhysicsComponent,
-                    t90Position,
-                    PlayerDefaults.RotationAngle,
                     PlayerDefaults.Scale,
                     PlayerDefaults.Health
                 );
@@ -170,7 +163,7 @@ namespace TGC.MonoGame.TP
 
             }
 
-            Forest = new Forest(ForestDefaults.Center, ForestDefaults.Radius, 0.05f, PhysicsEngine);
+            Forest = new Forest(ForestDefaults.Center, ForestDefaults.Radius, 0f, PhysicsEngine);
 
             base.Initialize();
         }
@@ -234,7 +227,7 @@ namespace TGC.MonoGame.TP
         {
             GraphicsDevice.Clear(Color.Black);
             Terrain.Draw(GraphicsDevice, MouseCamera.View, MouseCamera.Projection);
-            Bounds.Draw(gameTime, MouseCamera.View, MouseCamera.Projection);
+            Bounds.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, GizmosRenderer);
             foreach (var obj in Objects)
             {
                 obj.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, GizmosRenderer);

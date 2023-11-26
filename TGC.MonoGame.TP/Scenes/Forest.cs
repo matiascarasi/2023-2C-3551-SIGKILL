@@ -49,8 +49,6 @@ namespace TGC.MonoGame.TP.Scenes
                         treeBox,
                         position,
                         Quaternion.CreateFromAxisAngle(Vector3.Up, rotation)),
-                    position,
-                    rotation,
                     scale,
                     0.1f
                 );
@@ -77,8 +75,6 @@ namespace TGC.MonoGame.TP.Scenes
                         rockBox,
                         position,
                         Quaternion.CreateFromAxisAngle(Vector3.Up, rotation)),
-                    position,
-                    rotation,
                     scale,
                     0.1f
                 );
