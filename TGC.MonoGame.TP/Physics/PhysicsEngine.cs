@@ -25,7 +25,7 @@ namespace TGC.MonoGame.TP.Physics
                 Environment.ProcessorCount > 4 ? Environment.ProcessorCount - 2 : Environment.ProcessorCount - 1);
             _threadDispatcher = new SimpleThreadDispatcher(targetThreadCount);
             _simulation = Simulation.Create(_bufferPool, new NarrowPhaseCallbacks(new SpringSettings(30, 1)),
-                new PoseIntegratorCallbacks(new System.Numerics.Vector3(0, 0, 0)), new SolveDescription(8, 1));
+                new PoseIntegratorCallbacks(new System.Numerics.Vector3(0, 0, 0), 0.1f, 0.1f), new SolveDescription(8, 1));
         }
 
         public void Update(GameTime gameTime)

@@ -115,6 +115,7 @@ namespace TGC.MonoGame.TP.Actors
             Position += Velocity * deltaTime;
 
             GraphicsComponent.Update(this, gameTime);
+            PhysicsComponent?.Update(gameTime);
         }
 
         public void Draw(GameTime gameTime, Matrix view, Matrix projection)

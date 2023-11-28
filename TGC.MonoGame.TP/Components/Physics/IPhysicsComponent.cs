@@ -8,5 +8,6 @@ namespace TGC.MonoGame.TP.Components.Physics
         public Vector3 Position { get; }
         public Quaternion Orientation { get; }
         public void Draw(ShapeDrawer shapeDrawer);
+        public void Update(GameTime gameTime);
     }
 }

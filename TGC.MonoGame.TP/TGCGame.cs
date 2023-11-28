@@ -107,7 +107,8 @@ namespace TGC.MonoGame.TP
                 "Panzer Box",
                 panzerBox,
                 playerPosition,
-                Quaternion.CreateFromAxisAngle(Vector3.Up, PlayerDefaults.RotationAngle));
+                Quaternion.CreateFromAxisAngle(Vector3.Up, PlayerDefaults.RotationAngle),
+                Terrain);
             Player = new GameObject(
                 new List<IComponent>() { new TankInputComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, PlayerDefaults.CoolDown, MouseCamera, Terrain, HUD, physicsComponent) },
                 new PanzerGraphicsComponent(),
@@ -130,7 +131,8 @@ namespace TGC.MonoGame.TP
                     "Panzer Box",
                     panzerBox,
                     panzerPosition,
-                    Quaternion.CreateFromAxisAngle(Vector3.Up, PlayerDefaults.RotationAngle));
+                    Quaternion.CreateFromAxisAngle(Vector3.Up, PlayerDefaults.RotationAngle),
+                    Terrain);
                 var panzer = new GameObject(
                     new PanzerGraphicsComponent(),
                     panzerPhysicsComponent,
@@ -144,7 +146,8 @@ namespace TGC.MonoGame.TP
                     "T90 Box",
                     t90Box,
                     t90Position,
-                    Quaternion.CreateFromAxisAngle(Vector3.Up, PlayerDefaults.RotationAngle));
+                    Quaternion.CreateFromAxisAngle(Vector3.Up, PlayerDefaults.RotationAngle),
+                    Terrain);
                 var t90 = new GameObject(
                     new T90GraphicsComponent(),
                     t90PhysicsComponent,

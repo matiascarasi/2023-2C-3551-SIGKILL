@@ -24,9 +24,12 @@ namespace TGC.MonoGame.TP.Components.Physics
 
         public void Draw(ShapeDrawer shapeDrawer)
         {
-            var bodyReference = PhysicsEngine.GetStaticReference(_staticHandle);
-            shapeDrawer.Draw(Shape, bodyReference.Pose);
+            var reference = PhysicsEngine.GetStaticReference(_staticHandle);
+            shapeDrawer.Draw(Shape, reference.Pose);
         }
 
+        public void Update(GameTime gameTime)
+        {
+        }
     }
 }
