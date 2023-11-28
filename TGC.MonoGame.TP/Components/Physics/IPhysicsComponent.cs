@@ -1,3 +1,5 @@
+using System;
+using BepuPhysics.CollisionDetection;
 using Microsoft.Xna.Framework;
 using TGC.MonoGame.TP.Gizmos;
 
@@ -7,6 +9,8 @@ namespace TGC.MonoGame.TP.Components.Physics
     {
         public Vector3 Position { get; }
         public Quaternion Orientation { get; }
+        public Action<int, ConvexContactManifold> CustomCollisionCallback { set; }
+        public void CollisionCallback(int collidableNumber, ConvexContactManifold manifold);
         public void Draw(ShapeDrawer shapeDrawer);
         public void Update(GameTime gameTime);
     }

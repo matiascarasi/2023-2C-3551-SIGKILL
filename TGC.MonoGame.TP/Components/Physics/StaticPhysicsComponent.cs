@@ -1,5 +1,7 @@
+using System;
 using BepuPhysics;
 using BepuPhysics.Collidables;
+using BepuPhysics.CollisionDetection;
 using Microsoft.Xna.Framework;
 using TGC.MonoGame.TP.Gizmos;
 using TGC.MonoGame.TP.Physics;
@@ -13,13 +15,20 @@ namespace TGC.MonoGame.TP.Components.Physics
         public Vector3 Position { get => PhysicsEngine.GetStaticReference(_staticHandle).Pose.Position; }
         public Quaternion Orientation { get => PhysicsEngine.GetStaticReference(_staticHandle).Pose.Orientation; }
         private readonly StaticHandle _staticHandle;
+        public Action<int, ConvexContactManifold> CustomCollisionCallback { get; set; }
 
         public StaticPhysicsComponent(PhysicsEngine physicsEngine, string shapeName, TShape shape, Vector3 initialPosition, Quaternion initialOrientation)
         {
             Shape = shape;
             PhysicsEngine = physicsEngine;
             PhysicsEngine.AddShape(shapeName, shape);
-            _staticHandle = PhysicsEngine.AddStatic(shapeName, initialPosition.ToNumerics(), initialOrientation.ToNumerics());
+            _staticHandle = PhysicsEngine.AddStatic(this, shapeName, initialPosition.ToNumerics(), initialOrientation.ToNumerics());
+            CustomCollisionCallback = (collidableNumber, manifold) => {};
+        }
+
+        public void CollisionCallback(int collidableNumber, ConvexContactManifold manifold)
+        {
+            CustomCollisionCallback(collidableNumber, manifold);
         }
 
         public void Draw(ShapeDrawer shapeDrawer)

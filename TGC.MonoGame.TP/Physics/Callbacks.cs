@@ -127,15 +127,17 @@ public struct NarrowPhaseCallbacks : INarrowPhaseCallbacks
     private SpringSettings ContactSpringiness { get; set; }
     private float MaximumRecoveryVelocity { get; set; }
     private float FrictionCoefficient { get; set; }
+    private Action<CollidablePair, Object> _customCallback;
 
-    public NarrowPhaseCallbacks(SpringSettings contactSpringiness) : this(contactSpringiness, 2f, 1f)
+    public NarrowPhaseCallbacks(SpringSettings contactSpringiness, Action<CollidablePair, Object> customCallback) : this(contactSpringiness, customCallback , 2f, 1f)
     {
     }
 
-    public NarrowPhaseCallbacks(SpringSettings contactSpringiness, float maximumRecoveryVelocity,
+    public NarrowPhaseCallbacks(SpringSettings contactSpringiness, Action<CollidablePair, Object> customCallback, float maximumRecoveryVelocity,
         float frictionCoefficient)
     {
         ContactSpringiness = contactSpringiness;
+        _customCallback = customCallback;
         MaximumRecoveryVelocity = maximumRecoveryVelocity;
         FrictionCoefficient = frictionCoefficient;
     }
@@ -174,6 +176,7 @@ public struct NarrowPhaseCallbacks : INarrowPhaseCallbacks
         pairMaterial.FrictionCoefficient = FrictionCoefficient;
         pairMaterial.MaximumRecoveryVelocity = MaximumRecoveryVelocity;
         pairMaterial.SpringSettings = ContactSpringiness;
+        _customCallback(pair, manifold);
         return true;
     }
 

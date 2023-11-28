@@ -1,5 +1,7 @@
+using System;
 using BepuPhysics;
 using BepuPhysics.Collidables;
+using BepuPhysics.CollisionDetection;
 using Microsoft.Xna.Framework;
 using TGC.MonoGame.TP.Gizmos;
 using TGC.MonoGame.TP.Physics;
@@ -12,6 +14,7 @@ namespace TGC.MonoGame.TP.Components.Physics
         private readonly TShape Shape;
         public Vector3 Position { get => PhysicsEngine.GetBodyReference(BodyHandle).Pose.Position; }
         public Quaternion Orientation { get => PhysicsEngine.GetBodyReference(BodyHandle).Pose.Orientation; }
+        public Action<int, ConvexContactManifold> CustomCollisionCallback { get; set; }
         private readonly BodyHandle BodyHandle;
         private readonly Terrain _terrain;
 
@@ -20,12 +23,13 @@ namespace TGC.MonoGame.TP.Components.Physics
             Shape = shape;
             PhysicsEngine = physicsEngine;
             PhysicsEngine.AddShape(shapeName, shape);
-            BodyHandle = PhysicsEngine.AddBody(shapeName, initialPosition.ToNumerics(), initialOrientation.ToNumerics());
+            BodyHandle = PhysicsEngine.AddBody(this, shapeName, initialPosition.ToNumerics(), initialOrientation.ToNumerics());
             _terrain = terrain;
             PhysicsEngine.GetBodyReference(BodyHandle).LocalInertia.InverseInertiaTensor.XX = 0f;
             PhysicsEngine.GetBodyReference(BodyHandle).LocalInertia.InverseInertiaTensor.ZX = 0f;
             PhysicsEngine.GetBodyReference(BodyHandle).LocalInertia.InverseInertiaTensor.ZY = 0f;
             PhysicsEngine.GetBodyReference(BodyHandle).LocalInertia.InverseInertiaTensor.ZZ = 0f;
+            CustomCollisionCallback = (collidableNumber, manifold) => {};
         }
 
         public void Update(GameTime gameTime)
@@ -79,6 +83,11 @@ namespace TGC.MonoGame.TP.Components.Physics
             var impulse = right * 50000f;
             bodyReference.Awake = true;
             bodyReference.ApplyAngularImpulse(impulse);
+        }
+
+        public void CollisionCallback(int collidableNumber, ConvexContactManifold manifold)
+        {
+            CustomCollisionCallback(collidableNumber, manifold);
         }
     }
 }
