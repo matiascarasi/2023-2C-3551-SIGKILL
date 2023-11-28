@@ -10,7 +10,6 @@
 uniform float4x4 World;
 uniform float4x4 View;
 uniform float4x4 Projection;
-
 uniform texture Texture;
 
 sampler2D textureSampler = sampler_state
@@ -47,7 +46,11 @@ VertexShaderOutput MainVS(in VertexShaderInput input)
 
 float4 MainPS(VertexShaderOutput input) : COLOR
 {
-    return tex2D(textureSampler, input.TextureCoordinate);
+	
+    float4 textureColor = tex2D(textureSampler, input.TextureCoordinate);
+	
+    if (textureColor.a < 0.1f) clip(-1);
+    return textureColor;
 }
 
 technique BasicTexture

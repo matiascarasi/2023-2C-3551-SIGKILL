@@ -19,11 +19,13 @@ namespace TGC.MonoGame.TP.Menu
             get { return assetName; }
             set { assetName = value; }
         }
+        private MouseState PrevMouseState { get; set; }
         public delegate void ElementClicked(string element);
         public event ElementClicked clickElement;
         public MenuElement(string assetName)
         {
             this.assetName = assetName;
+            PrevMouseState = Mouse.GetState();
         }
 
         public void LoadContent(ContentManager content, GraphicsDevice GraphicsDevice)
@@ -37,10 +39,14 @@ namespace TGC.MonoGame.TP.Menu
 
         public void Update()
         {
-            if (MenuBtnRect.Contains(new Point(Mouse.GetState().X, Mouse.GetState().Y)) && Mouse.GetState().LeftButton == ButtonState.Pressed)
+            MouseState mouseState = Mouse.GetState();
+
+            if (MenuBtnRect.Contains(new Point(Mouse.GetState().X, Mouse.GetState().Y)) 
+                && Mouse.GetState().LeftButton == ButtonState.Pressed && PrevMouseState.LeftButton == ButtonState.Released)
             {
                 clickElement(assetName);
             }
+            PrevMouseState = Mouse.GetState();
         }
 
         public void Draw(SpriteBatch spriteBatch) {         

@@ -43,11 +43,53 @@
 /processorParam:DebugMode=Auto
 /build:Effects/BasicTexture.fx
 
+#begin Effects/BlinnPhong.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Effects/BlinnPhong.fx
+
+#begin Effects/Fences.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Effects/Fences.fx
+
+#begin Effects/FullScreenQuad.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Effects/FullScreenQuad.fx
+
 #begin Effects/Gizmos.fx
 /importer:EffectImporter
 /processor:EffectProcessor
 /processorParam:DebugMode=Auto
 /build:Effects/Gizmos.fx
+
+#begin Effects/HeightMap.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Effects/HeightMap.fx
+
+#begin Effects/Leaves.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Effects/Leaves.fx
+
+#begin Effects/SkyBox.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Effects/SkyBox.fx
+
+#begin Effects/Terrain.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Effects/Terrain.fx
 
 #begin Effects/WrapTexture.fx
 /importer:EffectImporter
@@ -92,6 +134,25 @@
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
 /build:Models/geometries/sphere.fbx
+
+#begin Models/skybox/cube.fbx
+/importer:FbxImporter
+/processor:ModelProcessor
+/processorParam:ColorKeyColor=0,0,0,0
+/processorParam:ColorKeyEnabled=True
+/processorParam:DefaultEffect=BasicEffect
+/processorParam:GenerateMipmaps=True
+/processorParam:GenerateTangentFrames=False
+/processorParam:PremultiplyTextureAlpha=True
+/processorParam:PremultiplyVertexColors=True
+/processorParam:ResizeTexturesToPowerOfTwo=False
+/processorParam:RotationX=0
+/processorParam:RotationY=0
+/processorParam:RotationZ=0
+/processorParam:Scale=1
+/processorParam:SwapWindingOrder=False
+/processorParam:TextureFormat=Compressed
+/build:Models/skybox/cube.fbx
 
 #begin Models/TankWars/Miscellaneous/Box/Wooden_box_01_BaseColor.png
 /importer:TextureImporter
@@ -160,30 +221,6 @@
 /processorParam:TextureFormat=Color
 /build:Models/TankWars/Miscellaneous/Bullet/9mm Luger Metal.png
 
-#begin Models/TankWars/Miscellaneous/Bullet/9mm Luger Metal.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Models/TankWars/Miscellaneous/Bullet/9mm Luger Metal.png
-
-#begin Models/TankWars/Miscellaneous/Bullet/9mm Luger Normal.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Models/TankWars/Miscellaneous/Bullet/9mm Luger Normal.png
-
 #begin Models/TankWars/Miscellaneous/Bullet/9mm Luger Normal.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -207,30 +244,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Models/TankWars/Miscellaneous/Bullet/9mm Luger Roughness.png
-
-#begin Models/TankWars/Miscellaneous/Bullet/9mm Luger Roughness.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Models/TankWars/Miscellaneous/Bullet/9mm Luger Roughness.png
-
-#begin Models/TankWars/Miscellaneous/Bullet/9mm Luger Specular.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Models/TankWars/Miscellaneous/Bullet/9mm Luger Specular.png
 
 #begin Models/TankWars/Miscellaneous/Bullet/9mm Luger Specular.png
 /importer:TextureImporter
@@ -262,37 +275,6 @@
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
 /build:Models/TankWars/Miscellaneous/Bullet/bullet.fbx
-
-#begin Models/TankWars/Miscellaneous/Bullet/bullet.fbx
-/importer:FbxImporter
-/processor:ModelProcessor
-/processorParam:ColorKeyColor=0,0,0,0
-/processorParam:ColorKeyEnabled=True
-/processorParam:DefaultEffect=BasicEffect
-/processorParam:GenerateMipmaps=True
-/processorParam:GenerateTangentFrames=False
-/processorParam:PremultiplyTextureAlpha=True
-/processorParam:PremultiplyVertexColors=True
-/processorParam:ResizeTexturesToPowerOfTwo=False
-/processorParam:RotationX=0
-/processorParam:RotationY=0
-/processorParam:RotationZ=0
-/processorParam:Scale=1
-/processorParam:SwapWindingOrder=False
-/processorParam:TextureFormat=Compressed
-/build:Models/TankWars/Miscellaneous/Bullet/bullet.fbx
-
-#begin Models/TankWars/Miscellaneous/Bullet/main_texture.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Models/TankWars/Miscellaneous/Bullet/main_texture.png
 
 #begin Models/TankWars/Miscellaneous/Bullet/main_texture.png
 /importer:TextureImporter
@@ -428,6 +410,18 @@
 /processorParam:TextureFormat=Color
 /build:Models/TankWars/Miscellaneous/Dumpster/dumpsters_Dumpster_Roughness.png
 
+#begin Models/TankWars/Miscellaneous/Fence/chainLinkFence_low_mat_BaseColor.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Models/TankWars/Miscellaneous/Fence/chainLinkFence_low_mat_BaseColor.png
+
 #begin Models/TankWars/Miscellaneous/Fence/chainLinkFence_low.fbx
 /importer:FbxImporter
 /processor:ModelProcessor
@@ -446,37 +440,6 @@
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
 /build:Models/TankWars/Miscellaneous/Fence/chainLinkFence_low.fbx
-
-#begin Models/TankWars/Miscellaneous/Fence/chainLinkFence_low_mat_BaseColor.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Models/TankWars/Miscellaneous/Fence/chainLinkFence_low_mat_BaseColor.png
-
-#begin Models/TankWars/Miscellaneous/Rock/Rock07-Base.fbx
-/importer:FbxImporter
-/processor:ModelProcessor
-/processorParam:ColorKeyColor=0,0,0,0
-/processorParam:ColorKeyEnabled=True
-/processorParam:DefaultEffect=BasicEffect
-/processorParam:GenerateMipmaps=True
-/processorParam:GenerateTangentFrames=False
-/processorParam:PremultiplyTextureAlpha=True
-/processorParam:PremultiplyVertexColors=True
-/processorParam:ResizeTexturesToPowerOfTwo=False
-/processorParam:RotationX=0
-/processorParam:RotationY=0
-/processorParam:RotationZ=0
-/processorParam:Scale=1
-/processorParam:SwapWindingOrder=False
-/processorParam:TextureFormat=Compressed
-/build:Models/TankWars/Miscellaneous/Rock/Rock07-Base.fbx
 
 #begin Models/TankWars/Miscellaneous/Rock/Rock07-Base-Diffuse.png
 /importer:TextureImporter
@@ -526,7 +489,26 @@
 /processorParam:TextureFormat=Color
 /build:Models/TankWars/Miscellaneous/Rock/Rock07-Base-Specular.png
 
-#begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_flower1_1.png
+#begin Models/TankWars/Miscellaneous/Rock/Rock07-Base.fbx
+/importer:FbxImporter
+/processor:ModelProcessor
+/processorParam:ColorKeyColor=0,0,0,0
+/processorParam:ColorKeyEnabled=True
+/processorParam:DefaultEffect=BasicEffect
+/processorParam:GenerateMipmaps=True
+/processorParam:GenerateTangentFrames=False
+/processorParam:PremultiplyTextureAlpha=True
+/processorParam:PremultiplyVertexColors=True
+/processorParam:ResizeTexturesToPowerOfTwo=False
+/processorParam:RotationX=0
+/processorParam:RotationY=0
+/processorParam:RotationZ=0
+/processorParam:Scale=1
+/processorParam:SwapWindingOrder=False
+/processorParam:TextureFormat=Compressed
+/build:Models/TankWars/Miscellaneous/Rock/Rock07-Base.fbx
+
+#begin Models/TankWars/Miscellaneous/Trees/bark-texture.jpg
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -536,7 +518,26 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_flower1_1.png
+/build:Models/TankWars/Miscellaneous/Trees/bark-texture.jpg
+
+#begin Models/TankWars/Miscellaneous/Trees/Chestnut_Good.fbx
+/importer:FbxImporter
+/processor:ModelProcessor
+/processorParam:ColorKeyColor=0,0,0,0
+/processorParam:ColorKeyEnabled=True
+/processorParam:DefaultEffect=BasicEffect
+/processorParam:GenerateMipmaps=True
+/processorParam:GenerateTangentFrames=False
+/processorParam:PremultiplyTextureAlpha=True
+/processorParam:PremultiplyVertexColors=True
+/processorParam:ResizeTexturesToPowerOfTwo=False
+/processorParam:RotationX=0
+/processorParam:RotationY=0
+/processorParam:RotationZ=0
+/processorParam:Scale=1
+/processorParam:SwapWindingOrder=False
+/processorParam:TextureFormat=Compressed
+/build:Models/TankWars/Miscellaneous/Trees/Chestnut_Good.fbx
 
 #begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_flower1_1_Gloss.png
 /importer:TextureImporter
@@ -598,7 +599,7 @@
 /processorParam:TextureFormat=Color
 /build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_flower1_1_SubsurfaceColor.png
 
-#begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_flower1_2.png
+#begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_flower1_1.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -608,7 +609,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_flower1_2.png
+/build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_flower1_1.png
 
 #begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_flower1_2_Gloss.png
 /importer:TextureImporter
@@ -670,7 +671,7 @@
 /processorParam:TextureFormat=Color
 /build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_flower1_2_SubsurfaceColor.png
 
-#begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_flower1_3.png
+#begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_flower1_2.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -680,7 +681,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_flower1_3.png
+/build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_flower1_2.png
 
 #begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_flower1_3_Gloss.png
 /importer:TextureImporter
@@ -742,7 +743,7 @@
 /processorParam:TextureFormat=Color
 /build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_flower1_3_SubsurfaceColor.png
 
-#begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_flower2_1.png
+#begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_flower1_3.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -752,7 +753,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_flower2_1.png
+/build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_flower1_3.png
 
 #begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_flower2_1_Gloss.png
 /importer:TextureImporter
@@ -814,7 +815,7 @@
 /processorParam:TextureFormat=Color
 /build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_flower2_1_SubsurfaceColor.png
 
-#begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_flower2_2.png
+#begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_flower2_1.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -824,7 +825,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_flower2_2.png
+/build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_flower2_1.png
 
 #begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_flower2_2_Gloss.png
 /importer:TextureImporter
@@ -886,7 +887,7 @@
 /processorParam:TextureFormat=Color
 /build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_flower2_2_SubsurfaceColor.png
 
-#begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_flower2_3.png
+#begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_flower2_2.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -896,7 +897,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_flower2_3.png
+/build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_flower2_2.png
 
 #begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_flower2_3_Gloss.png
 /importer:TextureImporter
@@ -958,7 +959,7 @@
 /processorParam:TextureFormat=Color
 /build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_flower2_3_SubsurfaceColor.png
 
-#begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_kabu_trunk.png
+#begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_flower2_3.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -968,7 +969,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_kabu_trunk.png
+/build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_flower2_3.png
 
 #begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_kabu_trunk_Gloss.png
 /importer:TextureImporter
@@ -1006,7 +1007,7 @@
 /processorParam:TextureFormat=Color
 /build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_kabu_trunk_Opacity.png
 
-#begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_aut1_1.png
+#begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_kabu_trunk.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1016,7 +1017,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_aut1_1.png
+/build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_kabu_trunk.png
 
 #begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_aut1_1_Gloss.png
 /importer:TextureImporter
@@ -1078,7 +1079,7 @@
 /processorParam:TextureFormat=Color
 /build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_aut1_1_SubsurfaceColor.png
 
-#begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_aut1_2.png
+#begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_aut1_1.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1088,7 +1089,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_aut1_2.png
+/build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_aut1_1.png
 
 #begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_aut1_2_Gloss.png
 /importer:TextureImporter
@@ -1150,7 +1151,7 @@
 /processorParam:TextureFormat=Color
 /build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_aut1_2_SubsurfaceColor.png
 
-#begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_aut1_3.png
+#begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_aut1_2.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1160,7 +1161,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_aut1_3.png
+/build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_aut1_2.png
 
 #begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_aut1_3_Gloss.png
 /importer:TextureImporter
@@ -1222,7 +1223,7 @@
 /processorParam:TextureFormat=Color
 /build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_aut1_3_SubsurfaceColor.png
 
-#begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_spr1_1.png
+#begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_aut1_3.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1232,7 +1233,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_spr1_1.png
+/build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_aut1_3.png
 
 #begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_spr1_1_Gloss.png
 /importer:TextureImporter
@@ -1294,7 +1295,7 @@
 /processorParam:TextureFormat=Color
 /build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_spr1_1_SubsurfaceColor.png
 
-#begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_spr1_2.png
+#begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_spr1_1.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1304,7 +1305,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_spr1_2.png
+/build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_spr1_1.png
 
 #begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_spr1_2_Gloss.png
 /importer:TextureImporter
@@ -1366,7 +1367,7 @@
 /processorParam:TextureFormat=Color
 /build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_spr1_2_SubsurfaceColor.png
 
-#begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_spr1_3.png
+#begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_spr1_2.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1376,7 +1377,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_spr1_3.png
+/build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_spr1_2.png
 
 #begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_spr1_3_Gloss.png
 /importer:TextureImporter
@@ -1438,7 +1439,7 @@
 /processorParam:TextureFormat=Color
 /build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_spr1_3_SubsurfaceColor.png
 
-#begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_sum1_1.png
+#begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_spr1_3.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1448,7 +1449,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_sum1_1.png
+/build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_spr1_3.png
 
 #begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_sum1_1_Gloss.png
 /importer:TextureImporter
@@ -1510,7 +1511,7 @@
 /processorParam:TextureFormat=Color
 /build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_sum1_1_SubsurfaceColor.png
 
-#begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_sum1_2.png
+#begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_sum1_1.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1520,7 +1521,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_sum1_2.png
+/build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_sum1_1.png
 
 #begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_sum1_2_Gloss.png
 /importer:TextureImporter
@@ -1582,7 +1583,7 @@
 /processorParam:TextureFormat=Color
 /build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_sum1_2_SubsurfaceColor.png
 
-#begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_sum1_3.png
+#begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_sum1_2.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1592,7 +1593,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_sum1_3.png
+/build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_sum1_2.png
 
 #begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_sum1_3_Gloss.png
 /importer:TextureImporter
@@ -1654,7 +1655,7 @@
 /processorParam:TextureFormat=Color
 /build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_sum1_3_SubsurfaceColor.png
 
-#begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_stalk.png
+#begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_sum1_3.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1664,7 +1665,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_stalk.png
+/build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_leaf_sum1_3.png
 
 #begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_stalk_Gloss.png
 /importer:TextureImporter
@@ -1702,7 +1703,7 @@
 /processorParam:TextureFormat=Color
 /build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_stalk_Opacity.png
 
-#begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_tan_trunk.png
+#begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_stalk.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1712,7 +1713,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_tan_trunk.png
+/build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_stalk.png
 
 #begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_tan_trunk_Gloss.png
 /importer:TextureImporter
@@ -1749,6 +1750,42 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_tan_trunk_Opacity.png
+
+#begin Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_tan_trunk.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Models/TankWars/Miscellaneous/Trees/tex/yamaboushi_tan_trunk.png
+
+#begin Models/TankWars/Miscellaneous/Trees/TexturesCom_Branches0018_1_alphamasked_S.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Models/TankWars/Miscellaneous/Trees/TexturesCom_Branches0018_1_alphamasked_S.png
+
+#begin Models/TankWars/Miscellaneous/Trees/tileable_tree_bark_texture_by_ftourini-d3l69hz.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Models/TankWars/Miscellaneous/Trees/tileable_tree_bark_texture_by_ftourini-d3l69hz.jpg
 
 #begin Models/TankWars/Miscellaneous/Trees/yamaboushi_tan_6000_a_aut1.fbx
 /importer:FbxImporter
@@ -1845,6 +1882,78 @@
 /processorParam:TextureFormat=Compressed
 /build:Models/TankWars/Panzer/Panzer.fbx
 
+#begin Models/TankWars/Panzer/PzVI_Tiger_I_NM.dds
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Models/TankWars/Panzer/PzVI_Tiger_I_NM.dds
+
+#begin Models/TankWars/Panzer/PzVI_Tiger_I_SM.dds
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Models/TankWars/Panzer/PzVI_Tiger_I_SM.dds
+
+#begin Models/TankWars/Panzer/PzVI_Tiger_I_track_NM.dds
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Models/TankWars/Panzer/PzVI_Tiger_I_track_NM.dds
+
+#begin Models/TankWars/Panzer/PzVI_Tiger_I_track_SM.dds
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Models/TankWars/Panzer/PzVI_Tiger_I_track_SM.dds
+
+#begin Models/TankWars/Panzer/PzVI_Tiger_I_track.dds
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Models/TankWars/Panzer/PzVI_Tiger_I_track.dds
+
+#begin Models/TankWars/Panzer/PzVl_Tiger_I.dds
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Models/TankWars/Panzer/PzVl_Tiger_I.dds
+
 #begin Models/TankWars/T90/T90.fbx
 /importer:FbxImporter
 /processor:ModelProcessor
@@ -1924,18 +2033,6 @@
 /processorParam:TextureFormat=Color
 /build:Models/TankWars/T90/textures_mod/normal.png
 
-#begin Models/TankWars/T90/textures_mod/treadmills.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Models/TankWars/T90/textures_mod/treadmills.png
-
 #begin Models/TankWars/T90/textures_mod/treadmills_mask.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -1960,6 +2057,18 @@
 /processorParam:TextureFormat=Color
 /build:Models/TankWars/T90/textures_mod/treadmills_normal.png
 
+#begin Models/TankWars/T90/textures_mod/treadmills.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Models/TankWars/T90/textures_mod/treadmills.png
+
 #begin Models/tgc-logo/tgc-logo.fbx
 /importer:FbxImporter
 /processor:ModelProcessor
@@ -1979,7 +2088,7 @@
 /processorParam:TextureFormat=Compressed
 /build:Models/tgc-logo/tgc-logo.fbx
 
-#begin Textures/heightmaps/hills.jpg
+#begin Textures/heightmaps/colormap.jpg
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1989,7 +2098,55 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Textures/heightmaps/hills.jpg
+/build:Textures/heightmaps/colormap.jpg
+
+#begin Textures/heightmaps/grass.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/heightmaps/grass.png
+
+#begin Textures/heightmaps/greenGrass.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/heightmaps/greenGrass.jpg
+
+#begin Textures/heightmaps/ground.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/heightmaps/ground.jpg
+
+#begin Textures/heightmaps/heightmap.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/heightmaps/heightmap.jpg
 
 #begin Textures/heightmaps/hills-heightmap.jpg
 /importer:TextureImporter
@@ -2002,6 +2159,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Textures/heightmaps/hills-heightmap.jpg
+
+#begin Textures/heightmaps/hills.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/heightmaps/hills.jpg
 
 #begin Textures/HUD/cannonBar.png
 /importer:TextureImporter
@@ -2027,6 +2196,18 @@
 /processorParam:TextureFormat=Color
 /build:Textures/HUD/cannonGauge.png
 
+#begin Textures/HUD/gameOver.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/HUD/gameOver.png
+
 #begin Textures/HUD/healthBar.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -2051,6 +2232,18 @@
 /processorParam:TextureFormat=Color
 /build:Textures/HUD/healthGauge.png
 
+#begin Textures/HUD/home.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/HUD/home.png
+
 #begin Textures/HUD/Panzer.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -2062,6 +2255,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Textures/HUD/Panzer.png
+
+#begin Textures/HUD/retry.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/HUD/retry.png
 
 #begin Textures/HUD/T90.png
 /importer:TextureImporter
@@ -2075,6 +2280,30 @@
 /processorParam:TextureFormat=Color
 /build:Textures/HUD/T90.png
 
+#begin Textures/HUD/target.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/HUD/target.png
+
+#begin Textures/HUD/youReWinner.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/HUD/youReWinner.png
+
 #begin Textures/Menu/cursor.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -2086,6 +2315,42 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Textures/Menu/cursor.png
+
+#begin Textures/Menu/empty_chekbox_modogod.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Menu/empty_chekbox_modogod.png
+
+#begin Textures/Menu/empty_chekbox_muteeffects.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Menu/empty_chekbox_muteeffects.png
+
+#begin Textures/Menu/empty_chekbox_mutemusic.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Menu/empty_chekbox_mutemusic.png
 
 #begin Textures/Menu/exit.png
 /importer:TextureImporter
@@ -2110,6 +2375,66 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Textures/Menu/exit2.png
+
+#begin Textures/Menu/exitcross.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Menu/exitcross.png
+
+#begin Textures/Menu/modo_god.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Menu/modo_god.png
+
+#begin Textures/Menu/mute_effects.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Menu/mute_effects.png
+
+#begin Textures/Menu/mute_music.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Menu/mute_music.png
+
+#begin Textures/Menu/options_container.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Menu/options_container.png
 
 #begin Textures/Menu/options.png
 /importer:TextureImporter
@@ -2159,6 +2484,18 @@
 /processorParam:TextureFormat=Color
 /build:Textures/Menu/play2.png
 
+#begin Textures/Menu/return_button.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Menu/return_button.png
+
 #begin Textures/Menu/tankWarsLogo.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -2170,4 +2507,112 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Textures/Menu/tankWarsLogo.png
+
+#begin Textures/Menu/tick_modogod.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Menu/tick_modogod.png
+
+#begin Textures/Menu/tick_muteeffects.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Menu/tick_muteeffects.png
+
+#begin Textures/Menu/tick_mutemusic.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Menu/tick_mutemusic.png
+
+#begin Textures/skyboxes/empty-space/empty-space.dds
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/skyboxes/empty-space/empty-space.dds
+
+#begin Textures/skyboxes/islands/islands.dds
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/skyboxes/islands/islands.dds
+
+#begin Textures/skyboxes/skybox/skybox.dds
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=False
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/skyboxes/skybox/skybox.dds
+
+#begin Textures/skyboxes/skybox/skybox2-.dds
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=False
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/skyboxes/skybox/skybox2-.dds
+
+#begin Textures/skyboxes/sun-in-space/sun-in-space.dds
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/skyboxes/sun-in-space/sun-in-space.dds
+
+#begin Textures/skyboxes/sunset/sunset.dds
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/skyboxes/sunset/sunset.dds
 

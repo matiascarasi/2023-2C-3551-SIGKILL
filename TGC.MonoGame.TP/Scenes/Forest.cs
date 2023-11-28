@@ -14,7 +14,7 @@ namespace TGC.MonoGame.TP.Scenes
     class Forest : IScene
     {
 
-        private const double SMALL_TREES_MIN_SCALE = 1.5;
+        private const double SMALL_TREES_MIN_SCALE = 1;
         private Vector2 Center;
         private readonly double _radius;
         private readonly int smallTreesAmount;
@@ -24,12 +24,12 @@ namespace TGC.MonoGame.TP.Scenes
         {
             Center = center;
             _radius = radius;
-            smallTreesAmount = (int)(Math.PI * Math.Pow(_radius, 2) * 0.000001 * density);
+            smallTreesAmount = (int) (Math.PI * Math.Pow(_radius, 2) * 0.000005 * density);
             rocksAmount = (int)(Math.PI * Math.Pow(_radius, 2) * 0.00000075 * density);
             PhysicsEngine = physicsEngine;
         }
 
-        public void LoadContent(ContentManager Content, Terrain Terrain, List<GameObject> Objects)
+        public void LoadContent(ContentManager Content, HeightMap HeightMap, List<GameObject> Objects)
         {
             Random Random = new(Guid.NewGuid().GetHashCode());
 
@@ -39,7 +39,7 @@ namespace TGC.MonoGame.TP.Scenes
                 var xzPosition = AlgebraHelper.GetRandomPointInCircle(Center, _radius, Random);
                 var rotation = Convert.ToSingle(AlgebraHelper.FULL_ROTATION * Random.NextDouble());
                 var scale = Convert.ToSingle(Math.Max(SMALL_TREES_MIN_SCALE, Random.NextDouble()));
-                var position = new Vector3(xzPosition.X, Terrain.Height(xzPosition.X, xzPosition.Y), xzPosition.Y);
+                var position = new Vector3(xzPosition.X, HeightMap.Height(xzPosition.X, xzPosition.Y), xzPosition.Y);
                 var treeBox = new Box(50f, 200f, 50f);
                 var tree = new GameObject(
                     new TreeGraphicsComponent(),
@@ -65,7 +65,7 @@ namespace TGC.MonoGame.TP.Scenes
                 var xzPosition = AlgebraHelper.GetRandomPointInCircle(Center, _radius, Random);
                 var rotation = Convert.ToSingle(AlgebraHelper.FULL_ROTATION * Random.NextDouble());
                 var scale = Convert.ToSingle(Math.Max(SMALL_TREES_MIN_SCALE, Random.NextDouble()));
-                var position = new Vector3(xzPosition.X, Terrain.Height(xzPosition.X, xzPosition.Y), xzPosition.Y);
+                var position = new Vector3(xzPosition.X, HeightMap.Height(xzPosition.X, xzPosition.Y), xzPosition.Y);
                 var rockBox = new Box(250f, 50f, 250f);
                 var rock = new GameObject(
                     new BushGraphicsComponent(),

@@ -13,6 +13,7 @@ using TGC.MonoGame.TP.Components.Graphics;
 using TGC.MonoGame.TP.Components.Inputs;
 using TGC.MonoGame.TP.Components.Physics;
 using TGC.MonoGame.TP.Defaults;
+using TGC.MonoGame.TP.Helpers;
 using TGC.MonoGame.TP.HUD;
 using TGC.MonoGame.TP.Menu;
 using TGC.MonoGame.TP.Physics;
@@ -53,21 +54,30 @@ namespace TGC.MonoGame.TP
         private HUDComponent HUD { get; set; }
         private SpriteBatch SpriteBatch { get; set; }
         private BoundsComponent Bounds { get; set; }
-        private Terrain Terrain;
+        private SkyBox SkyBox;
         public bool IsMenuActive { get; set; }
-
+        
         public const string ContentFolderEffects = "Effects/";
-        private MouseCamera MouseCamera { get; set; }
+        public MouseCamera MouseCamera { get; set; }
         private Song MainSong { get; set; }
         private SoundEffectInstance Instance { get; set; }
         private SoundEffect SoundEffect { get; set; }
         private List<GameObject> Objects { get; set; }
         private Forest Forest { get; set; }
-        private GameObject Player { get; set; }
+        public GameObject Player { get; set; }
         private List<GameObject> TeamPanzer { get; set; }
         private List<GameObject> TeamT90 { get; set; }
         private List<GameObject> Collisionables { get; set; }
         private PhysicsEngine PhysicsEngine { get; set; }
+        private BoundingFrustum BoundingFrustum { get; set; }
+
+        private RenderTarget2D HorizontalRenderTarget;
+
+        private RenderTarget2D MainRenderTarget;
+        private FullScreenQuad FullScreenQuad;
+        private Effect FullScreenQuadEffect;
+        private HeightMap HeightMap;
+
         private const int TEAMS_SIZE = 5;
 
         protected override void Initialize()
@@ -94,28 +104,29 @@ namespace TGC.MonoGame.TP
             //Cambio textura de cursor
             Mouse.SetCursor(MouseCursor.FromTexture2D(Content.Load<Texture2D>("Textures/Menu/cursor"), 0, 0));
 
-            Menu = new MenuComponent(this);
-            HUD = new HUDComponent(PlayerDefaults.TankName, PlayerDefaults.Health, PlayerDefaults.CoolDown);
-            Terrain = new Terrain(Content, GraphicsDevice, "Textures/heightmaps/hills-heightmap", "Textures/heightmaps/hills", 20.0f, 8.0f);
+            HUD = new HUDComponent(this, PlayerDefaults.TankName, PlayerDefaults.Health, PlayerDefaults.CoolDown, TeamPanzer);
+            HeightMap = new HeightMap(Content, GraphicsDevice, "Textures/heightmaps/heightmap", "Textures/heightmaps/colormap",
+                "Textures/heightmaps/greenGrass", "Textures/heightmaps/ground", 2000, 3);
             MouseCamera = new MouseCamera(GraphicsDevice);
-            Bounds = new BoundsComponent(Content, Terrain, PhysicsEngine);
+            Bounds = new BoundsComponent(Content, HeightMap, PhysicsEngine);
             var panzerBox = new Box(500f, 250f, 1000f);
             var t90Box = new Box(500f, 250f, 1000f);
-            var playerPosition = new Vector3(0f, Terrain.Height(0f, 0f), 0f);
+            var playerPosition = new Vector3(0f, HeightMap.Height(0f, 0f), 0f);
             var physicsComponent = new DynamicPhysicsComponent<Box>(
                 PhysicsEngine,
                 "Panzer Box",
                 panzerBox,
                 playerPosition,
                 Quaternion.CreateFromAxisAngle(Vector3.Up, PlayerDefaults.RotationAngle),
-                Terrain);
+                HeightMap);
             Player = new GameObject(
-                new List<IComponent>() { new TankInputComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, PlayerDefaults.CoolDown, MouseCamera, Terrain, HUD, physicsComponent) },
+                new List<IComponent>() { new TankInputComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, PlayerDefaults.CoolDown, MouseCamera, HeightMap, HUD, physicsComponent) },
                 new PanzerGraphicsComponent(),
                 physicsComponent,
                 PlayerDefaults.Scale,
                 PlayerDefaults.Health
             );
+            Menu = new MenuComponent(this, Player.Health);
 
             Objects = new List<GameObject>() { Player };
             Collisionables = new List<GameObject>();
@@ -125,14 +136,14 @@ namespace TGC.MonoGame.TP
 
             for (var i = 0; i <= TEAMS_SIZE; i++)
             {
-                var panzerPosition = new Vector3(2000f, Terrain.Height(2000f, 2000f + 1000f * i), 2000f + 1000f * i);
+                var panzerPosition = new Vector3(2000f, HeightMap.Height(2000f, 2000f + 1000f * i), 2000f + 1000f * i);
                 var panzerPhysicsComponent = new DynamicPhysicsComponent<Box>(
                     PhysicsEngine,
                     "Panzer Box",
                     panzerBox,
                     panzerPosition,
                     Quaternion.CreateFromAxisAngle(Vector3.Up, PlayerDefaults.RotationAngle),
-                    Terrain);
+                    HeightMap);
                 var panzer = new GameObject(
                     new PanzerGraphicsComponent(),
                     panzerPhysicsComponent,
@@ -140,14 +151,14 @@ namespace TGC.MonoGame.TP
                     PlayerDefaults.Health
                 );
 
-                var t90Position = new Vector3(-2000f, Terrain.Height(-2000f, -2000f + 1000f * i), -2000f + 1000f * i);
+                var t90Position = new Vector3(-2000f, HeightMap.Height(-2000f, -2000f + 1000f * i), -2000f + 1000f * i);
                 var t90PhysicsComponent = new DynamicPhysicsComponent<Box>(
                     PhysicsEngine,
                     "T90 Box",
                     t90Box,
                     t90Position,
                     Quaternion.CreateFromAxisAngle(Vector3.Up, PlayerDefaults.RotationAngle),
-                    Terrain);
+                    HeightMap);
                 var t90 = new GameObject(
                     new T90GraphicsComponent(),
                     t90PhysicsComponent,
@@ -155,18 +166,20 @@ namespace TGC.MonoGame.TP
                     PlayerDefaults.Health
                 );
 
-                panzer.AddComponent(new AITankComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, PlayerDefaults.CoolDown, 5000, t90, Collisionables, Terrain, panzerPhysicsComponent));
-                t90.AddComponent(new AITankComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, PlayerDefaults.CoolDown, 5000, panzer, Collisionables, Terrain, t90PhysicsComponent));
-
                 TeamPanzer.Add(panzer);
                 TeamT90.Add(t90);
 
+                
                 Collisionables.Add(panzer);
                 Collisionables.Add(t90);
 
-            }
+                panzer.AddComponent(new AITankComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, PlayerDefaults.CoolDown, 5000, TeamT90, t90, Collisionables, HeightMap, panzerPhysicsComponent));
+                t90.AddComponent(new AITankComponent(PlayerDefaults.DriveSpeed, PlayerDefaults.RotationSpeed, PlayerDefaults.CoolDown, 5000, TeamPanzer, panzer, Collisionables, HeightMap, t90PhysicsComponent));
 
-            Forest = new Forest(ForestDefaults.Center, ForestDefaults.Radius, 0f, PhysicsEngine);
+            }
+            SkyBox = new SkyBox("Models/skybox/cube", "Textures/skyboxes/skybox/skybox", 50000f);
+            Forest = new Forest(ForestDefaults.Center, ForestDefaults.Radius, ForestDefaults.Density, PhysicsEngine);
+            BoundingFrustum = new BoundingFrustum(MouseCamera.View * MouseCamera.Projection);
 
             base.Initialize();
         }
@@ -174,17 +187,35 @@ namespace TGC.MonoGame.TP
 
         protected override void LoadContent()
         {
+
+            FullScreenQuadEffect = Content.Load<Effect>(ContentFolderEffects + "FullScreenQuad");
+            FullScreenQuadEffect.Parameters["screenSize"]
+               .SetValue(new Vector2(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height));
+
             SpriteBatch = new SpriteBatch(GraphicsDevice);
             Menu.LoadContent(Content, GraphicsDevice);
-            HUD.LoadContent(Content);
-            Terrain.LoadContent(Content, GraphicsDevice);
+            HUD.LoadContent(Content, GraphicsDevice);
+            MouseCamera.LoadContent(Content);
+            FullScreenQuad = new FullScreenQuad(GraphicsDevice);
+
+            MainRenderTarget = new RenderTarget2D(GraphicsDevice, GraphicsDevice.Viewport.Width,
+                GraphicsDevice.Viewport.Height, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8, 0,
+                RenderTargetUsage.DiscardContents);
+            HorizontalRenderTarget = new RenderTarget2D(GraphicsDevice, GraphicsDevice.Viewport.Width,
+                GraphicsDevice.Viewport.Height, false, SurfaceFormat.Color, DepthFormat.None, 0,
+                RenderTargetUsage.DiscardContents);
+
+
+            HeightMap.LoadContent(Content, GraphicsDevice);
             Bounds.LoadContent(Content);
-            Forest.LoadContent(Content, Terrain, Objects);
-            GizmosRenderer.LoadContent(GraphicsDevice, Content);
             Player.LoadContent(Content);
+            Forest.LoadContent(Content, HeightMap, Objects);
+            GizmosRenderer.LoadContent(GraphicsDevice, Content);
 
             foreach (var t90 in TeamT90) t90.LoadContent(Content);
             foreach (var panzer in TeamPanzer) panzer.LoadContent(Content);
+
+            SkyBox.LoadContent(Content);
 
             base.LoadContent();
         }
@@ -203,19 +234,29 @@ namespace TGC.MonoGame.TP
 
             if (!IsMenuActive)
             {
-                MediaPlayer.Volume = .1f;
-
-                //MediaPlayer.Stop();
+                HUD.Update();
+                if (MediaPlayer.Volume != 0) MediaPlayer.Volume = .1f;
                 Instance.Play();
+            } else {
+                Menu.Update();
             }
 
-            Menu.Update();
-            MouseCamera.Update(gameTime, Player.World, IsMenuActive);
+
+            if (Player.Health > 0 && TeamT90.Count != 0)
+            {
+                MouseCamera.Update(gameTime, Player.World, IsMenuActive);
+            } else
+            {
+                IsMouseVisible = true;
+            }
 
             foreach (var obj in Objects)
             {
                 obj.Update(gameTime);
             }
+
+      
+            BoundingFrustum.Matrix = MouseCamera.View * MouseCamera.Projection;
 
             Bounds.Update(gameTime);
             GizmosRenderer.UpdateViewProjection(MouseCamera.View, MouseCamera.Projection);
@@ -228,26 +269,113 @@ namespace TGC.MonoGame.TP
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.Black);
-            Terrain.Draw(GraphicsDevice, MouseCamera.View, MouseCamera.Projection);
-            Bounds.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, GizmosRenderer);
-            foreach (var obj in Objects)
-            {
-                obj.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, GizmosRenderer);
-            }
-            foreach (var t90 in TeamT90) t90.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, GizmosRenderer);
-            foreach (var panzer in TeamPanzer) panzer.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, GizmosRenderer);
-            GizmosRenderer.SetColor(Color.Yellow);
-            GizmosRenderer.Draw();
-            if (IsMenuActive) Menu.Draw(SpriteBatch); else HUD.Draw(SpriteBatch);
-
+            if (IsMenuActive) DrawWithScreenBlur(gameTime);
+            else DrawDefault(gameTime);
         }
         protected override void UnloadContent()
         {
             Content.Unload();
-            Terrain.UnloadContent();
 
             base.UnloadContent();
+        }
+
+        protected void DrawDefault(GameTime gameTime)
+        {
+            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            GraphicsDevice.BlendState = BlendState.Opaque;
+
+
+            RasterizerState originalRasterizerState = GraphicsDevice.RasterizerState;
+            RasterizerState rasterizerState = new RasterizerState();
+            rasterizerState.CullMode = CullMode.None;
+            GraphicsDevice.RasterizerState = rasterizerState;
+
+            SkyBox.Draw(MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition);
+            HeightMap.Draw(GraphicsDevice, Matrix.Identity, MouseCamera.View, MouseCamera.Projection);
+            GraphicsDevice.RasterizerState = originalRasterizerState;
+
+
+            //Terrain.Draw(GraphicsDevice, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition, "Default");
+            Bounds.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition, GizmosRenderer);
+
+            foreach (var obj in Objects)
+            {
+                // if (BoundingFrustum.Intersects(obj.CollisionComponent.BoxWorldSpace))
+                // {
+                    obj.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition, GizmosRenderer);
+                // }
+            }
+            foreach (var t90 in TeamT90) t90.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition, GizmosRenderer);
+            foreach (var panzer in TeamPanzer) panzer.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition, GizmosRenderer);
+
+            GizmosRenderer.SetColor(Color.Yellow);
+            GizmosRenderer.Draw();
+
+            MouseCamera.Draw(SpriteBatch);
+            HUD.Draw(SpriteBatch, Player.Health, TeamT90);
+        }
+        protected void DrawWithScreenBlur(GameTime gameTime)
+        {
+            #region Main Render Target
+            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            GraphicsDevice.BlendState = BlendState.Opaque;
+
+            GraphicsDevice.SetRenderTarget(MainRenderTarget);
+            GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.CornflowerBlue, 1f, 0);
+
+            RasterizerState originalRasterizerState = GraphicsDevice.RasterizerState;
+            RasterizerState rasterizerState = new RasterizerState();
+            rasterizerState.CullMode = CullMode.None;
+            GraphicsDevice.RasterizerState = rasterizerState;
+            SkyBox.Draw(MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition);
+            HeightMap.Draw(GraphicsDevice, Matrix.Identity, MouseCamera.View, MouseCamera.Projection);
+            GraphicsDevice.RasterizerState = originalRasterizerState;
+
+            // Set the main render target as our render target
+
+
+            //Terrain.Draw(GraphicsDevice, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition, "Default");
+            HeightMap.Draw(GraphicsDevice, Matrix.Identity, MouseCamera.View, MouseCamera.Projection);
+            Bounds.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition);
+            foreach (var obj in Objects)
+            {
+                // if (BoundingFrustum.Intersects(obj.CollisionComponent.BoxWorldSpace))
+                // {
+                    obj.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition);
+                // }
+            }
+            foreach (var t90 in TeamT90) t90.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition);
+            foreach (var panzer in TeamPanzer) panzer.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition);
+
+            #endregion
+
+            #region BlurHorizontal
+
+            GraphicsDevice.DepthStencilState = DepthStencilState.None;
+
+            GraphicsDevice.SetRenderTarget(HorizontalRenderTarget);
+            GraphicsDevice.Clear(Color.Black);
+
+
+            FullScreenQuadEffect.CurrentTechnique = FullScreenQuadEffect.Techniques["BlurHorizontalTechnique"];
+            FullScreenQuadEffect.Parameters["ModelTexture"].SetValue(MainRenderTarget);
+            FullScreenQuad.Draw(FullScreenQuadEffect);
+
+
+            #endregion
+
+            #region BlurVerticalTechnique
+            GraphicsDevice.SetRenderTarget(null);
+            GraphicsDevice.Clear(Color.Black);
+
+            FullScreenQuadEffect.CurrentTechnique = FullScreenQuadEffect.Techniques["BlurVerticalTechnique"];
+            FullScreenQuadEffect.Parameters["ModelTexture"].SetValue(HorizontalRenderTarget);
+            FullScreenQuad.Draw(FullScreenQuadEffect);
+            Menu.Draw(SpriteBatch);
+            #endregion
+
         }
     }
 }

@@ -18,38 +18,34 @@ namespace TGC.MonoGame.TP.Components.Inputs
         private ShootingController ShootingController { get; set; }
         private MouseState PrevMouseState { get; set; }
         private MouseCamera MouseCamera { get; }
-        private Terrain Terrain { get; }
+        private HeightMap HeightMap { get; }
         private HUDComponent HUDComponent { get; }
 
-        public TankInputComponent(float driveSpeed, float rotationSpeed, float shootingCooldown, MouseCamera mouseCamera, Terrain terrain, HUDComponent hudComponent, IDynamicPhysicsComponent physicsComponent)
+        public TankInputComponent(float driveSpeed, float rotationSpeed, float shootingCooldown, MouseCamera mouseCamera, HeightMap heightMap, HUDComponent hudComponent, IDynamicPhysicsComponent physicsComponent)
         {
             PhysicsComponent = physicsComponent;
             ShootingController = new ShootingController(shootingCooldown, MAX_BULLETS_AMOUNT);
             PrevMouseState = Mouse.GetState();
 
             MouseCamera = mouseCamera;
-            Terrain = terrain;
+            HeightMap = heightMap;
             HUDComponent = hudComponent;
         }
 
-        public void Update(GameObject Player, GameTime gameTime, GraphicsComponent graphicsComponent)
+        public void Update(GameObject Player, GameTime gameTime)
         {
 
-            if (!(graphicsComponent is TankGraphicsComponent)) return;
+            if (!(Player.GraphicsComponent is TankGraphicsComponent)) return;
 
-            var tankGraphics = graphicsComponent as TankGraphicsComponent;
+            var tankGraphics = Player.GraphicsComponent as TankGraphicsComponent;
 
             ShootingController.Update(Player, gameTime);
 
             var keyboardState = Keyboard.GetState();
             var deltaTime = Convert.ToSingle(gameTime.ElapsedGameTime.TotalSeconds);
 
-            var X = Player.Position.X;
-            var Z = Player.Position.Z; 
-            var height = Terrain.Height(X, Z);
-
             //DETECCION DE MOVIMIENTO DEL MOUSE
-            tankGraphics.CannonRotation = tankGraphics.FixCannonAngle(MouseCamera.UpDownRotation);
+            tankGraphics.CannonRotation = TankGraphicsComponent.FixCannonAngle(MouseCamera.UpDownRotation);
             tankGraphics.TurretRotation = MouseCamera.LeftRightRotation;
 
             //DETECCION DE CLICK
@@ -89,9 +85,9 @@ namespace TGC.MonoGame.TP.Components.Inputs
             ShootingController.LoadContent(content);
         }
 
-        public void Draw(GameObject gameObject, GameTime gameTime, Matrix view, Matrix projection)
+        public void Draw(GameObject gameObject, GameTime gameTime, Matrix view, Matrix projection, Vector3 cameraPosition)
         {
-            ShootingController.Draw(gameTime, view, projection);
+            ShootingController.Draw(gameTime, view, projection, cameraPosition);
         }
     }
 

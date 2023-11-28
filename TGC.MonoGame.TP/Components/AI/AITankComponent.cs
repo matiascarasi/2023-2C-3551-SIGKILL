@@ -16,23 +16,23 @@ namespace TGC.MonoGame.TP.Components.AI
         const float BULLET_SPEED = 8000f;
         private ShootingController ShootingController { get; }
         private PathFindingController PathFindingController { get; } 
-        private Terrain Terrain { get; }
-        public AITankComponent(float driveSpeed, float rotationSpeed, float cooldown, float minDistance, GameObject target, List<GameObject> objects, Terrain terrain, IDynamicPhysicsComponent physicsComponent)
+        private HeightMap HeightMap { get; }
+        public AITankComponent(float driveSpeed, float rotationSpeed, float cooldown, float minDistance, List<GameObject> targets, GameObject initialTarget, List<GameObject> objects, HeightMap heightMap, IDynamicPhysicsComponent physicsComponent)
         {
             ShootingController = new ShootingController(cooldown, MAX_BULLETS_AMOUNT);
-            PathFindingController = new PathFindingController(target, minDistance, objects, physicsComponent);
-            Terrain = terrain;
+            PathFindingController = new PathFindingController(targets, initialTarget, minDistance, objects, physicsComponent);
+            HeightMap = heightMap;
         }
-        public void Update(GameObject gameObject, GameTime gameTime, GraphicsComponent graphicsComponent)
+        public void Update(GameObject gameObject, GameTime gameTime)
         {
 
-            if (!(graphicsComponent is TankGraphicsComponent)) return;
+            if (!(gameObject.GraphicsComponent is TankGraphicsComponent)) return;
 
-            var tankGraphics = graphicsComponent as TankGraphicsComponent;
+            var tankGraphics = gameObject.GraphicsComponent as TankGraphicsComponent;
 
             var X = gameObject.Position.X;
             var Z = gameObject.Position.Z;
-            var height = Terrain.Height(X, Z);
+            var height = HeightMap.Height(X, Z);
             gameObject.Position = new Vector3(X, height, Z);
 
             ShootingController.Update(gameObject, gameTime);
@@ -40,21 +40,21 @@ namespace TGC.MonoGame.TP.Components.AI
 
             var direction = PathFindingController.GetDirection();
             var forward = new Vector3(direction.X, 0f, direction.Z);
-            var terrainRationXZ = Terrain.GetScaleY() / Terrain.GetScaleXZ();
+            var terrainRatioXZ = HeightMap.GetScaleY() / HeightMap.GetScaleXZ();
 
             var turretAngle = MathHelper.ToRadians(AlgebraHelper.GetAngleBetweenTwoVectors(gameObject.World.Forward, forward));
-            var cannonAngle = MathF.Atan2(direction.Y, forward.Length() * terrainRationXZ);
+            var cannonAngle = MathF.Atan2(direction.Y, forward.Length() * terrainRatioXZ);
 
             tankGraphics.TurretRotation = turretAngle;
-            tankGraphics.CannonRotation = tankGraphics.FixCannonAngle(cannonAngle);
+            tankGraphics.CannonRotation = TankGraphicsComponent.FixCannonAngle(cannonAngle);
 
             ShootingController.Shoot(tankGraphics.GetCannonEnd(gameObject), tankGraphics.GetCannonDirection(gameObject), BULLET_SPEED);
 
         }
 
-        public void Draw(GameObject gameObject, GameTime gameTime, Matrix view, Matrix projection)
+        public void Draw(GameObject gameObject, GameTime gameTime, Matrix view, Matrix projection, Vector3 cameraPosition)
         {
-            ShootingController.Draw(gameTime, view, projection);
+            ShootingController.Draw(gameTime, view, projection, cameraPosition);
         }
 
         public void LoadContent(GameObject gameObject, ContentManager content)

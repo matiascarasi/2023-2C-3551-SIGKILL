@@ -5,7 +5,7 @@
     {
         public RockGraphicsComponent() : base(
                 "Models/TankWars/Miscellaneous/Rock/Rock07-Base",
-                "Effects/BasicTexture",
+                "Effects/BlinnPhong",
                 "Models/TankWars/Miscellaneous/Rock/Rock07-Base-Diffuse_0"
             )
         { }

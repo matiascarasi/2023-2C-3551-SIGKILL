@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
@@ -39,6 +40,10 @@ namespace TGC.MonoGame.TP
         private Vector2 screenCenterCoordinates { get; set; }
         private float mouseSensibility { get; set; } = 10f;
 
+        private Texture2D target;
+        private Rectangle targetRect;
+        private GraphicsDevice graphicsDevice;
+
         /// <summary>
         /// Crea una FollowCamera que sigue a una matriz de mundo
         /// </summary>
@@ -46,8 +51,24 @@ namespace TGC.MonoGame.TP
         public MouseCamera(GraphicsDevice GraphicsDevice)
         {
             var aspectRatio = GraphicsDevice.Viewport.AspectRatio;
+            graphicsDevice = GraphicsDevice;
             screenCenterCoordinates = new Vector2((GraphicsDevice.Viewport.Width / 2), (GraphicsDevice.Viewport.Height / 2));
-            Projection = Matrix.CreatePerspectiveFieldOfView(MathF.PI / 3.5f, aspectRatio, 0.1f, 100000f);
+            Projection = Matrix.CreatePerspectiveFieldOfView(MathF.PI / 3.5f, aspectRatio, 0.1f, 500000f);
+        }
+
+        public void LoadContent(ContentManager content)
+        {
+            target = content.Load<Texture2D>("Textures/HUD/target");
+
+            var width = 50; 
+            var height = 50;
+
+            var difference = -50;
+
+            var x = graphicsDevice.Viewport.Width / 2 - width / 2;
+            var y = graphicsDevice.Viewport.Height / 2 - height / 2;
+
+            targetRect = new Rectangle(x, y - difference, width, height);
         }
 
         public void Update(GameTime gameTime, Matrix playerWorld, bool IsMenuActive)
@@ -65,6 +86,14 @@ namespace TGC.MonoGame.TP
 
             View = Matrix.CreateLookAt(OffsetPosition, FollowedPosition, cameraCorrectUp);
 
+        }
+
+        public void Draw(SpriteBatch spriteBatch)
+        {
+
+            spriteBatch.Begin();
+            spriteBatch.Draw(target, targetRect, Color.White);
+            spriteBatch.End();
         }
 
         public void SetPlayerCamera(float elapsedTime, Matrix playerWorld)

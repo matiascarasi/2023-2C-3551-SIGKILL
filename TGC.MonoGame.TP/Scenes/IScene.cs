@@ -7,6 +7,6 @@ namespace TGC.MonoGame.TP.Scenes
 {
     interface IScene
     {
-        public void LoadContent(ContentManager content, Terrain terrain, List<GameObject> objects);
+        public void LoadContent(ContentManager content, HeightMap HeightMap, List<GameObject> objects);
     }
 }
