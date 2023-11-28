@@ -14,12 +14,12 @@ namespace TGC.MonoGame.TP.Menu
         private Texture2D MenuBtnTexture;
         private Rectangle MenuBtnRect;
         private string assetName;
-        private MouseState PrevMouseState { get; set; }
         public string AssetName
         {
             get { return assetName; }
             set { assetName = value; }
         }
+        private MouseState PrevMouseState { get; set; }
         public delegate void ElementClicked(string element);
         public event ElementClicked clickElement;
         public MenuElement(string assetName)

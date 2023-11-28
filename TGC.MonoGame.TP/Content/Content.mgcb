@@ -2196,6 +2196,18 @@
 /processorParam:TextureFormat=Color
 /build:Textures/HUD/cannonGauge.png
 
+#begin Textures/HUD/gameOver.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/HUD/gameOver.png
+
 #begin Textures/HUD/healthBar.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -2220,6 +2232,18 @@
 /processorParam:TextureFormat=Color
 /build:Textures/HUD/healthGauge.png
 
+#begin Textures/HUD/home.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/HUD/home.png
+
 #begin Textures/HUD/Panzer.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -2232,6 +2256,18 @@
 /processorParam:TextureFormat=Color
 /build:Textures/HUD/Panzer.png
 
+#begin Textures/HUD/retry.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/HUD/retry.png
+
 #begin Textures/HUD/T90.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -2243,6 +2279,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Textures/HUD/T90.png
+
+#begin Textures/HUD/youReWinner.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/HUD/youReWinner.png
 
 #begin Textures/Menu/cursor.png
 /importer:TextureImporter
@@ -2315,6 +2363,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Textures/Menu/exit2.png
+
+#begin Textures/Menu/exitcross.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Menu/exitcross.png
 
 #begin Textures/Menu/modo_god.png
 /importer:TextureImporter

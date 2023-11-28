@@ -32,7 +32,7 @@ namespace TGC.MonoGame.TP.Menu
             elementsList.Add(new MenuElement("play2"));
             elementsList.Add(new MenuElement("options2"));
             elementsList.Add(new MenuElement("exit2"));
-            optionsList.Add(new MenuElement("return_button"));
+            optionsList.Add(new MenuElement("exitcross"));
             optionsList.Add(new MenuElement("options_container"));
             optionsList.Add(new MenuElement("modo_god"));
             optionsList.Add(new MenuElement("mute_music"));
@@ -63,11 +63,9 @@ namespace TGC.MonoGame.TP.Menu
             {
                 optionsList[i].LoadContent(content, device);
                 optionsList[i].clickElement += OnClick;
-                if (optionsList[i].AssetName == "return_button")
+                if (optionsList[i].AssetName == "exitcross")
                 {
-                    optionsList[i].SizeElement(-100, -100);
                     optionsList[i].MoveElement(-700, -350);
-
                 }
                 else if (optionsList[i].AssetName.Contains("tick"))
                 {
@@ -148,7 +146,7 @@ namespace TGC.MonoGame.TP.Menu
             {
                 this.optionsVisible = true;
             }
-            else if (element == "return_button")
+            else if (element == "exitcross")
             {
                 this.optionsVisible = false;
             }

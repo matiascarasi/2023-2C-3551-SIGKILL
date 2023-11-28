@@ -107,7 +107,7 @@ namespace TGC.MonoGame.TP
             //Cambio textura de cursor
             Mouse.SetCursor(MouseCursor.FromTexture2D(Content.Load<Texture2D>("Textures/Menu/cursor"), 0, 0));
 
-            HUD = new HUDComponent(PlayerDefaults.TankName, PlayerDefaults.Health, PlayerDefaults.CoolDown);
+            HUD = new HUDComponent(this, PlayerDefaults.TankName, PlayerDefaults.Health, PlayerDefaults.CoolDown, TeamPanzer);
             Terrain = new Terrain(Content, GraphicsDevice, "Textures/heightmaps/hills-heightmap", "Textures/heightmaps/hills", 20.0f, 8.0f);
             HeightMap = new HeightMap(Content, GraphicsDevice, "Textures/heightmaps/heightmap", "Textures/heightmaps/colormap",
                 "Textures/heightmaps/greenGrass", "Textures/heightmaps/ground", 2000, 3);
@@ -221,19 +221,28 @@ namespace TGC.MonoGame.TP
 
             if(!IsMenuActive)
             {
-                if(MediaPlayer.Volume != 0) MediaPlayer.Volume = .1f;
+                HUD.Update();
+                if (MediaPlayer.Volume != 0) MediaPlayer.Volume = .1f;
                 Instance.Play();
+            } else {
+                Menu.Update();
             }
-          
-            Menu.Update();
-            MouseCamera.Update(gameTime, Player.World, IsMenuActive);
 
+
+            if (Player.Health > 0 && TeamT90.Count != 0)
+            {
+                MouseCamera.Update(gameTime, Player.World, IsMenuActive);
+            } else
+            {
+                IsMouseVisible = true;
+            }
 
             foreach (var obj in Objects)
             {
                 obj.Update(gameTime);
             }
 
+      
             BoundingFrustum.Matrix = MouseCamera.View * MouseCamera.Projection;
 
             Bounds.Update(gameTime);
@@ -290,7 +299,7 @@ namespace TGC.MonoGame.TP
 
             Gizmos.Draw();
 
-            if (IsMenuActive) Menu.Draw(SpriteBatch); else HUD.Draw(SpriteBatch);
+            HUD.Draw(SpriteBatch, Player.Health, TeamT90);
         }
         protected void DrawWithScreenBlur(GameTime gameTime)
         {
@@ -353,7 +362,7 @@ namespace TGC.MonoGame.TP
             FullScreenQuadEffect.CurrentTechnique = FullScreenQuadEffect.Techniques["BlurVerticalTechnique"];
             FullScreenQuadEffect.Parameters["ModelTexture"].SetValue(HorizontalRenderTarget);
             FullScreenQuad.Draw(FullScreenQuadEffect);
-            if (IsMenuActive) Menu.Draw(SpriteBatch); else HUD.Draw(SpriteBatch);
+            Menu.Draw(SpriteBatch);
             #endregion
 
         }
