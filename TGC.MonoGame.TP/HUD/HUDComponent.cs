@@ -52,7 +52,7 @@ namespace TGC.MonoGame.TP.HUD
             };
 
         }
-        public void LoadContent(ContentManager content)
+        public void LoadContent(ContentManager content,GraphicsDevice graphics)
         {
             foreach (var (_, element) in Elements) 
             {
@@ -69,6 +69,8 @@ namespace TGC.MonoGame.TP.HUD
                 element.LoadContent(content);
             }
 
+            var x = graphics.Viewport.Width / 2;
+            var y = graphics.Viewport.Height / 2;
 
             Elements["healthGauge"].SetWidth(initialHealth);
             Elements["cannonGauge"].SetWidth(shootingCooldown);
@@ -79,21 +81,29 @@ namespace TGC.MonoGame.TP.HUD
             Elements["cannonBar"].MoveElement(160, 70);
             Elements["cannonGauge"].MoveElement(194, 97);
 
-            winElements["youReWinner"].SizeElement(50, 50);
-            winElements["youReWinner"].MoveElement(600, 50);
-            winElements["home"].SizeElement(-100, -120);
-            winElements["home"].MoveElement(900, 600); 
-            winElements["retry"].SizeElement(-100, -115);
-            winElements["retry"].MoveElement(760, 600);
+            var buttonsGap = 100;
+
+            winElements["youReWinner"].MoveElement(x - winElements["youReWinner"].GetTexture().Width /2, 
+                y - winElements["youReWinner"].GetTexture().Height/2);
+            winElements["home"].MoveElement(x - winElements["home"].GetTexture().Width / 2 + buttonsGap,
+                y - winElements["home"].GetTexture().Height 
+                    + winElements["youReWinner"].GetTexture().Height );
+            winElements["retry"].MoveElement(x - winElements["retry"].GetTexture().Width - buttonsGap / 2,
+                y - winElements["retry"].GetTexture().Height 
+                    + winElements["youReWinner"].GetTexture().Height );
 
             winElements["home"].clickElement += OnClick;
             winElements["retry"].clickElement += OnClick;
 
-            loseElements["gameOver"].MoveElement(370, 170);
-            loseElements["home"].SizeElement(-100, -120);
-            loseElements["home"].MoveElement(900, 600);
-            loseElements["retry"].SizeElement(-100, -115);
-            loseElements["retry"].MoveElement(760, 600);
+            loseElements["gameOver"].MoveElement(x - loseElements["gameOver"].GetTexture().Width / 2,
+                y - loseElements["gameOver"].GetTexture().Height / 2);
+            loseElements["home"].MoveElement(x - loseElements["home"].GetTexture().Width / 2 + buttonsGap,
+                y - loseElements["home"].GetTexture().Height 
+                    + loseElements["gameOver"].GetTexture().Height * 2);
+            loseElements["retry"].MoveElement(x - winElements["retry"].GetTexture().Width - buttonsGap / 2,
+                y - loseElements["retry"].GetTexture().Height 
+                    + loseElements["gameOver"].GetTexture().Height * 2);
+
 
             loseElements["home"].clickElement += OnClick;
             loseElements["retry"].clickElement += OnClick;
@@ -103,10 +113,6 @@ namespace TGC.MonoGame.TP.HUD
         public void UpdatePlayerHealth(float newHealth)
         {
             Elements["healthGauge"].UpdateElementWidth(newHealth);
-
-            System.Diagnostics.Debug.WriteLine(newHealth);
-            
-
         }
 
         public void Update()

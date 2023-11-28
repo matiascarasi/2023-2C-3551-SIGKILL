@@ -58,7 +58,10 @@ namespace TGC.MonoGame.TP.Menu
         public void Draw(SpriteBatch spriteBatch) {         
             spriteBatch.Draw(HudElementTexture, HudElementRect, Color.White);
         }
-
+        public Texture2D GetTexture()
+        {
+            return HudElementTexture;
+        }
         public void MoveElement(int x, int y)
         {
             HudElementRect = new Rectangle(HudElementRect.X + x, HudElementRect.Y + y, HudElementRect.Width, HudElementRect.Height);

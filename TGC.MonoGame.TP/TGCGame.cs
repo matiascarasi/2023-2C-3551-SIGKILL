@@ -180,8 +180,8 @@ namespace TGC.MonoGame.TP
 
             SpriteBatch = new SpriteBatch(GraphicsDevice);
             Menu.LoadContent(Content, GraphicsDevice);
-            HUD.LoadContent(Content);
-
+            HUD.LoadContent(Content, GraphicsDevice);
+            MouseCamera.LoadContent(Content);
             FullScreenQuad = new FullScreenQuad(GraphicsDevice);
 
             MainRenderTarget = new RenderTarget2D(GraphicsDevice, GraphicsDevice.Viewport.Width,
@@ -299,7 +299,9 @@ namespace TGC.MonoGame.TP
 
             Gizmos.Draw();
 
+            MouseCamera.Draw(SpriteBatch);
             HUD.Draw(SpriteBatch, Player.Health, TeamT90);
+
         }
         protected void DrawWithScreenBlur(GameTime gameTime)
         {
@@ -325,7 +327,6 @@ namespace TGC.MonoGame.TP
             //Terrain.Draw(GraphicsDevice, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition, "Default");
             HeightMap.Draw(GraphicsDevice, Matrix.Identity, MouseCamera.View, MouseCamera.Projection);
             Bounds.Draw(gameTime, MouseCamera.View, MouseCamera.Projection, MouseCamera.OffsetPosition);
-
             foreach (var obj in Objects)
             {
                 if (BoundingFrustum.Intersects(obj.CollisionComponent.BoxWorldSpace))

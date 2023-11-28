@@ -2280,6 +2280,18 @@
 /processorParam:TextureFormat=Color
 /build:Textures/HUD/T90.png
 
+#begin Textures/HUD/target.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/HUD/target.png
+
 #begin Textures/HUD/youReWinner.png
 /importer:TextureImporter
 /processor:TextureProcessor
