@@ -66,7 +66,7 @@ namespace TGC.MonoGame.TP.Controllers
                 return;
             }
 
-            PhysicsComponent.Accelerate();
+            PhysicsComponent.Accelerate(deltaTime);
 
         }
 

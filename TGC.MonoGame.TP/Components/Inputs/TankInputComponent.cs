@@ -62,11 +62,11 @@ namespace TGC.MonoGame.TP.Components.Inputs
 
             if (keyboardState.IsKeyDown(Keys.W))
             {
-                PhysicsComponent.Accelerate();
+                PhysicsComponent.Accelerate(deltaTime);
             }
             else if (keyboardState.IsKeyDown(Keys.S))
             {
-                PhysicsComponent.Decelerate();
+                PhysicsComponent.Decelerate(deltaTime);
             }
 
             if (keyboardState.IsKeyDown(Keys.A))

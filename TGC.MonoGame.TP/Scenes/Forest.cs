@@ -8,6 +8,7 @@ using TGC.MonoGame.TP.Actors;
 using TGC.MonoGame.TP.Physics;
 using TGC.MonoGame.TP.Components.Physics;
 using BepuPhysics.Collidables;
+using System.Linq;
 
 namespace TGC.MonoGame.TP.Scenes
 {
@@ -55,6 +56,14 @@ namespace TGC.MonoGame.TP.Scenes
 
                 tree.LoadContent(Content);
 
+                if (Objects.Any(obj => 
+                {
+                    var objXZ = new Vector2(obj.Position.X, obj.Position.Z);
+                    return (objXZ - xzPosition).Length() < 2000f;
+                }) || (xzPosition - Vector2.Zero).Length() < 5000f)
+                {
+                    continue;
+                }
                 Objects.Add(tree);
 
             }
@@ -81,6 +90,14 @@ namespace TGC.MonoGame.TP.Scenes
 
                 rock.LoadContent(Content);
 
+                if (Objects.Any(obj => 
+                {
+                    var objXZ = new Vector2(obj.Position.X, obj.Position.Z);
+                    return (objXZ - xzPosition).Length() < 200f;
+                }) || (xzPosition - Vector2.Zero).Length() < 5000f)
+                {
+                    continue;
+                }
                 Objects.Add(rock);
 
             }
